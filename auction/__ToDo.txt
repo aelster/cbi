@@ -1,0 +1,8 @@
+Admin:      
+   Spiritual:
+      o Today's pledges?
+      o Edit Capability
+      o Split report into by Item or by User
+      o Allow for mail on pledges
+      
+Log entries for pledges

@@ -1,0 +1,4 @@
+itemExpires  - obsolete field
+
+Features:  require email/first/last to enable confirm
+Value of -1:  Priceless

@@ -1,0 +1,446 @@
+@charset "UTF-8";
+
+body {
+	background-color: #73899E;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#FloatPage {
+	position: relative;
+	width: 992px;
+}
+
+/*
+.container {
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	width: 992px;
+}
+*/
+
+#page {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-color: #FFF;
+	margin: 25px;
+	padding: 20px;
+	width: 100%;
+	-moz-border-radius: 8px;
+	border-radius: 8px;
+}
+
+#AboveBar {
+	width: 100%;
+	height: 100px;
+}
+
+#Logo {
+	float: left;
+	margin-top: -39px;
+}
+
+#AboveBarRight {
+	position: absolute;
+	top: 10px;
+	right: -30px;
+}
+
+#paypaldonate {
+	float: right;
+	padding-left: 20px;
+}
+
+#candlelight {
+	float: right;
+}
+
+#MenuBar {
+	background-color: #A5AB85;
+	-moz-border-radius: 8px 8px 0px 0px;
+	border-radius: 8px 8px 0px 0px;
+	padding: 8px;
+	height: 30px;
+}
+
+#content {
+	text-align: left;
+	vertical-align: top;
+	float: left;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	background-color: #fff;
+	width: 992px;
+	padding: 20px;
+	margin-left: -20px;
+}
+
+#Footer {
+	background-color: #a5ab85;
+	-moz-border-radius: 0px 0px 8px 8px;
+	border-radius: 0px 0px 8px 8px;
+	margin-top: 20px;
+	margin-right: -20px;
+	margin-bottom: -40px;
+	margin-left: -20px;
+	padding: 10px;
+}
+
+table.pledge {
+	margin-left: 100px;
+	float: left;
+}
+
+table.pledge td {
+	text-align: left;
+}
+
+table.pledge_other {
+	margin-left: 100px;
+	float: none;
+}
+
+table.avodah {
+	float: left;
+}
+
+div.spirit div {
+	float: left;
+	background-color: #FFF;
+}
+
+.pledgeBtn {
+	font-size: 16px;
+}
+
+hh_intro   {
+	text-align: justify;
+}
+
+.content tr {
+	vertical-align: top;
+}
+
+.content tr.sel {
+	background-color: #F5DEB3;
+}
+
+.content-fltlft {
+	text-align: left;
+	float: left;
+	margin-top: 10px;
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.buttonOk {
+	background-color: #ADB96E;
+	font-size: large;
+}
+
+.buttonNotOk {
+	background-color: #FFF;
+	font-size: large;
+}
+
+#img1 {
+	display: block;
+}
+
+#img2 {
+	position: absolute;
+	left: 575px;
+	top: 0;
+}
+
+.spiritLeft {
+	width:485px;
+}
+
+.spiritRight {
+	width: 465px;
+	margin-bottom: 10px;
+}
+
+.spirit th {
+	text-align: center;
+	background-color: #CCC49F;
+	width:475px;
+}
+
+.spirit td {
+	text-align: left;
+}
+
+.spiritTable {
+	font-weight: medium;
+	margin-left: 5px;
+	margin-bottom: 5px;
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
+	border-top-style: solid;
+	border-right-style: solid
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+}
+
+.spiritTable tr.spacer {
+	line-height: 3px;
+}
+
+.spiritTable td.box {
+	font-weight: bold;
+	text-align: center;
+	border-top-width: thin;
+	border-right-width: thin;
+	border-left-width: thin;
+	border-bottom-width: thin;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	background-color: #AAAE8A;
+	margin-left: 20px;
+}
+
+.spiritTable td.col_left {
+	width: 100px;
+}
+
+.spiritTable td.col_right {
+	width: 120px;
+}
+
+.spiritBottom {
+	clear: both;
+}
+#video {
+	text-align: center;
+}
+
+.spirit_detail {
+	margin-left: 200px;
+}
+
+.spirit_detail ul {
+	margin-left: 20px;
+}
+
+.left {
+	text-align: left;
+}
+
+#spiritOther {
+	font-size: medium;
+}
+
+#pledgeOther {
+	font-size: medium;
+}
+
+.pledge_center {
+	text-align: center;
+}
+
+.adminBody input {
+	font-size: large;
+	height: 30px;
+	width: 100px;
+}
+
+#edit_financial {
+	font-size: large;
+}
+
+#edit_financial table {
+	background-color: #000000;
+	border-collapse: collapse;
+}
+
+#edit_financial th {
+        background-color: #addfff;
+        border: 1px solid #000000;
+        padding: 0px 5px 0px 5px;
+}
+
+#edit_financial th.val {
+        background-color: #addfff;
+        border: 1px solid #000000;
+        padding: 0px 5px 0px 5px;
+		  width: 400px;
+}
+
+#edit_financial td {
+        background-color: #ffffff;
+        border: 1px solid #000000;
+        padding: 0px 5px 0px 5px;
+}
+
+#edit_financial input {
+	width: 400px;
+}
+
+#edit_financial option {
+	font-size: large;
+}
+
+.to_date {
+	text-align: center;
+	font-size: small;
+}
+
+.to_date table {
+	width: 70%;
+	margin: auto;
+}
+
+.to_date td {
+	width: 50%;
+}
+
+.to_date .num {
+	font-size: 18pt;
+	font-weight: bold;
+	background-color: #AAAE8A;
+	width: 150px;
+	text-align: center;
+	margin: auto;
+	border: thin solid;
+}
+
+.container #HeaderRight #text-9 .textwidget .desc {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	color: #930;
+}
+
+#textwidget {
+	color: #993300;
+	margin-top: 20px;
+	font-weight: normal;
+	clear: both;
+}
+
+#textwidget h3 {
+	font-weight: normal;
+	font-size: 20px;
+}
+
+.content p {
+	font-size: medium;
+	font-style: normal;
+	text-align: left;
+}
+#video {
+	text-align: center;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top: -30px;
+}
+#bottom_buttons {
+	text-align: center;
+	padding-left: 20px;
+	width: 100%;
+	clear: both;
+}
+#greeting {
+	padding: 20px;
+}
+.paypal {
+	vertical-align: middle;
+}
+
+.content table {
+        background-color: #000000;
+        border-collapse: collapse;
+}
+
+.content tr.sched {
+        height: 20px;
+}
+
+.content th {
+        background-color: #A5AB85;
+        border: 1px solid #000000;
+        padding: 0px 5px 0px 5px;
+}
+
+.content td {
+        background-color: #ffffff;
+        border: 1px solid #000000;
+        padding: 0px 5px 0px 5px;
+}
+
+.content td.c {
+        background-color: #ffffff;
+        border: 1px solid #000000;
+        padding: 0px 5px 0px 5px;
+		  text-align: center;
+}
+
+.content td.r {
+        background-color: #ffffff;
+        border: 1px solid #000000;
+        padding: 0px 5px 0px 5px;
+		  text-align: right;
+}
+
+table.items {
+	font-size: 10pt;
+}
+
+table.items th.top {
+	background-color: #FFF;
+	text-align: left;
+	border: none;
+}
+
+table.items th.bottom {
+	background-color: #A5AB85;
+	text-align: center;
+	border: none;
+}
+
+table.items th.bottomr {
+	background-color: #A5AB85;
+	text-align: right;
+	border: none;
+}
+
+table.items td {
+	border: none;
+}
+
+table.items td.c {
+	border-left: 1px solid #000000;
+	border-top: none;
+	border-bottom: none;
+	border-right: none;
+	text-align: center;
+	vertical-align: top;
+}
+
+table.items td.price {
+	width: 80px;
+	border-left: 1px solid #000000;
+	text-align: right;
+	vertical-align: top;
+}
+
+table.items td.bar {
+	height: 20px;
+	border-bottom:  1px solid #000000;
+}
+
+table.items td.bar2 {
+	height: 20px;
+	border-left:  1px solid #000000;
+	border-bottom:  1px solid #000000;
+}
+
+.content #spryradio1 td {
+	border:hidden;
+}
