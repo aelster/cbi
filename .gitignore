@@ -1,2 +1,5 @@
 */dwsync.xml
 *.komodoproject
+*/.DS_Store
+.DS_Store
+
