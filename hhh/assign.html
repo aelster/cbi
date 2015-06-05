@@ -2,46 +2,58 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>Untitled Document</title>
+<title>CBI HH Honors Assignments</title>
 <link href="oneColFixCtr.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="assign.js"></script>
 </head>
 
 <body>
 <form id="form1" name="form1" method="post" action="">
-</form>
 
 <div class="container">
   <div class="content-box1">
     <p>Filters
-    <input type="button" name="rh3" id="rh3" value="Reset" />
+    <input type="button" id="filter-reset" value="Reset" onclick="myPress('filter-reset');"/>
     </p>
     <!-- end .content -->
   </div>
   <div class="content-box2">
-      <input type="button" id="day-rh1" value="Rosh 1" />
-      <input type="button" id="day-kn" value="Kol Nidre" />
-      <input type="button" id="day-ykpm" value="YK - PM" />
+      <input type="button" id="day-rh1" value="Rosh 1" onclick="myPress('day-rh1');"/>
+      <input type="button" id="day-kn" value="Kol Nidre" onclick="myPress('day-kn');"/>
+      <input type="button" id="day-ykpm" value="YK - PM" onclick="myPress('day-ykpm');"/>
 <br />
-      <input type="button" id="day-rh2" value="Rosh 2" />
-      <input type="button" id="day-ykam" value="YK - AM" />
-      <input type="button" id="day-all" value="All" />      
+      <input type="button" id="day-rh2" value="Rosh 2" onclick="myPress('day-rh2');"/>
+      <input type="button" id="day-ykam" value="YK - AM" onclick="myPress('day-ykam');"/>
+      <input type="button" id="day-all" value="All" onclick="myPress('day-all');"/>      
   <!-- end .content -->
   </div>
   <div class="content-box3">
-      <input type="button" id="opt-cohen" value="Cohen" />
-      <input type="button" id="opt-board" value="Board" />
-      <input type="button" id="opt-staff" value="Staff" />
-      <input type="button" id="opt-vola" value="Vol A" />
-      <input type="button" id="opt-volc" value="Vol C" />
+      <input type="button" id="opt-cohen" value="Cohen" onclick="myPress('opt-cohen');"/>
+      <input type="button" id="opt-board" value="Board" onclick="myPress('opt-board');"/>
+      <input type="button" id="opt-staff" value="Staff" onclick="myPress('opt-staff');"/>
+      <input type="button" id="opt-vola" value="Vol A" onclick="myPress('opt-vola');"/>
+      <input type="button" id="opt-volc" value="Vol C" onclick="myPress('opt-volc');"/>
 <br />
-      <input type="button" id="opt-levi" value="Levi" />
-      <input type="button" id="opt-donor" value="Donor" />
-      <input type="button" id="opt-newmember" value="New Member" />      
-      <input type="button" id="opt-volb" value="Vol B" />      
-      <input type="button" id="opt-pastpres" value="Past Pres" />      
-      <input type="button" id="opt-all" value="All" />      
+      <input type="button" id="opt-levi" value="Levi" onclick="myPress('opt-levi');"/>
+      <input type="button" id="opt-donor" value="Donor" onclick="myPress('opt-donor');"/>
+      <input type="button" id="opt-newmember" value="New Member" onclick="myPress('opt-newmember');"/>      
+      <input type="button" id="opt-volb" value="Vol B" onclick="myPress('opt-volb');"/>      
+      <input type="button" id="opt-pastpres" value="Past Pres" onclick="myPress('opt-pastpres');"/>      
+      <input type="button" id="opt-all" value="All" onclick="myPress('opt-all');"/>      
 </div>
-
-<!-- end .container --></div>
+<hr />
+<div class="cong-box1">
+<p>Honors</p>
+<div id="honors">
+</div>
+</div>
+<div class="cong-box2">
+<p>Mode</p>
+</div>
+<div class="cong-box3">
+<p>Congregants</p>
+</div>
+</div>
+</form>
 </body>
 </html>

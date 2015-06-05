@@ -1,6 +1,6 @@
 @charset "UTF-8";
 body {
-	background-color: #42413C;
+	background-color: #fff;
 	margin: 0;
 	padding: 0;
 	color: #FFF;
@@ -73,6 +73,8 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 }
 .container .content-box1 {
 	float: left;
+	background-color:#9FCFE0;
+	border-color: #000;
 	border-top-width: 2px;
 	border-right-width: 2px;
 	border-bottom-width: 2px;
@@ -82,11 +84,13 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	border-bottom-style: solid;
 	border-left-style: solid;
 	height: 50px;
-	width: 10%;
+	width: 12%;
 }
 
 .container .content-box2 {
 	float: left;
+	background-color:#9FCFE0;
+	border-color: #000;
 	border-top-width: 2px;
 	border-right-width: 2px;
 	border-bottom-width: 2px;
@@ -100,7 +104,9 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 }
 
 .container .content-box3 {
-	float: left;
+	float:none;
+	background-color:#9FCFE0;
+	border-color: #000;
 	border-top-width: 2px;
 	border-right-width: 2px;
 	border-bottom-width: 2px;
@@ -111,7 +117,68 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	border-left-style: solid;
 	height: 50px;
 }
-
+	
 .container input {
-	width:70px;
+	width:80px;
+	background-color: #fff;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.container input.closed {
+	width:80px;
+	background-color: #9F9;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.container .cong-box1 {
+	float: left;
+	border-top-width: 2px;
+	border-right-width: 2px;
+	border-bottom-width: 2px;
+	border-left-width: 2px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	height: 500px;
+	width: 40%;
+}
+
+.container .cong-box2 {
+	float: left;
+	background-color: #0f0;
+	border-top-width: 2px;
+	border-right-width: 2px;
+	border-bottom-width: 2px;
+	border-left-width: 2px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	width: 15%
+	height: 500px;
+}
+
+.container .cong-box3 {
+	float: none;
+	background-color: #00f;
+	border-top-width: 2px;
+	border-right-width: 2px;
+	border-bottom-width: 2px;
+	border-left-width: 2px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	width: 40%;
+	height: 500px;
+}#form1 .container .cong-box1 #honors {
+	border-top-width: 1px;
+	border-right-width: 1px;
+	border-bottom-width: 1px;
+	border-left-width: 1px;
 }
