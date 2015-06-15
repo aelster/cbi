@@ -1,13 +1,13 @@
-<!--
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>CBI HH Honors Assignments</title>
-<link href="oneColFixCtr.css" rel="stylesheet" type="text/css" />
-<script type="text/javascript" src="assign.js"></script>
-</head>
--->
+<?php
+  DoQuery( "select Honor from honors order by Code" );
+  $honors_res = $GLOBALS['mysql_result'];
+  $query = "select `Last Name`, `Female 1st Name`, `Male 1st Name` from members";
+  $query .= " where Status not like 'Non-Member'";
+  $query .= " order by `Last Name` asc";
+  DoQuery( $query );
+  $member_res = $GLOBALS['mysql_result'];
+  ?>
+  
 <div class="container">
 
   <div class="assign-top">
@@ -51,9 +51,12 @@
 
 <div class="cong-box1">
 <p>Honors</p>
-<textarea name="honors" id="honors" cols=50 rows=30>
-  Opening the Ark
-  Holding the Torah
+<textarea name="honors" id="honors" cols=60 rows=30>
+<?php
+  while( list( $honor ) = mysql_fetch_array( $honors_res ) ) {
+    echo "$honor\n";
+  }
+?>
 </textarea>
 </div>
 
@@ -66,9 +69,12 @@
 
 <div class="cong-box3">
 <p>Congregants</p>
-<textarea name="congregants" id="congregants" cols=50 rows=30>
-  Elster, Andy & Beth
-  Leavitt, Stacy & Marc
+<textarea name="congregants" id="congregants" cols=60 rows=30>
+<?php
+  while( list( $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
+    echo "$last, $ff & $mf\n";
+  }
+?>
 </textarea>
 </div>
 
