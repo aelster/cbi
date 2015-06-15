@@ -93,7 +93,8 @@ switch( $gAction ) {
 			exec( "perl /home/cbi18/site/my_backup.pl > /home/cbi18/backup_sql/manual.log", $out );
 		}
 		if( $area == 'assign' ) {
-			AssignHonors();
+			include( 'assign.php' );
+			exit;
 		}
 		break;
 	

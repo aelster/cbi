@@ -3,7 +3,6 @@ body {
 	background-color: #fff;
 	margin: 0;
 	padding: 0;
-	color: #FFF;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 100%;
 	line-height: normal;
@@ -22,7 +21,6 @@ h1, h2, h3, h4, h5, h6, p {
 	font-size: medium;
 	font-weight: bold;
 	text-align: center;
-	color: #000;
 }
 a img { /* this selector removes the default blue border displayed in some browsers around an image when it is surrounded by a link */
 	border: none;
@@ -72,6 +70,11 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	font-size: 1px;
 	line-height: 0px;
 }
+
+.container .assign-top {
+	text-align: center;	
+}
+
 .container .content-box1 {
 	float: left;
 	background-color:#9FCFE0;
@@ -105,7 +108,7 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 }
 
 .container .content-box3 {
-	float:none;
+	float:left;
 	background-color:#9FCFE0;
 	border-color: #000;
 	border-top-width: 2px;
@@ -137,14 +140,6 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 .container .cong-box1 {
 	float: left;
-	border-top-width: 2px;
-	border-right-width: 2px;
-	border-bottom-width: 2px;
-	border-left-width: 2px;
-	border-top-style: solid;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-left-style: solid;
 	height: 500px;
 	width: 40%;
 }

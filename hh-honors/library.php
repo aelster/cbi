@@ -1074,7 +1074,6 @@ function HashAdd() {
 
 function LocalInit() {
 	include( 'globals.php' );
-	
 	$gDebug = 0;
 	$gTrace = 0;
 	$x = isset( $_REQUEST['bozo'] ) ? 1 : 0;
@@ -1083,6 +1082,11 @@ function LocalInit() {
 		$gTrace = $x;
 	}
 
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
 	$gFrom = array_key_exists( 'from', $_POST ) ? $_POST['from'] : '';
 	$gFunction = array();
 	$gSourceCode = $_SERVER['REQUEST_URI'];
@@ -1641,10 +1645,11 @@ function WriteHeader() {
 	
 	echo "<html>$gLF";
 	echo "<head>$gLF";
-	
+
 	$styles = array();
 	$styles[] = "/css/CommonV2.css";
 	$styles[] = "honors.css";
+	$styles[] = "oneColFixCtr.css";
 	
 	foreach( $styles as $style ) {
 		printf( "<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\" />$gLF", $style );
@@ -1656,7 +1661,7 @@ function WriteHeader() {
 	$scripts[] = "/scripts/commonv2.js";
 	$scripts[] = "/scripts/sha256.js";
 	$scripts[] = "/scripts/sorttable.js";
-	$scripts[] = "hhPledges.js";
+	$scripts[] = "assign.js";
 	
 	foreach( $scripts as $script ) {
 		printf( "<script type=\"text/javascript\" src=\"%s\"></script>$gLF", $script );
