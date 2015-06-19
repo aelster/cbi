@@ -54,7 +54,7 @@
 <div class=honors-div>
 <?php
   while( list( $id, $honor ) = mysql_fetch_array( $honors_res ) ) {
-    echo "<p id=honor_$id onclick=\"myHonorsClick($id);\">$honor</p>\n";
+    echo "<p id=honor_$id onclick=\"myHonorsClick('honor_' + $id);\">$honor</p>\n";
   }
 ?>
 </div>
@@ -72,7 +72,7 @@
 <div class=cong-div>
 <?php
   while( list( $id, $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
-    echo "<p id=cong_$id onclick=\"myCongClick($id);\">$last, $ff & $mf</p>\n";
+    echo "<p id=cong_$id onclick=\"myCongClick('cong_' + $id);\">$last, $ff & $mf</p>\n";
   }
 ?>
 </div>
@@ -81,4 +81,8 @@
 
 </form>
 </body>
+<script type='text/javascript'>
+  myPress('day-all');
+  myPress('opt-all');
+</script>
 </html>
