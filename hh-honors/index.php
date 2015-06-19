@@ -96,6 +96,10 @@ switch( $gAction ) {
 			include( 'assign.php' );
 			exit;
 		}
+		if( $func == "honors" ) {
+			CreateHonors();
+			$gAction = 'Main';
+		}
 		break;
 	
 	case( 'Update' ):

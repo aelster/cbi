@@ -1,3 +1,9 @@
+function myHonorsClick(e) {
+	var t = 1;
+	var o = getClientRecs(e);
+	// try a boxed div, <p>s and a scroll bar
+}
+
 function myPress(id) {
 	var e, b, i;
 	if ( id == 'filter-reset' ) {

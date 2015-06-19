@@ -154,6 +154,185 @@ function CleanString ($data) {
 	return $data;
 }
 
+function CreateHonors() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
+	DoQuery( "select date from dates" );
+	if( $GLOBALS['mysql_numrows'] == 0 ) {
+		?>
+		<script type='text/javascript'>
+			alert('You must first select a date for Rosh Hashanah');
+		</script>
+		<?php
+	} else {
+		$row = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$date = new DateTime( $row['date'] );
+		
+		DoQuery( 'truncate table honors');
+#===========
+		$date->add(new DateInterval('P1D'));  # Advance to day #1
+		$shabbat = $date->format('w') == 6 ? 1 : 0;
+		
+		$service = "RH1";
+		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
+		$res = $GLOBALS['mysql_result'];
+		while( $row = mysql_fetch_array( $res ) ) {
+			$qx = array();
+			$qx[] = "`id` = " . $row['id'];
+			$qx[] = "`service` = '" . $service . "'";
+			$qx[] = "`page` = " . $row['page'];
+			$qx[] = "`sort` = " . $row['sort'];
+			$qx[] = sprintf( "`honor` = '%s'", mysql_escape_string( $row['honor'] ) );
+			$query = "insert into honors set " . join( ',', $qx );
+			$add = 1;
+			if( $shabbat && $row['shabbat_exclude'] ) $add = 0;
+			if( ! $shabbat && $row['shabbat_include'] ) $add = 0;
+			if( $add ) DoQuery( $query );
+		}
+		
+#===========
+		$date->add(new DateInterval('P1D'));  # Advance to day #2
+		$shabbat = $date->format('w') == 6 ? 1 : 0;
+		
+		$service = "RH2";
+		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
+		$res = $GLOBALS['mysql_result'];
+		while( $row = mysql_fetch_array( $res ) ) {
+			$qx = array();
+			$qx[] = "`id` = " . $row['id'];
+			$qx[] = "`service` = '" . $service . "'";
+			$qx[] = "`page` = " . $row['page'];
+			$qx[] = "`sort` = " . $row['sort'];
+			$qx[] = sprintf( "`honor` = '%s'", mysql_escape_string( $row['honor'] ) );
+			$query = "insert into honors set " . join( ',', $qx );
+			$add = 1;
+			if( $shabbat && $row['shabbat_exclude'] ) $add = 0;
+			if( ! $shabbat && $row['shabbat_include'] ) $add = 0;
+			if( $add ) DoQuery( $query );
+		}
+		
+#===========
+		$date->add(new DateInterval('P5D'));  # Advance to Kol Nidre
+		$shabbat = $date->format('w') == 6 ? 1 : 0;
+		
+		$service = "YKA";
+		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
+		$res = $GLOBALS['mysql_result'];
+		while( $row = mysql_fetch_array( $res ) ) {
+			$qx = array();
+			$qx[] = "`id` = " . $row['id'];
+			$qx[] = "`service` = '" . $service . "'";
+			$qx[] = "`page` = " . $row['page'];
+			$qx[] = "`sort` = " . $row['sort'];
+			$qx[] = sprintf( "`honor` = '%s'", mysql_escape_string( $row['honor'] ) );
+			$query = "insert into honors set " . join( ',', $qx );
+			$add = 1;
+			if( $shabbat && $row['shabbat_exclude'] ) $add = 0;
+			if( ! $shabbat && $row['shabbat_include'] ) $add = 0;
+			if( $add ) DoQuery( $query );
+		}
+		
+#===========
+		$date->add(new DateInterval('P1D'));  # Advance to Yom Kippur
+		$shabbat = $date->format('w') == 6 ? 1 : 0;
+		
+		$service = "YKB";
+		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
+		$res = $GLOBALS['mysql_result'];
+		while( $row = mysql_fetch_array( $res ) ) {
+			$qx = array();
+			$qx[] = "`id` = " . $row['id'];
+			$qx[] = "`service` = '" . $service . "'";
+			$qx[] = "`page` = " . $row['page'];
+			$qx[] = "`sort` = " . $row['sort'];
+			$qx[] = sprintf( "`honor` = '%s'", mysql_escape_string( $row['honor'] ) );
+			$query = "insert into honors set " . join( ',', $qx );
+			$add = 1;
+			if( $shabbat && $row['shabbat_exclude'] ) $add = 0;
+			if( ! $shabbat && $row['shabbat_include'] ) $add = 0;
+			if( $add ) DoQuery( $query );
+		}
+		
+#===========
+		$service = "YKC";
+		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
+		$res = $GLOBALS['mysql_result'];
+		while( $row = mysql_fetch_array( $res ) ) {
+			$qx = array();
+			$qx[] = "`id` = " . $row['id'];
+			$qx[] = "`service` = '" . $service . "'";
+			$qx[] = "`page` = " . $row['page'];
+			$qx[] = "`sort` = " . $row['sort'];
+			$qx[] = sprintf( "`honor` = '%s'", mysql_escape_string( $row['honor'] ) );
+			$query = "insert into honors set " . join( ',', $qx );
+			$add = 1;
+			if( $shabbat && $row['shabbat_exclude'] ) $add = 0;
+			if( ! $shabbat && $row['shabbat_include'] ) $add = 0;
+			if( $add ) DoQuery( $query );
+		}
+		
+
+	}
+	if( $gTrace ) array_pop( $gFunction );
+}
+
+function CreateHonorsMaster() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
+	echo "<table>";
+	echo "<tr>";
+	echo "  <td>Source</td>";
+	echo "  <td>Service</td>";
+	echo "  <td>Sort</td>";
+	echo "  <td>S-Incl</td>";
+	echo "  <td>S-Excl</td>";
+	echo "  <td>Page</td>";
+	echo "  <td>Honor</td>";
+	echo "</tr>";
+	
+	$tsort = 0;
+	
+	DoQuery( "truncate table honors_master" );
+	
+	DoQuery( "select Code, Honor, Page from honors_temp order by Code asc");
+	$res = $GLOBALS['mysql_result'];
+	while( list( $code, $honor, $page ) = mysql_fetch_array( $res ) ) {
+		echo "<tr>";
+		echo "  <td>$code</td>";
+		$service = substr( $code,0,3);
+		echo "  <td>$service</td>";
+		$sort = substr( $code,3,2);
+		echo "  <td>$sort</td>";
+		$s_incl = strpos($code, '+') ? 1 : 0;
+		$s_excl = strpos($code, '-') ? 1 : 0;
+		echo "  <td>$s_incl</td>";
+		echo "  <td>$s_excl</td>";
+		echo "  <td>$page</td>";
+		echo "  <td>$honor</td>";
+		echo "</tr>";
+		$qx = array();
+		$qx[] = sprintf( "`service` = '%s'", $service );
+		$qx[] = sprintf( "`sort` = $tsort" );
+		$qx[] = sprintf( "`shabbat_include` = $s_incl" );
+		$qx[] = sprintf( "`shabbat_exclude` = $s_excl" );
+		$qx[] = sprintf( "`honor` = '%s'", mysql_escape_string($honor) );
+		$qx[] = sprintf( "`page` = $page" );
+		$query = "insert into honors_master set " . join( ',', $qx );
+		DoQuery( $query );
+		$tsort += 10;
+	}
+	echo "</table>";
+	if( $gTrace ) array_pop( $gFunction );
+}
+
 function DateUpdate() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -165,20 +344,20 @@ function DateUpdate() {
 	$id = $_POST['id'];
 	$from = $_POST['from'];
 
-	$tmp = preg_split( '/,/', $_POST['fields'] );  // This is what was touched
-	$keys = array_unique( $tmp );
+	$label = $_POST['label'];
+	$ts = strtotime( $_POST['rosh'] );
+	$val = date('Y-m-d', $ts);
 	
 	if( $func == "update" ) {
 		$qx = array();
-		foreach( $keys as $id ) {
-			$qx[] = sprintf( "date = '%d'", strtotime( $_POST['date_'.$id] ) );
-			if( $id == 0 ) {
-				$query = sprintf( "insert into dates set %s", join( ',', $qx ) );
-			} else {
-				$query = sprintf( "update dates set %s where id = %d", join( ',', $qx ), $id );
-			}
-			DoQuery( $query );
+		$qx[] = "date = '$val'";
+		if( empty($id) ) {
+			$qx[] = "label = '$label'";
+			$query = sprintf( "insert into dates set %s", join( ',', $qx ) );
+		} else {
+			$query = sprintf( "update dates set %s where id = %d", join( ',', $qx ), $id );
 		}
+		DoQuery( $query );
 
 	} elseif( $func == "delete" ) {
 		$query = sprintf( "delete from dates where id = %d", $keys[0] );
@@ -355,40 +534,64 @@ function DisplayDates() {
 	$jsx[] = "addAction('Update')";
 	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 	echo "<input type=button value=Update $tag $js>";
+	echo "<input type=hidden id=id>";
 	
 	printf( "<h3>Current date: %s</h3>", date( "D M jS, Y, g:i A" ) );
-	echo "<table class=sortable>";
+	echo "<table>";
 	
 	echo "<tr>";
 	echo "<th>Label</th>";
-	echo "<th>Weekday</th>";
 	echo "<th>Date</th>";
 	echo "</tr>\n";
 
 	DoQuery( "select * from dates order by `date` asc" );
-	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+	$num_dates = $GLOBALS['mysql_numrows'];
+	if( $num_dates ) {
+		$row = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
 		$id = $row['id'];
-		$label = $row['label'];
-		$date = $row['date'];
-		if( ! ( $label == 'open' || $label == 'close' ) ) continue;
-		
 		echo "<tr>";
 		$jsx = array();
 		$jsx[] = "setValue('from','DisplayDates')";
-		$jsx[] = "addField('$id')";
+		$jsx[] = "setValue('id','$id')";
 		$jsx[] = "toggleBgRed('update')";
 		$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
-
-		printf( "<td>%s</td>", $label );
-
-		printf( "<td class=c>%s</td>", date( "l", $date ) );
-
-		$tag = MakeTag('date_'.$id);
-		printf( "<td><input $tag $js size=30 value=\"%s\"></td>", date( "M jS, Y, g:i A", $date ) );
-
+	
+		printf( "<td>%s</td>", $row['label'] );
+		$date = new DateTime( $row['date'] );
+		$tag = MakeTag('rosh');
+		printf( "<td><input $tag $js size=30 value=\"%s\"></td>", $date->format( "l, M jS, Y") );
 		echo "</tr>\n";
+		
+		$date->add(new DateInterval('P1D'));
+		echo "<tr>";
+		echo "<td>Rosh Hashanah Day #1</td>";
+		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
+		echo "</tr>";
+		
+		$date->add(new DateInterval('P1D'));
+		echo "<tr>";
+		echo "<td>Rosh Hashanah Day #2</td>";
+		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
+		echo "</tr>";
+				
+		$date->add(new DateInterval('P5D'));
+		echo "<tr>";
+		echo "<td>Kol Nidre</td>";
+		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
+		echo "</tr>";
+				
+		$date->add(new DateInterval('P1D'));
+		echo "<tr>";
+		echo "<td>Yom Kippur</td>";
+		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
+		echo "</tr>";
+				
+	} else {
+		echo "<tr>";
+		echo "  <td><input type=text id=label name=label value=\"Erev Rosh Hashanah\"></td>";
+		echo "  <td><input type=text id=rosh name=rosh size=15 onchange=\"addField('rosh');toggleBgRed('update');\">";
+		echo "</tr>";
 	}
-
 	echo "</table>\n";
 	echo "</div>\n";
 
@@ -720,7 +923,7 @@ function DisplayMain() {
 			echo "<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">";
 			echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
 			echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
-			echo "<input type=button onclick=\"setValue('func','hash');addAction('Main');\" value=\"Add Hashes\">";
+			echo "<input type=button onclick=\"setValue('func','honors');addAction('Main');\" value=\"Create Honors\">";
 
 			$jsx = array();
 			$jsx[] = "setValue('area','reset')";

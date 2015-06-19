@@ -1,5 +1,5 @@
 <?php
-  DoQuery( "select Honor from honors order by Code" );
+  DoQuery( "select id, honor from honors order by sort" );
   $honors_res = $GLOBALS['mysql_result'];
   $query = "select `Last Name`, `Female 1st Name`, `Male 1st Name` from members";
   $query .= " where Status not like 'Non-Member'";
@@ -51,9 +51,9 @@
 
 <div class="cong-box1">
 <p>Honors</p>
-<textarea name="honors" id="honors" cols=60 rows=30>
+<textarea name="honors" id="honors" cols=60 rows=30 onclick="myHonorsClick(event);">
 <?php
-  while( list( $honor ) = mysql_fetch_array( $honors_res ) ) {
+  while( list( $id, $honor ) = mysql_fetch_array( $honors_res ) ) {
     echo "$honor\n";
   }
 ?>
