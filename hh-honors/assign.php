@@ -1,7 +1,7 @@
 <?php
   DoQuery( "select id, honor from honors order by sort" );
   $honors_res = $GLOBALS['mysql_result'];
-  $query = "select `Last Name`, `Female 1st Name`, `Male 1st Name` from members";
+  $query = "select id, `Last Name`, `Female 1st Name`, `Male 1st Name` from members";
   $query .= " where Status not like 'Non-Member'";
   $query .= " order by `Last Name` asc";
   DoQuery( $query );
@@ -51,13 +51,13 @@
 
 <div class="cong-box1">
 <p>Honors</p>
-<textarea name="honors" id="honors" cols=60 rows=30 onclick="myHonorsClick(event);">
+<div class=honors-div>
 <?php
   while( list( $id, $honor ) = mysql_fetch_array( $honors_res ) ) {
-    echo "$honor\n";
+    echo "<p id=honor_$id onclick=\"myHonorsClick($id);\">$honor</p>\n";
   }
 ?>
-</textarea>
+</div>
 </div>
 
 <div class="cong-box2">
@@ -69,15 +69,14 @@
 
 <div class="cong-box3">
 <p>Congregants</p>
-<textarea name="congregants" id="congregants" cols=60 rows=30>
+<div class=cong-div>
 <?php
-  while( list( $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
-    echo "$last, $ff & $mf\n";
+  while( list( $id, $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
+    echo "<p id=cong_$id onclick=\"myCongClick($id);\">$last, $ff & $mf</p>\n";
   }
 ?>
-</textarea>
 </div>
-
+</div>
 </div>
 
 </form>

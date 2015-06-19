@@ -132,12 +132,12 @@ div.assign-top {
 .container .cong-box1 {
 	float: left;
 	height: 500px;
-	width: 40%;
+	width: 50%;
 }
 
 .container .cong-box2 {
 	float: left;
-	width: 15%;
+	width: 10%;
 	height: 500px;
 }
 
@@ -152,4 +152,64 @@ div.assign-top {
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-left-width: 1px;
+}
+
+.container .cong-box1 .honors-div {
+	border: thin solid #000;
+	float: left;
+	height: 100%;
+	overflow: scroll;
+}
+
+.container .cong-box1 .honors-div p {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+	padding: 0;
+	line-height:  1.0;
+	margin: 2;
+	text-indent: -2em;
+	padding-left:  2em;
+}
+
+.container .cong-box1 .honors-div p.closed {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+	padding: 0;
+	line-height:  1.0;
+	margin: 2;
+	text-indent: -2em;
+	padding-left:  2em;
+	background-color: #9f9;
+}
+
+.container .cong-box3 .cong-div {
+	border: thin solid #000;
+	float: left;
+	height: 100%;
+	overflow: scroll;
+}
+
+.container .cong-box3 .cong-div p {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+	padding: 0;
+	line-height:  1.0;
+	margin: 2;
+	text-indent: -2em;
+	padding-left:  2em;
+}
+
+.container .cong-box3 .cong-div p.closed {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+	padding: 0;
+	line-height:  1.0;
+	margin: 2;
+	text-indent: -2em;
+	padding-left:  2em;
+	background-color: #9f9;
 }

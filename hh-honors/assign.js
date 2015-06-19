@@ -1,9 +1,20 @@
-function myHonorsClick(e) {
-	var t = 1;
-	var o = getClientRecs(e);
-	// try a boxed div, <p>s and a scroll bar
+function myCongClick(id) {
+	var e = document.getElementById('cong_' + id);
+	if( e.className == "" ) {
+		e.className = "closed";
+	} else {
+		e.className = "";
+	}
 }
 
+function myHonorsClick(id) {
+	var e = document.getElementById('honor_' + id);
+	if( e.className == "" ) {
+		e.className = "closed";
+	} else {
+		e.className = "";
+	}
+}
 function myPress(id) {
 	var e, b, i;
 	if ( id == 'filter-reset' ) {
