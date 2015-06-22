@@ -1,6 +1,14 @@
 <?php
+  DoQuery( "select id, service, honor from honors order by sort" );
+  echo "<script type='text/javascript'>\n";
+  echo "var honors_db = new Array();\n";
+  while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
+    printf( "honors_db.push( { id:%d, service:\"%s\", honor:\"%s\" } );\n", $id, $service, mysql_escape_string($honor) );
+  }
+  echo "</script>\n";
   DoQuery( "select id, honor from honors order by sort" );
   $honors_res = $GLOBALS['mysql_result'];
+  
   $query = "select id, `Last Name`, `Female 1st Name`, `Male 1st Name` from members";
   $query .= " where Status not like 'Non-Member'";
   $query .= " order by `Last Name` asc";
@@ -25,11 +33,11 @@
   
   <div class="content-box2">
       <input type="button" id="day-rh1" value="Rosh 1" onclick="myPress('day-rh1');"/>
-      <input type="button" id="day-kn" value="Kol Nidre" onclick="myPress('day-kn');"/>
-      <input type="button" id="day-ykpm" value="YK - PM" onclick="myPress('day-ykpm');"/>
+      <input type="button" id="day-yka" value="Kol Nidre" onclick="myPress('day-yka');"/>
+      <input type="button" id="day-ykc" value="YK - PM" onclick="myPress('day-ykc');"/>
 <br />
       <input type="button" id="day-rh2" value="Rosh 2" onclick="myPress('day-rh2');"/>
-      <input type="button" id="day-ykam" value="YK - AM" onclick="myPress('day-ykam');"/>
+      <input type="button" id="day-ykb" value="YK - AM" onclick="myPress('day-ykb');"/>
       <input type="button" id="day-all" value="All" onclick="myPress('day-all');"/>      
   <!-- end .content -->
   </div>

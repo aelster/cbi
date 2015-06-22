@@ -48,7 +48,7 @@ function myPress(id) {
 		e.value = 'All';
 		e.className = "closed";
 		
-   	} else if( id == 'day-all' ) {
+   } else if( id == 'day-all' ) {
 		var t = document.getElementById('day-all');
 		var state = t.value;
 		
@@ -70,7 +70,7 @@ function myPress(id) {
 			t.className = "closed";
 		}
 		
-   	} else if( id == 'opt-all' ) {
+   } else if( id == 'opt-all' ) {
 		var t = document.getElementById('opt-all');
 		var state = t.value;
 		
