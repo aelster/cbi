@@ -177,7 +177,7 @@ function CreateHonors() {
 		$date->add(new DateInterval('P1D'));  # Advance to day #1
 		$shabbat = $date->format('w') == 6 ? 1 : 0;
 		
-		$service = "RH1";
+		$service = "rh1";
 		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
 		$res = $GLOBALS['mysql_result'];
 		while( $row = mysql_fetch_array( $res ) ) {
@@ -198,7 +198,7 @@ function CreateHonors() {
 		$date->add(new DateInterval('P1D'));  # Advance to day #2
 		$shabbat = $date->format('w') == 6 ? 1 : 0;
 		
-		$service = "RH2";
+		$service = "rh2";
 		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
 		$res = $GLOBALS['mysql_result'];
 		while( $row = mysql_fetch_array( $res ) ) {
@@ -219,7 +219,7 @@ function CreateHonors() {
 		$date->add(new DateInterval('P5D'));  # Advance to Kol Nidre
 		$shabbat = $date->format('w') == 6 ? 1 : 0;
 		
-		$service = "YKA";
+		$service = "kn";
 		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
 		$res = $GLOBALS['mysql_result'];
 		while( $row = mysql_fetch_array( $res ) ) {
@@ -240,7 +240,7 @@ function CreateHonors() {
 		$date->add(new DateInterval('P1D'));  # Advance to Yom Kippur
 		$shabbat = $date->format('w') == 6 ? 1 : 0;
 		
-		$service = "YKB";
+		$service = "yka";
 		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
 		$res = $GLOBALS['mysql_result'];
 		while( $row = mysql_fetch_array( $res ) ) {
@@ -258,7 +258,7 @@ function CreateHonors() {
 		}
 		
 #===========
-		$service = "YKC";
+		$service = "ykp";
 		DoQuery( "select * from honors_master where service = '$service' order by `sort` asc" );
 		$res = $GLOBALS['mysql_result'];
 		while( $row = mysql_fetch_array( $res ) ) {
@@ -330,6 +330,36 @@ function CreateHonorsMaster() {
 		$tsort += 10;
 	}
 	echo "</table>";
+	if( $gTrace ) array_pop( $gFunction );
+}
+
+function CreateMembers() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
+	DoQuery( "truncate table members" );
+	
+	$qx = array();
+	$qx[] = "status = 'Member'";
+	$qx[] = "status = 'New'";
+	$qx[] = "status = 'Sharon'";
+	$qx[] = "status = 'Staff'";
+	$query = "select * from members_master where " . join( ' or ', $qx );
+	DoQuery( $query );
+	
+	$res = $GLOBALS["mysql_result"];
+	while( $row = mysql_fetch_assoc( $res ) ) {
+		$qx = array();
+		foreach( $row as $key => $val ) {
+			$qx[] = sprintf( "`%s` = '%s'", $key, mysql_escape_string($val) );
+		}
+		$query = "insert into members set " . join( ',', $qx );
+		DoQuery( $query );
+	}
+	
 	if( $gTrace ) array_pop( $gFunction );
 }
 
@@ -920,17 +950,8 @@ function DisplayMain() {
 			echo "<h3>Control User Features</h3>";
 			echo "<input type=button onclick=\"setValue('func','source');addAction('Main');\" value=\"Source\">";
 			echo "<input type=button onclick=\"setValue('func','backup');addAction('Main');\" value=\"Backup\">";
-			echo "<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">";
 			echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
 			echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
-			echo "<input type=button onclick=\"setValue('func','honors');addAction('Main');\" value=\"Create Honors\">";
-
-			$jsx = array();
-			$jsx[] = "setValue('area','reset')";
-			$jsx[] = "setValue('from','DisplayMain')";
-			$jsx[] = "myConfirm('Are you sure you want to delete all bidders and bids?')";
-			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-			echo "<input type=button $js value='Reset Bids'>";
 
 			echo "</div>";
 		}
@@ -940,52 +961,144 @@ function DisplayMain() {
 			echo "<h3>Admin User Features</h3>";
 
 			$jsx = array();
-			$jsx[] = "setValue('area','assign')";
-			$jsx[] = "addAction('Main')";
-			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-			echo "<input type=button $js value=Assign>";
-
-			$jsx = array();
 			$jsx[] = "setValue('area','dates')";
 			$jsx[] = "addAction('Main')";
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 			echo "<input type=button $js value=Dates>";
 
+			echo "<input type=button onclick=\"setValue('func','honors');addAction('Main');\" value=\"Honors List - All Days\">";
+			echo "<input type=button onclick=\"setValue('func','members');addAction('Main');\" value=\"Member List - This Year\">";
+			echo "<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">";
+
+			echo "</div>";
+			echo "<br>";
+		}
+		
+		if( UserManager( 'authorized', 'assign' ) ) {
+			echo "<div class=assign>";
+			echo "<h3>Assignor Features</h3>";
+			
 			$jsx = array();
-			$jsx[] = "setValue('area','items')";
+			$jsx[] = "setValue('area','assign')";
 			$jsx[] = "addAction('Main')";
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-			echo "<input type=button $js value=Items>";
+			echo "<input type=button $js value=Assign>";
 
+			echo "<input type=button onclick=\"setValue('func','Back');addAction('Main');\" value=Refresh>";
+
+			
 			echo "</div>";
 			echo "<br>";
 		}
 		
 		if( UserManager( 'authorized', 'office' ) ) {
-			echo "<div class=office>";
+			echo "<div class=assign>";
 			echo "<h3>Office Features</h3>";
 			
 			echo "<input type=button onclick=\"setValue('func','Back');addAction('Main');\" value=Refresh>";
-
-			$jsx = array();
-			$jsx[] = "setValue('area','bidders')";
-			$jsx[] = "addAction('Main')";
-			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-			echo "<input type=button $js value=Bidders>";
-
-			$jsx = array();
-			$jsx[] = "setValue('area','topbids')";
-			$jsx[] = "addAction('Main')";
-			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-			echo "<input type=button $js value=\"Top Bids\">";
-
-			echo "</div>";
-			echo "<br>";
 		}
-		
+
 		echo "<br>";
 		echo "<input type=button onclick=\"addAction('Logout');\" value=Logout>";
 	}
+	
+	if( $gTrace ) array_pop( $gFunction );
+}
+
+ function DisplayMembers() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
+	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
+	
+	DoQuery( "select * from members order by `Last Name` asc" );
+	$members = array();
+	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+		$id = $row['ID'];
+		$members[$id] = $row;
+	}
+echo "# members: " . count( $members ) . "<br>";
+
+	DoQuery( "select * from member_attributes");
+	$attributes = array();
+	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+		$attributes[$row['id']] = $row;
+	}
+	
+	echo "<div class=CommonV2>";
+	echo "<table class=sortable>";
+	echo "<tr>";
+	echo "  <th>Name</th>";
+	echo "  <th>Tribe</th>";
+	echo "  <th>Board</th>";
+	echo "  <th>Past Pres</th>";
+	echo "  <th>Donor</th>";
+	echo "  <th>Vol A</th>";
+	echo "  <th>Vol B</th>";
+	echo "  <th>Vol C</th>";
+	echo "</tr>";
+	
+	foreach( $members as $id => $row ) {
+		echo "<tr>";
+		echo "<td>" . sprintf( "%s, %s & %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>";
+		if( $row['Male Tribe'] == "Kohen" || $row['Female Tribe'] == "Kohen" ) {
+			$tribe = "Kohen";
+		} elseif( $row['Male Tribe'] == "Levi" || $row['Female Tribe'] == "Levi" ) {
+			$tribe = "Levi";
+		} else {
+			$tribe = "Yisrael";
+		}
+		echo "<td class=c>$tribe</td>";
+		
+		$tag = MakeTag('board_' . $id );
+		$checked = "";
+		if( array_key_exists( $id, $attributes ) ) {
+			$checked = empty( $attributes[$id]['board'] ) ? "" : "checked";
+		}
+		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
+		
+		$tag = MakeTag('past_pres_' . $id );
+		$checked = "";
+		if( array_key_exists( $id, $attributes ) ) {
+			$checked = empty( $attributes[$id]['past_pres'] ) ? "" : "checked";
+		}
+		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
+		
+		$tag = MakeTag('donor_' . $id );
+		$checked = "";
+		if( array_key_exists( $id, $attributes ) ) {
+			$checked = empty( $attributes[$id]['donor'] ) ? "" : "checked";
+		}
+		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
+		
+		$tag = MakeTag('vol_a_' . $id );
+		$checked = "";
+		if( array_key_exists( $id, $attributes ) ) {
+			$checked = empty( $attributes[$id]['vol_a'] ) ? "" : "checked";
+		}
+		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
+		
+		$tag = MakeTag('vol_b' . $id );
+		$checked = "";
+		if( array_key_exists( $id, $attributes ) ) {
+			$checked = empty( $attributes[$id]['vol_b'] ) ? "" : "checked";
+		}
+		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
+		
+		$tag = MakeTag('vol_c' . $id );
+		$checked = "";
+		if( array_key_exists( $id, $attributes ) ) {
+			$checked = empty( $attributes[$id]['vol_c'] ) ? "" : "checked";
+		}
+		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
+		
+		echo "</tr>";
+	}
+	echo "</table>";
+	echo "</div>";
 	
 	if( $gTrace ) array_pop( $gFunction );
 }

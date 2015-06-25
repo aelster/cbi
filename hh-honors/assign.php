@@ -3,10 +3,10 @@
   echo "<script type='text/javascript'>\n";
   echo "var honors_db = new Array();\n";
   while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
-    printf( "honors_db.push( { id:%d, service:\"%s\", honor:\"%s\" } );\n", $id, $service, mysql_escape_string($honor) );
+    printf( "honors_db.push( { id:%d, service:\"day-%s\", honor:\"%s\", selected:0 } );\n", $id, $service, mysql_escape_string($honor) );
   }
   echo "</script>\n";
-  DoQuery( "select id, honor from honors order by sort" );
+  DoQuery( "select id, service, honor from honors order by sort" );
   $honors_res = $GLOBALS['mysql_result'];
   
   $query = "select id, `Last Name`, `Female 1st Name`, `Male 1st Name` from members";
@@ -26,19 +26,19 @@
 
   <div class="content-box1">
    <p>Filters
-    <input type="button" id="filter-reset" value="Reset" onclick="myPress('filter-reset');"/>
+    <input type="button" id="filter-reset" value="Reset" onclick="myFilterReset('reset');"/>
     </p>
     <!-- end .content -->
   </div>
   
   <div class="content-box2">
-      <input type="button" id="day-rh1" value="Rosh 1" onclick="myPress('day-rh1');"/>
-      <input type="button" id="day-yka" value="Kol Nidre" onclick="myPress('day-yka');"/>
-      <input type="button" id="day-ykc" value="YK - PM" onclick="myPress('day-ykc');"/>
+      <input type="button" id="day-rh1" value="Rosh 1" onclick="myDayClick('day-rh1');"/>
+      <input type="button" id="day-kn" value="Kol Nidre" onclick="myDayClick('day-kn');"/>
+      <input type="button" id="day-ykp" value="YK - PM" onclick="myDayClick('day-ykp');"/>
 <br />
-      <input type="button" id="day-rh2" value="Rosh 2" onclick="myPress('day-rh2');"/>
-      <input type="button" id="day-ykb" value="YK - AM" onclick="myPress('day-ykb');"/>
-      <input type="button" id="day-all" value="All" onclick="myPress('day-all');"/>      
+      <input type="button" id="day-rh2" value="Rosh 2" onclick="myDayClick('day-rh2');"/>
+      <input type="button" id="day-yka" value="YK - AM" onclick="myDayClick('day-yka');"/>
+      <input type="button" id="day-all" value="All" onclick="myFilterReset('day-all');"/>      
   <!-- end .content -->
   </div>
   <div class="content-box3">
@@ -53,16 +53,21 @@
       <input type="button" id="opt-newmember" value="New Member" onclick="myPress('opt-newmember');"/>      
       <input type="button" id="opt-volb" value="Vol B" onclick="myPress('opt-volb');"/>      
       <input type="button" id="opt-pastpres" value="Past Pres" onclick="myPress('opt-pastpres');"/>      
-      <input type="button" id="opt-all" value="All" onclick="myPress('opt-all');"/>      
+      <input type="button" id="opt-all" value="All" onclick="myFilterReset('opt-all');"/>      
 </div>
 <hr />
 
 <div class="cong-box1">
-<p>Honors</p>
+<p>Honors <div id=tot-honors></div></p>
 <div class=honors-div>
 <?php
-  while( list( $id, $honor ) = mysql_fetch_array( $honors_res ) ) {
-    echo "<p id=honor_$id onclick=\"myHonorsClick('honor_' + $id);\">$honor</p>\n";
+  $last_service = "";
+  while( list( $id, $service, $honor ) = mysql_fetch_array( $honors_res ) ) {
+    if( $service != $last_service && ! empty($last_service) ) {
+      echo "<hr>";
+    }
+    echo "<p id=honor_$id style='display:none' onclick=\"myHonorsClick($id);\">$service: $honor</p>\n";
+    $last_service = $service;
   }
 ?>
 </div>
@@ -90,7 +95,8 @@
 </form>
 </body>
 <script type='text/javascript'>
-  myPress('day-all');
+  button_init();
+  myDisplayHonors();
   myPress('opt-all');
 </script>
 </html>

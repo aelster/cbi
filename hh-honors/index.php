@@ -100,6 +100,14 @@ switch( $gAction ) {
 			CreateHonors();
 			$gAction = 'Main';
 		}
+		if( $func == "members" ) {
+			DisplayMembers();
+			$gAction = "Main";
+		}
+		if( $func == "lkjsd" ) {
+			CreateMembers();
+			$gAction = 'Main';
+		}
 		break;
 	
 	case( 'Update' ):
