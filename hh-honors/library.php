@@ -1011,8 +1011,18 @@ function DisplayMain() {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
+	echo "<div class=center>";
 	
 	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
+	
+	$tag = MakeTag('update');
+	$jsx = array();
+	$jsx[] = "setValue('area','$area')";
+	$jsx[] = "setValue('from','DisplayMembers')";
+	$jsx[] = "setValue('func','update')";
+	$jsx[] = "addAction('Update')";
+	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
+	echo "<input type=button value=Update $tag $js>";
 	
 	DoQuery( "select * from members order by `Last Name` asc" );
 	$members = array();
@@ -1020,7 +1030,6 @@ function DisplayMain() {
 		$id = $row['ID'];
 		$members[$id] = $row;
 	}
-echo "# members: " . count( $members ) . "<br>";
 
 	DoQuery( "select * from member_attributes");
 	$attributes = array();
@@ -1053,51 +1062,25 @@ echo "# members: " . count( $members ) . "<br>";
 		}
 		echo "<td class=c>$tribe</td>";
 		
-		$tag = MakeTag('board_' . $id );
-		$checked = "";
-		if( array_key_exists( $id, $attributes ) ) {
-			$checked = empty( $attributes[$id]['board'] ) ? "" : "checked";
+		foreach( array( "board", "pastpres", "donor", "vola", "volb", "volc" ) as $cat ) {
+			$itag = sprintf( "%s_%s", $cat, $id );
+			$tag = MakeTag($itag);
+			$checked = "";
+			if( array_key_exists( $id, $attributes ) ) {
+				$checked = empty( $attributes[$id][$cat] ) ? "" : "checked";
+			}
+			$jsx = array();
+			$jsx[] = "setValue('from','DisplayMembers')";
+			$jsx[] = "addField('$itag')";
+			$jsx[] = "toggleBgRed('update')";
+			$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
+			echo "<td class=c><input type=\"checkbox\" $tag $checked $js value=1></td>";
 		}
-		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
-		
-		$tag = MakeTag('past_pres_' . $id );
-		$checked = "";
-		if( array_key_exists( $id, $attributes ) ) {
-			$checked = empty( $attributes[$id]['past_pres'] ) ? "" : "checked";
-		}
-		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
-		
-		$tag = MakeTag('donor_' . $id );
-		$checked = "";
-		if( array_key_exists( $id, $attributes ) ) {
-			$checked = empty( $attributes[$id]['donor'] ) ? "" : "checked";
-		}
-		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
-		
-		$tag = MakeTag('vol_a_' . $id );
-		$checked = "";
-		if( array_key_exists( $id, $attributes ) ) {
-			$checked = empty( $attributes[$id]['vol_a'] ) ? "" : "checked";
-		}
-		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
-		
-		$tag = MakeTag('vol_b' . $id );
-		$checked = "";
-		if( array_key_exists( $id, $attributes ) ) {
-			$checked = empty( $attributes[$id]['vol_b'] ) ? "" : "checked";
-		}
-		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
-		
-		$tag = MakeTag('vol_c' . $id );
-		$checked = "";
-		if( array_key_exists( $id, $attributes ) ) {
-			$checked = empty( $attributes[$id]['vol_c'] ) ? "" : "checked";
-		}
-		echo "<td class=c><input type=\"checkbox\" $tag $checked value=1></td>";
 		
 		echo "</tr>";
 	}
 	echo "</table>";
+	echo "</div>";
 	echo "</div>";
 	
 	if( $gTrace ) array_pop( $gFunction );
@@ -1436,6 +1419,28 @@ function MailUpdate() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
+function MemberUpdate() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
+	$tmp = array_unique( preg_split( '/,/', $_POST['fields'] ) );
+	foreach( $tmp as $field ) {
+		list( $f, $id ) = preg_split( '/_/', $field );
+		echo "Field: $field, f: $f, id: $id\n";
+		$new_val = array_key_exists( $field, $_POST ) ? 1 : 0;
+		DoQuery( "select * from member_attributes where id = $id" );
+		if( $GLOBALS['mysql_numrows'] > 0 ) {
+			DoQuery( "update member_attributes set `$f` = $new_val where id = $id" );
+		} else {
+			DoQuery( "insert into member_attributes set `$f` = $new_val, `id` = $id" );
+		}
+	}
+	if( $gTrace ) array_pop( $gFunction );
+}
+	
 function PayPal() {
 	include( 'globals.php' );
 	if( $gTrace ) {

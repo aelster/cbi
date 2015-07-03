@@ -102,7 +102,7 @@ switch( $gAction ) {
 		}
 		if( $func == "members" ) {
 			DisplayMembers();
-			$gAction = "Main";
+			exit;
 		}
 		if( $func == "lkjsd" ) {
 			CreateMembers();
@@ -120,7 +120,11 @@ switch( $gAction ) {
          MailUpdate();
          $gAction = 'Main';
 			$_POST['area'] = 'mail';
-         
+		} elseif( $gFrom == "DisplayMembers" ) {
+			MemberUpdate();
+			DisplayMembers();
+			exit;
+			
 		} elseif( $gFrom == "DisplayFinancial" ) {
          PledgeUpdate();
          $gAction = 'Main';
