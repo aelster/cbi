@@ -1044,6 +1044,7 @@ function DisplayMain() {
 	echo "  <th>Tribe</th>";
 	echo "  <th>Board</th>";
 	echo "  <th>Past Pres</th>";
+	echo "  <th>Staff</th>";
 	echo "  <th>Donor</th>";
 	echo "  <th>Vol A</th>";
 	echo "  <th>Vol B</th>";
@@ -1062,7 +1063,7 @@ function DisplayMain() {
 		}
 		echo "<td class=c>$tribe</td>";
 		
-		foreach( array( "board", "pastpres", "donor", "vola", "volb", "volc" ) as $cat ) {
+		foreach( array( "board", "pastpres", "staff", "donor", "vola", "volb", "volc" ) as $cat ) {
 			$itag = sprintf( "%s_%s", $cat, $id );
 			$tag = MakeTag($itag);
 			$checked = "";
@@ -1428,8 +1429,8 @@ function MemberUpdate() {
 	
 	$tmp = array_unique( preg_split( '/,/', $_POST['fields'] ) );
 	foreach( $tmp as $field ) {
+		if( empty( $field ) ) continue;
 		list( $f, $id ) = preg_split( '/_/', $field );
-		echo "Field: $field, f: $f, id: $id\n";
 		$new_val = array_key_exists( $field, $_POST ) ? 1 : 0;
 		DoQuery( "select * from member_attributes where id = $id" );
 		if( $GLOBALS['mysql_numrows'] > 0 ) {

@@ -33,6 +33,40 @@ function myCongClick(id) {
 	}
 }
 
+function myDisplayCong()  {
+	var i, j, e;
+	for( i=0; i<cong_buttons.length; i++ ) {
+		e = document.getElementById(cong_buttons[i]);
+		e.className = "";
+	}
+	for( i=0; i<cong_buttons_live.length; i++ ) {
+		e = document.getElementById(cong_buttons_live[i]);
+		e.className = "closed";
+	}
+	var visible = 0;
+	
+	for( i=0; i<honors_db.length; i++ ) {
+		var found = 0;
+		for( j=0; j<cong_buttons_live.length; j++ ) {
+			if ( honors_db[i].service.match( cong_buttons_live[j] ) ) {
+				found = 1;
+			}
+		}
+		e = document.getElementById( 'honor_' + honors_db[i].id );
+		if ( found ) {
+			e.style.display='block';
+			if ( honors_db[i].selected ) {
+				e.className = "closed";
+			} else {
+				e.className = "";
+			}
+			visible++;
+		} else {
+			e.style.display='none';
+		}
+	}
+}
+
 function myDisplayHonors()  {
 	var i, j, e;
 	for( i=0; i<day_buttons.length; i++ ) {
@@ -65,9 +99,6 @@ function myDisplayHonors()  {
 			e.style.display='none';
 		}
 	}
-//	e = document.getElementById('tot-honors');
-//	e.textContent = "(" + visible + "/" + honors_db.length + ")";
-	
 }
 
 function myFilterReset(mode) {

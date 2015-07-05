@@ -5,6 +5,11 @@
   while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
     printf( "honors_db.push( { id:%d, service:\"day-%s\", honor:\"%s\", selected:0 } );\n", $id, $service, mysql_escape_string($honor) );
   }
+  echo "var cong_db = new Array();\n";
+  DoQuery( "select id, service, honor from honors order by sort" );
+  while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
+    printf( "cong_db.push( { id:%d, service:\"day-%s\", honor:\"%s\", selected:0 } );\n", $id, $service, mysql_escape_string($honor) );
+  }
   echo "</script>\n";
   DoQuery( "select id, service, honor from honors order by sort" );
   $honors_res = $GLOBALS['mysql_result'];
@@ -53,7 +58,7 @@
       <input type="button" id="opt-newmember" value="New Member" onclick="myPress('opt-newmember');"/>      
       <input type="button" id="opt-volb" value="Vol B" onclick="myPress('opt-volb');"/>      
       <input type="button" id="opt-pastpres" value="Past Pres" onclick="myPress('opt-pastpres');"/>      
-      <input type="button" id="opt-all" value="All" onclick="myFilterReset('opt-all');"/>      
+      <input type="button" id="opt-all" value="None" onclick="myFilterReset('opt-all');"/>      
 </div>
 <hr />
 
@@ -97,6 +102,6 @@
 <script type='text/javascript'>
   button_init();
   myDisplayHonors();
-  myPress('opt-all');
+  myDisplayCong();
 </script>
 </html>
