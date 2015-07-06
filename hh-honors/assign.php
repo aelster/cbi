@@ -1,15 +1,24 @@
 <?php
   DoQuery( "select id, service, honor from honors order by sort" );
   echo "<script type='text/javascript'>\n";
-  echo "var honors_db = new Array();\n";
   while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
-    printf( "honors_db.push( { id:%d, service:\"day-%s\", honor:\"%s\", selected:0 } );\n", $id, $service, mysql_escape_string($honor) );
+    printf( "honors_db.push( { id:%d, service:'day-%s', honor:'%s', selected:0 } );\n", $id, $service, mysql_escape_string($honor) );
   }
-  echo "var cong_db = new Array();\n";
-  DoQuery( "select id, service, honor from honors order by sort" );
-  while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
-    printf( "cong_db.push( { id:%d, service:\"day-%s\", honor:\"%s\", selected:0 } );\n", $id, $service, mysql_escape_string($honor) );
-  }
+  echo "</script>";
+  DoQuery( "select * from member_attributes order by id asc" );
+  echo "<script type='text/javascript'>\n";
+  while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+    $tmp = array();
+    foreach( $row as $key => $val ) {
+      if( is_numeric( $val ) ) {
+        $tmp[] = sprintf( "%s:%d", $key, $val );
+      } else {
+        $tmp[] = sprintf( "%s:'%s'", $key, $val );
+      }
+    }
+    printf( "cong_db.push( { %s } );\n", join( ', ', $tmp ) );
+ }
+
   echo "</script>\n";
   DoQuery( "select id, service, honor from honors order by sort" );
   $honors_res = $GLOBALS['mysql_result'];
@@ -22,7 +31,6 @@
   ?>
   
 <div class="container">
-
   <div class="assign-top">
     <input type=button onclick="setValue('func','assign');addAction('Main');" value="Back">
     <br>
@@ -47,17 +55,17 @@
   <!-- end .content -->
   </div>
   <div class="content-box3">
-      <input type="button" id="opt-cohen" value="Cohen" onclick="myPress('opt-cohen');"/>
-      <input type="button" id="opt-board" value="Board" onclick="myPress('opt-board');"/>
-      <input type="button" id="opt-staff" value="Staff" onclick="myPress('opt-staff');"/>
-      <input type="button" id="opt-vola" value="Vol A" onclick="myPress('opt-vola');"/>
-      <input type="button" id="opt-volc" value="Vol C" onclick="myPress('opt-volc');"/>
+      <input type="button" id="opt-cohen" value="Cohen" onclick="myCongClick('opt-cohen');"/>
+      <input type="button" id="opt-board" value="Board" onclick="myCongClick('opt-board');"/>
+      <input type="button" id="opt-staff" value="Staff" onclick="myCongClick('opt-staff');"/>
+      <input type="button" id="opt-vola" value="Vol A" onclick="myCongClick('opt-vola');"/>
+      <input type="button" id="opt-volc" value="Vol C" onclick="myCongClick('opt-volc');"/>
 <br />
-      <input type="button" id="opt-levi" value="Levi" onclick="myPress('opt-levi');"/>
-      <input type="button" id="opt-donor" value="Donor" onclick="myPress('opt-donor');"/>
-      <input type="button" id="opt-newmember" value="New Member" onclick="myPress('opt-newmember');"/>      
-      <input type="button" id="opt-volb" value="Vol B" onclick="myPress('opt-volb');"/>      
-      <input type="button" id="opt-pastpres" value="Past Pres" onclick="myPress('opt-pastpres');"/>      
+      <input type="button" id="opt-levi" value="Levi" onclick="myCongClick('opt-levi');"/>
+      <input type="button" id="opt-donor" value="Donor" onclick="myCongClick('opt-donor');"/>
+      <input type="button" id="opt-newmember" value="New Member" onclick="myCongClick('opt-newmember');"/>      
+      <input type="button" id="opt-volb" value="Vol B" onclick="myCongClick('opt-volb');"/>      
+      <input type="button" id="opt-pastpres" value="Past Pres" onclick="myCongClick('opt-pastpres');"/>      
       <input type="button" id="opt-all" value="None" onclick="myFilterReset('opt-all');"/>      
 </div>
 <hr />
@@ -90,7 +98,7 @@
 <div class=cong-div>
 <?php
   while( list( $id, $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
-    echo "<p id=cong_$id onclick=\"myCongClick('cong_' + $id);\">$last, $ff & $mf</p>\n";
+    echo "<p id=cong_$id style='display:none' onclick=\"myCongClick('cong_' + $id);\">$last, $ff $mf</p>\n";
   }
 ?>
 </div>

@@ -2,6 +2,8 @@ var cong_buttons = [];
 var cong_buttons_live = [];
 var day_buttons = [];
 var day_buttons_live = [];
+var honors_db = [];
+var cong_db = [];
 
 function button_init() {
 	var e = document.getElementsByTagName("input");
@@ -10,27 +12,54 @@ function button_init() {
 			continue;  // Don't load the All key
 		} else if ( e[i].id.match(/^day/) ) {
 			day_buttons.push( e[i].id );
-		} else if (e[i].id.match(/^cong/)) {
+		} else if (e[i].id.match(/^opt/)) {
 			cong_buttons.push( e[i].id );
 		}
 	}
 }
 
 function myCongClick(id) {
-	var e = document.getElementsByTagName("p");
-	for ( var i=0; i < e.length; i++ ) {
-		if ( e[i].id.match(/^cong_/) ) {
-			if ( e[i].id == id ) {
-				if (e[i].className == "" ) {
-					e[i].className = "closed";
-				} else {
-					e[i].className = "";
-				}
-			} else {
-				e[i].className = "";
-			}
+	var i, found;
+	var new_live = [];
+	found = 0;
+	for( i=0; i<cong_buttons_live.length; i++ ) {
+		if( id == cong_buttons_live[i] ) {
+			found = 1;
 		}
 	}
+	if ( found ) {
+		for( i=0; i<cong_buttons_live.length; i++ ) {
+			if ( id != cong_buttons_live[i] ) {
+				new_live.push( cong_buttons_live[i] );
+			}
+		}
+		cong_buttons_live = new_live;
+	} else {
+		cong_buttons_live.push(id);
+	}
+	myDisplayCong();
+}
+
+function myDayClick(id) {
+	var i, found;
+	var new_live = [];
+	found = 0;
+	for( i=0; i<day_buttons_live.length; i++ ) {
+		if( id == day_buttons_live[i] ) {
+			found = 1;
+		}
+	}
+	if ( found ) {
+		for( i=0; i<day_buttons_live.length; i++ ) {
+			if ( id != day_buttons_live[i] ) {
+				new_live.push( day_buttons_live[i] );
+			}
+		}
+		day_buttons_live = new_live;
+	} else {
+		day_buttons_live.push(id);
+	}
+	myDisplayHonors();
 }
 
 function myDisplayCong()  {
@@ -79,7 +108,7 @@ function myDisplayHonors()  {
 	}
 	var visible = 0;
 	
-	for( i=0; i<honors_db.length; i++ ) {
+	for( i=0; i < honors_db.length; i++ ) {
 		var found = 0;
 		for( j=0; j<day_buttons_live.length; j++ ) {
 			if ( honors_db[i].service.match( day_buttons_live[j] ) ) {
@@ -114,28 +143,6 @@ function myFilterReset(mode) {
 			day_buttons_live = [];
 			e.value = "All";
 		}
-	}
-	myDisplayHonors();
-}
-
-function myDayClick(id) {
-	var i, found;
-	var new_live = [];
-	found = 0;
-	for( i=0; i<day_buttons_live.length; i++ ) {
-		if( id == day_buttons_live[i] ) {
-			found = 1;
-		}
-	}
-	if ( found ) {
-		for( i=0; i<day_buttons_live.length; i++ ) {
-			if ( id != day_buttons_live[i] ) {
-				new_live.push( day_buttons_live[i] );
-			}
-		}
-		day_buttons_live = new_live;
-	} else {
-		day_buttons_live.push(id);
 	}
 	myDisplayHonors();
 }

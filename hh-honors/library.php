@@ -1041,7 +1041,8 @@ function DisplayMain() {
 	echo "<table class=sortable>";
 	echo "<tr>";
 	echo "  <th>Name</th>";
-	echo "  <th>Tribe</th>";
+	echo "  <th>Male<br>Tribe</th>";
+	echo "  <th>Female<br>Tribe</th>";
 	echo "  <th>Board</th>";
 	echo "  <th>Past Pres</th>";
 	echo "  <th>Staff</th>";
@@ -1053,15 +1054,10 @@ function DisplayMain() {
 	
 	foreach( $members as $id => $row ) {
 		echo "<tr>";
-		echo "<td>" . sprintf( "%s, %s & %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>";
-		if( $row['Male Tribe'] == "Kohen" || $row['Female Tribe'] == "Kohen" ) {
-			$tribe = "Kohen";
-		} elseif( $row['Male Tribe'] == "Levi" || $row['Female Tribe'] == "Levi" ) {
-			$tribe = "Levi";
-		} else {
-			$tribe = "Yisrael";
-		}
-		echo "<td class=c>$tribe</td>";
+		echo "<td>" . sprintf( "%s, %s %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>";
+
+		printf( "<td class=c>%s</td>", $attributes[$id]['mtribe'] );
+		printf( "<td class=c>%s</td>", $attributes[$id]['ftribe'] );
 		
 		foreach( array( "board", "pastpres", "staff", "donor", "vola", "volb", "volc" ) as $cat ) {
 			$itag = sprintf( "%s_%s", $cat, $id );
@@ -1405,6 +1401,18 @@ function LocalInit() {
 	$date_server = new DateTime( '2000-01-01' );
 	$date_calif = new DateTime( '2000-01-01', new DateTimeZone('America/Los_Angeles'));
 	$time_offset = $date_server->format('U') - $date_calif->format('U');
+#============
+
+	DoQuery( "select id, `Female Tribe`, `Male Tribe` from members" );
+	$outer = $GLOBALS['mysql_result'];
+	while( list( $id, $ft, $mt ) = mysql_fetch_array( $outer ) ) {
+		DoQuery( "select * from member_attributes where id = $id" );
+		if( $GLOBALS['mysql_numrows'] == 0 ) {
+			DoQuery( "insert into member_attributes set id = $id, ftribe = '$ft', mtribe = '$mt'" );
+		} else {
+			DoQuery( "update member_attributes set ftribe = '$ft', mtribe = '$mt' where id = $id" );
+		}
+	}
 }
 
 function MailUpdate() {
@@ -1978,8 +1986,8 @@ function WriteHeader() {
 	}
 
 	$scripts = array();
-	$scripts[] = "/scripts/overlib/overlib.js";
-	$scripts[] = "/scripts/overlib/overlib_hideform.js";
+//	$scripts[] = "/scripts/overlib/overlib.js";
+//	$scripts[] = "/scripts/overlib/overlib_hideform.js";
 	$scripts[] = "/scripts/commonv2.js";
 	$scripts[] = "/scripts/sha256.js";
 	$scripts[] = "/scripts/sorttable.js";
