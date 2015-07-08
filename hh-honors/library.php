@@ -11,27 +11,25 @@ function AddForm() {
 	}
 }
 
-function AssignHonors() {
+function AssignAdd() {
 	include( 'globals.php' );
 	if( $gTrace ) {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
-	echo "<div class=topBar>";
-	echo "<div class=topDays>";
-	echo "<p><b>Filters&nbsp:&nbsp;</b>";
-	echo "<input type=button name=reset value='Reset'></p>";
-	echo "<input type=button name=rh1 value='RH-1'>";
-	echo "<input type=button name=kn value='KN'>";
-	echo "<input type=button name=yk_pm value='YK-PM'>";
-	echo "<br>";
-	echo "<input type=button name=rh2 value='RH-2'>";
-	echo "<input type=button name=yk_am value='YK-AM'>";
-	echo "<input type=button name=all value='All'>";
-	echo "<div>";
-	echo "<div class=topCategories>";
-	echo "</div>";
-	echo "</div>";
+
+	$tmp = preg_split("/,/", $_POST['fields'] );
+	echo "tmp: ";
+	print_r( $tmp );
+	foreach( $tmp as $field ) {
+			$tmp2 = preg_split( "/_/", $field );
+			if( $tmp2[0] == "honor" ) {
+				$honor_id = $tmp2[1];
+			} elseif( $tmp2[0] == "member" ) {
+				$member_id = $tmp2[1];
+			}
+	}
+	DoQuery( "insert into assignments set honor_id = $honor_id, member_id = $member_id");
 	
 	if( $gTrace ) array_pop( $gFunction );
 }
@@ -1403,16 +1401,21 @@ function LocalInit() {
 	$time_offset = $date_server->format('U') - $date_calif->format('U');
 #============
 
+	$gDebug = 0;
 	DoQuery( "select id, `Female Tribe`, `Male Tribe` from members" );
 	$outer = $GLOBALS['mysql_result'];
 	while( list( $id, $ft, $mt ) = mysql_fetch_array( $outer ) ) {
-		DoQuery( "select * from member_attributes where id = $id" );
+		DoQuery( "select ftribe, mtribe from member_attributes where id = $id" );
 		if( $GLOBALS['mysql_numrows'] == 0 ) {
 			DoQuery( "insert into member_attributes set id = $id, ftribe = '$ft', mtribe = '$mt'" );
 		} else {
-			DoQuery( "update member_attributes set ftribe = '$ft', mtribe = '$mt' where id = $id" );
+			list( $maf, $mam) = mysql_fetch_array( $GLOBALS["mysql_result"]);
+			if( $maf != $ft || $mam != $mt ) {
+				DoQuery( "update member_attributes set ftribe = '$ft', mtribe = '$mt' where id = $id" );
+			}
 		}
 	}
+	$gDebug = $x;
 }
 
 function MailUpdate() {

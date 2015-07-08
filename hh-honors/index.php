@@ -111,7 +111,13 @@ switch( $gAction ) {
 		break;
 	
 	case( 'Update' ):
-      if( $gFrom == "DisplayDates" ) {
+		if( $gFrom == "Assign" ) {
+			if( $func == "add" ) {
+				AssignAdd();
+				$gAction = "Assign";
+			}
+		
+		} elseif( $gFrom == "DisplayDates" ) {
          DateUpdate();
          $gAction = 'Main';
 			$_POST['area'] = 'dates';
