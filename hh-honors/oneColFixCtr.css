@@ -111,6 +111,7 @@ div.assign-top {
 	border-bottom-style: solid;
 	border-left-style: solid;
 	height: 50px;
+	text-align: left;
 }
 	
 .container input {

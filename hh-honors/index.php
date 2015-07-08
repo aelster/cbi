@@ -92,10 +92,6 @@ switch( $gAction ) {
 		if( $func == "backup" ) {
 			exec( "perl /home/cbi18/site/my_backup.pl > /home/cbi18/backup_sql/manual.log", $out );
 		}
-		if( $area == 'assign' ) {
-			include( 'assign.php' );
-			exit;
-		}
 		if( $func == "honors" ) {
 			CreateHonors();
 			$gAction = 'Main';
@@ -196,6 +192,7 @@ if( $gDebug ) { DumpPostVars( "After Login/Logout:  gAction=[$gAction]" ); }
 
 $vect = $args = array();
 
+$vect['Assign'] = 'Assign';
 $vect['Edit'] = 'EditManager';
 $vect['Inactive'] = 'UserManager';
 $vect['Login']	= 'UserManager';

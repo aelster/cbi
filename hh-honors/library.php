@@ -11,6 +11,158 @@ function AddForm() {
 	}
 }
 
+function Assign() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+
+	$honor_assigned = [];
+	$member_assigned = [];
+	DoQuery( "select * from assignments" );
+	while( $row = mysql_fetch_array( $GLOBALS['mysql_result']) ) {
+		$honor_assigned[$row['honor_id']] = 1;
+		$member_assigned[$row['member_id']] = 1;
+	}
+	
+	DoQuery( "select id, service, honor from honors order by sort" );
+	echo "<script type='text/javascript'>\n";
+	while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
+		$used = array_key_exists( $id, $honor_assigned ) ? 1 : 0;
+		printf( "honors_db.push( { id:%d, service:'day-%s', honor:'%s', selected:0, assigned:$used } );\n", $id, $service, mysql_escape_string($honor) );
+	}
+	echo "</script>";
+	DoQuery( "select * from member_attributes order by id asc" );
+	echo "<script type='text/javascript'>\n";
+	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+		$tmp = array();
+		foreach( $row as $key => $val ) {
+			if( $key == "mtribe" || $key == "ftribe" ) continue;
+			if( is_numeric( $val ) ) {
+				$tmp[] = sprintf( "%s:%d", $key, $val );
+			} else {
+			  $tmp[] = sprintf( "%s:'%s'", $key, $val );
+			}
+		}
+		$cohen = ( $row["mtribe"] == "Kohen" || $row["ftribe"] == "Kohen" ) ? 1 : 0;
+		$levi = ! $cohen && ( $row["mtribe"] == "Levi" || $row["ftribe"] == "Levi" ) ? 1 : 0;
+		$tmp[] = sprintf( "%s:%d", "cohen", $cohen );
+		$tmp[] = sprintf( "%s:%d", "levi", $levi );
+		$tmp[] = sprintf( "%s:%d", "selected", 0 );
+		$used = array_key_exists( $row['id'], $member_assigned ) ? 1 : 0;
+		$tmp[] = sprintf( "%s:%d", "assigned", $used );
+		printf( "cong_db.push( { %s } );\n", join( ', ', $tmp ) );
+	 }
+
+  echo "</script>\n";
+  DoQuery( "select id, service, honor from honors order by sort" );
+  $honors_res = $GLOBALS['mysql_result'];
+  
+  $query = "select id, `Last Name`, `Female 1st Name`, `Male 1st Name` from members";
+  $query .= " where Status not like 'Non-Member'";
+  $query .= " order by `Last Name` asc";
+  DoQuery( $query );
+  $member_res = $GLOBALS['mysql_result'];
+  ?>
+  
+<div class="container">
+  <div class="assign-top">
+    <input type=button onclick="setValue('func','assign');addAction('Main');" value="Back">
+    <br>
+    <br>
+  </div>
+
+  <div class="content-box1">
+   <p>Filters
+    <input type="button" id="filter-reset" value="Reset" onclick="myFilterReset('reset');"/>
+    </p>
+    <!-- end .content -->
+  </div>
+  
+  <div class="content-box2">
+      <input type="button" id="day-rh1" value="Rosh 1" onclick="myDayClick('day-rh1');"/>
+      <input type="button" id="day-kn" value="Kol Nidre" onclick="myDayClick('day-kn');"/>
+      <input type="button" id="day-ykp" value="YK - PM" onclick="myDayClick('day-ykp');"/>
+<br />
+      <input type="button" id="day-rh2" value="Rosh 2" onclick="myDayClick('day-rh2');"/>
+      <input type="button" id="day-yka" value="YK - AM" onclick="myDayClick('day-yka');"/>
+      <input type="button" id="day-all" value="All" onclick="myFilterReset('day-all');"/>      
+  <!-- end .content -->
+  </div>
+  <div class="content-box3">
+      <input type="button" id="opt-cohen" value="Cohen" onclick="myCategoryClick('opt-cohen');"/>
+      <input type="button" id="opt-board" value="Board" onclick="myCategoryClick('opt-board');"/>
+      <input type="button" id="opt-staff" value="Staff" onclick="myCategoryClick('opt-staff');"/>
+      <input type="button" id="opt-vola" value="Vol A" onclick="myCategoryClick('opt-vola');"/>
+      <input type="button" id="opt-volc" value="Vol C" onclick="myCategoryClick('opt-volc');"/>
+<br />
+      <input type="button" id="opt-levi" value="Levi" onclick="myCategoryClick('opt-levi');"/>
+      <input type="button" id="opt-donor" value="Donor" onclick="myCategoryClick('opt-donor');"/>
+      <input type="button" id="opt-new" value="New Member" onclick="myCategoryClick('opt-new');"/>      
+      <input type="button" id="opt-volb" value="Vol B" onclick="myCategoryClick('opt-volb');"/>      
+      <input type="button" id="opt-pastpres" value="Past Pres" onclick="myCategoryClick('opt-pastpres');"/>      
+      <input type="button" id="opt-all" value="None" onclick="myFilterReset('opt-all');"/>      
+</div>
+  <div style="clear:both"></div>
+<hr />
+
+<div class="cong-box1">
+<p>Honors <div id=tot-honors></div></p>
+<div class=honors-div>
+<?php
+  $last_service = "";
+  while( list( $id, $service, $honor ) = mysql_fetch_array( $honors_res ) ) {
+    if( $service != $last_service && ! empty($last_service) ) {
+      echo "<hr>";
+    }
+    echo "<p id=honor_$id style='display:none' onclick=\"myHonorsClick($id);\">$service: $honor</p>\n";
+    $last_service = $service;
+  }
+?>
+</div>
+</div>
+
+<div class="cong-box2">
+<p>Mode</p>
+<input id=mode-view type=button onclick="mySetMode('view');" value='View'>
+<input id=mode-assign type=button onclick="mySetMode('assign');" value='Assign'>
+<br><br><br><br>
+<p>Action</p>
+<?php
+  $tmp = [];
+  $tmp[] = "setValue('from','Assign')";
+  $tmp[] = "setValue('func','add')";
+  $tmp[] = "saveChoices()";
+  $tmp[] = "addAction('Update')";
+  $js = join(';',$tmp );
+  echo "<input type=button onclick=\"$js\" value=\"Add\">";
+?>
+</div>
+
+<div class="cong-box3">
+<p>Congregants</p>
+<div class=cong-div>
+<?php
+  while( list( $id, $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
+    echo "<p id=cong_$id style='display:none' onclick=\"myCongClick($id);\">$last, $ff $mf</p>\n";
+  }
+?>
+</div>
+</div>
+</div>
+
+</form>
+</body>
+<script type='text/javascript'>
+  button_init();
+  myDisplayMode('view');
+</script>
+</html>
+	<?php
+	if( $gTrace ) array_pop( $gFunction );
+}
+
 function AssignAdd() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -978,7 +1130,7 @@ function DisplayMain() {
 			
 			$jsx = array();
 			$jsx[] = "setValue('area','assign')";
-			$jsx[] = "addAction('Main')";
+			$jsx[] = "addAction('Assign')";
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 			echo "<input type=button $js value=Assign>";
 
@@ -1402,16 +1554,31 @@ function LocalInit() {
 #============
 
 	$gDebug = 0;
-	DoQuery( "select id, `Female Tribe`, `Male Tribe` from members" );
+	DoQuery( "select id, `Female Tribe`, `Male Tribe`, `Status` from members" );
 	$outer = $GLOBALS['mysql_result'];
-	while( list( $id, $ft, $mt ) = mysql_fetch_array( $outer ) ) {
-		DoQuery( "select ftribe, mtribe from member_attributes where id = $id" );
+	while( list( $id, $ft, $mt, $status ) = mysql_fetch_array( $outer ) ) {
+		DoQuery( "select ftribe, mtribe, staff, new from member_attributes where id = $id" );
 		if( $GLOBALS['mysql_numrows'] == 0 ) {
-			DoQuery( "insert into member_attributes set id = $id, ftribe = '$ft', mtribe = '$mt'" );
+			$tmp = array();
+			$tmp[] = "id = $id";
+			$tmp[] = "ftribe = '$ft'";
+			$tmp[] = "mtribe = '$mt'";
+			if( $status == "Staff" ) $tmp[] = "staff = 1";
+			if( $status == "New") $tmp[] = "new = 1";
+			$query = "insert into member_attributes set " . join(',', $tmp );
+			DoQuery( $query );
 		} else {
-			list( $maf, $mam) = mysql_fetch_array( $GLOBALS["mysql_result"]);
-			if( $maf != $ft || $mam != $mt ) {
-				DoQuery( "update member_attributes set ftribe = '$ft', mtribe = '$mt' where id = $id" );
+			list( $maf, $mam, $staff, $new ) = mysql_fetch_array( $GLOBALS["mysql_result"]);
+			$tmp = array();
+			if( $maf != $ft ) $tmp[] = "ftribe = '$ft'";
+			if( $mam != $mt ) $tmp[] = "mtribe = '$mt'";
+			$expected = ( $status == 'Staff' ) ? 1 : 0;
+			if( $staff != $expected ) $tmp[] = "staff = $expected";
+			$expected = ( $status == 'New' ) ? 1 : 0;
+			if( $new != $expected ) $tmp[] = "new = $expected";
+			if( count( $tmp ) ) {
+				$query = "update member_attributes set " . join( ',', $tmp ) . " where id = $id";
+				DoQuery( $query );
 			}
 		}
 	}
