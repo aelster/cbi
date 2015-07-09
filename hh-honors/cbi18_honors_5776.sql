@@ -141,30 +141,6 @@ INSERT INTO `event_log` VALUES (142,'2013-06-18 13:56:18','logout','0','session_
 UNLOCK TABLES;
 
 --
--- Table structure for table `financial`
---
-
-DROP TABLE IF EXISTS `financial`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `financial` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `multiplier` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `financial`
---
-
-LOCK TABLES `financial` WRITE;
-/*!40000 ALTER TABLE `financial` DISABLE KEYS */;
-INSERT INTO `financial` VALUES (1,1),(2,2),(3,3),(4,4),(5,5),(6,10),(7,15),(8,20),(9,30),(10,60),(11,100),(12,200),(13,300),(14,400),(15,500);
-/*!40000 ALTER TABLE `financial` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `honors`
 --
 
@@ -417,39 +393,6 @@ INSERT INTO `members_master` VALUES ('',4,'Sharon','08','10/12/1996 0:00:00','Ma
 UNLOCK TABLES;
 
 --
--- Table structure for table `pledges`
---
-
-DROP TABLE IF EXISTS `pledges`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `pledges` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `pledgeType` tinyint(4) NOT NULL,
-  `firstName` char(32) NOT NULL,
-  `lastName` char(32) NOT NULL,
-  `phone` bigint(20) NOT NULL,
-  `email` char(64) NOT NULL,
-  `paymentMethod` tinyint(4) NOT NULL,
-  `amount` float NOT NULL,
-  `pledgeIds` char(128) NOT NULL,
-  `pledgeOther` varchar(512) NOT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=267 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `pledges`
---
-
-LOCK TABLES `pledges` WRITE;
-/*!40000 ALTER TABLE `pledges` DISABLE KEYS */;
-INSERT INTO `pledges` VALUES (33,3,'','',0,'',0,65000,'','','2013-06-18 05:24:46'),(80,1,'Andrew','Elster',9495096711,'andy@elsternet.com',1,540,'','','2013-08-20 05:44:50'),(81,1,'Beth','Elster',9495096711,'beth@elsternet.com',3,540,'','','2013-08-20 05:46:22'),(82,2,'Beth','Elster',9495096711,'beth@elsternet.com',0,0,'3,7','','2013-08-20 05:48:44'),(83,2,'Andrew','Elster',9495096711,'andy@elsternet.com',0,0,'15,17','','2013-08-20 05:48:50'),(84,1,'Steve, Andrea, Liam, & Adele','Alfi',7142269625,'andrea.alfi@gmail.com',3,72,'','','2013-08-20 23:07:49'),(85,2,'Steve, Andrea, Liam, & Adele','Alfi',7142269625,'andrea.alfi@gmail.com',0,0,'1,3,5,8,13,15','','2013-08-20 23:09:15'),(86,1,'Julia and Ken','Reinhard',9498545611,'jrlupton@uci.edu',3,180,'','','2013-08-21 16:59:51'),(87,2,'Julia and Ken','Reinhard',9498545611,'jrlupton@uci.edu',0,0,'','Be a better Board member!!','2013-08-21 17:00:55'),(88,2,'Michelle','Madick',7144572145,'xoxo@cox.net',0,0,'9','','2013-08-21 17:28:57'),(89,1,'Michelle','Madick',7144572145,'xoxo@cox.net',3,180,'','','2013-08-21 17:29:42'),(90,1,'Jonathan','Cohen',9498563607,'jkcohen@pobox.com',2,72,'','','2013-08-21 18:05:53'),(91,2,'Nessim','Albagli',9492499451,'nessim.albagli@yahoo.com',0,0,'4,6,8,9','','2013-08-21 21:24:39'),(92,2,'Nancy','Neudorf',9498546684,'nneudorf@gmail.com',0,0,'9,10,12,18','','2013-08-21 21:37:35'),(93,2,'Susan','Seely',9496751362,'smseely1@mac.com',0,0,'3,5,8,9,11,15,17,18','','2013-08-22 03:50:18'),(94,1,'Susan','Seely',9496751362,'smseely1@mac.com',1,54,'','','2013-08-22 03:50:43'),(95,1,'Wendy','Kottmeier',7143335228,'Wrkottmeier@yahoo.com',1,54,'','','2013-08-22 04:47:04'),(96,1,'Francine','Wenhardt',7144179291,'fwen@cox.net',1,540,'','','2013-08-22 13:31:45'),(97,2,'Francine','Wenhardt',7144179291,'fwen@cox.net',0,0,'5,11,14,15,17,18','','2013-08-22 13:33:43'),(98,1,'Joel','Widzer',7145442855,'jwidzer@cox.net',1,90,'','','2013-08-22 14:58:29'),(99,2,'Mary Ann','Malkoff',7143288541,'maryann@malkoff.com',0,0,'1,5,15','','2013-08-22 15:40:49'),(100,1,'Phyllis and Steven','Littman',7147346832,'phyllisabrams2@gmail.com',1,180,'','','2013-08-22 16:29:45'),(101,2,'Phyllis and Steven','Littman',7147346832,'phyllisabrams2@gmail.com',0,0,'7,19','','2013-08-22 16:30:17'),(102,1,'Sandy','Klein',7147309693,'sklein@cbi18.org',2,360,'','','2013-08-22 16:51:31'),(103,2,'Sandy','Klein',7147309693,'sklein@cbi18.org',0,0,'9','','2013-08-22 16:52:12'),(104,1,'Helene','Coulter',7147309693,'hcoulter@cbi18.org',1,18,'','','2013-08-22 16:57:43'),(105,2,'Helene','Coulter',7147309693,'hcoulter@cbi18.org',0,0,'5,7,8,10,11,16,19','','2013-08-22 16:58:31'),(106,1,'Denise','Mailman',9499337567,'denisemailman2@yahoo.com',1,54,'','','2013-08-22 20:55:37'),(107,1,'Marc','Goldin',9493482775,'Goldinzim@hotmail.com',3,360,'','','2013-08-22 23:35:32'),(108,2,'Marc','Goldin',9493482775,'Goldinzim@hotmail.com',0,0,'15,18','','2013-08-22 23:36:38'),(109,1,'Yolande & Joe','Bati',7147309693,'hcoulter@cbi18.org',3,640,'','','2013-08-23 17:07:02'),(110,1,'Judy','Thurmond',7147309693,'hcoulter@cbi18.org',3,500,'','','2013-08-23 17:07:35'),(111,1,'Howard & Ingrid','Rosenthal',7147309693,'hcoulter@cbi18.org',3,900,'','','2013-08-23 17:08:15'),(112,1,'Mike & Natalie','Vishny',7147309693,'hcoulter@cbi18.org',3,500,'','','2013-08-23 17:08:37'),(113,1,'Howard and Ellen','Mirowitz',9497591637,'howard@mirowitz.com',3,180,'','','2013-08-23 18:40:28'),(114,2,'Howard and Ellen','Mirowitz',9497591637,'howard@mirowitz.com',0,0,'3,6,8,11,17','','2013-08-23 18:41:42'),(115,1,'Jay','Witzling',9495527650,'jlwitzling@cox.net',1,360,'','','2013-08-23 21:45:22'),(118,2,'Eric','Dangott',7149142431,'edangott@hotmail.com',0,0,'1,5,7,8,11,17','','2013-08-25 23:29:23'),(119,1,'Eric','Dangott',7149142431,'edangott@hotmail.com',1,1,'','','2013-08-25 23:30:14'),(120,1,'Muriel','Ullman',7143184038,'Murielullman@yahoo.com',1,36,'','','2013-08-25 23:56:22'),(121,1,'nessim','albagli',9492499451,'nessim.albagli@yahoo.com',2,270,'','','2013-08-26 02:52:30'),(122,1,'Ann','Bendroff',7142828632,'Abendroff@gmail.com',2,18,'','','2013-08-26 03:41:19'),(123,2,'Ann','Bendroff',7142828632,'Abendroff@gmail.com',0,0,'9,17','','2013-08-26 03:42:27'),(124,2,'Terry','Ginsburg',7144207667,'arturo.gins@gmail.com',0,0,'7,15','','2013-08-26 03:47:44'),(125,1,'Bonnie','Widerman',9492629547,'bonnielee10@hotmail.com',3,90,'','','2013-08-26 03:59:01'),(126,2,'Bonnie','Widerman',9492629547,'bonnielee10@hotmail.com',0,0,'7','','2013-08-26 04:00:01'),(127,1,'Terry','Ginsburg',7144207667,'arturo.gins@gmail.com',1,90,'','','2013-08-26 04:05:39'),(128,1,'Joel','Kuperberg',7146624608,'kuplevin@cox.net',1,90,'','','2013-08-26 04:40:59'),(129,2,'Joel','Kuperberg',7146624608,'kuplevin@cox.net',0,0,'8,14','','2013-08-26 04:41:42'),(130,2,'Michael','Adler',7148388480,'adler.family@cox.net',0,0,'8,15,17','','2013-08-26 06:44:43'),(131,1,'Margot and Michael','Shapiro',9493552635,'margot@shapiro5.com',1,270,'','','2013-08-26 07:20:19'),(132,2,'Margot and Michael','Shapiro',9493552635,'margot@shapiro5.com',0,0,'9','','2013-08-26 07:21:25'),(133,1,'Heather','Katz',7148325677,'heather@tkoart.com',2,540,'','','2013-08-26 18:04:12'),(134,2,'Heather','Katz',7148325677,'heather@tkoart.com',0,0,'11,15','','2013-08-26 18:05:03'),(135,1,'Joel','Don',9498588793,'jcdon460@hotmail.com',2,180,'','','2013-08-27 04:47:52'),(136,2,'Lisa','Shatzkin',7143894491,'lshatzkin@yahoo.com',0,0,'5,8,10,12,14,15,16','','2013-08-27 14:08:46'),(137,2,'Nancy','Raymon',9492944407,'nancyraymon@gmail.com',0,0,'','This is the year for me to find ways in which I can contribute to the health, healing and well-being of members of the CBI Family. I\'m so looking forward to using my experience and skills in fulfilling this pledge, whatever form it may take. Nancy Raymon','2013-08-27 18:41:43'),(139,1,'Marla & Scott','Nathan',7145054115,'mnathan@gr8law.com',3,360,'','','2013-08-28 20:18:25'),(140,2,'Marla & Scott','Nathan',7145054115,'mnathan@gr8law.com',0,0,'8,10,11,14,15,17,18','','2013-08-28 20:20:02'),(141,2,'Steven','Neudorf',9498546684,'Teamneudorf@gmail.com',0,0,'18','','2013-08-28 20:26:12'),(144,1,'Harris and Janice','Shultz',9495518620,'hshultz@cox.net',1,360,'','','2013-08-29 22:23:20'),(145,2,'Harris','Shultz',9495518620,'hshultz@cox.net',0,0,'5,6,8,18,19','','2013-08-29 22:25:40'),(146,1,'Jack and Elaine','Finkelstein',7145303673,'jack55elaine@yahoo.com',1,90,'','','2013-08-29 23:34:21'),(147,1,'Debbie','Moysychyn',7143252623,'d_moysychyn@hotmail.com',1,180,'','','2013-08-30 00:29:34'),(148,1,'Gavin','Jonas',9497862214,'Gijonas@cox.net',1,180,'','','2013-08-30 01:27:29'),(149,1,'Tony and Jean','Kravitz',9493482949,'tony.kravitz@unisys.com',1,54,'','','2013-08-30 02:45:13'),(150,1,'David & Joyce','Walter',7144013958,'Joysdrm@flash.net',1,90,'','','2013-08-30 03:27:12'),(151,2,'David & Joyce','Walter',7144013958,'Joysdrm@flash.net',0,0,'1,8,13','','2013-08-30 03:29:05'),(153,1,'Michael','Adler',7148388480,'adler.family@cox.net',1,18,'','','2013-08-30 05:58:30'),(154,1,'Annie & Jeff','Shugarman',7146652225,'jeffandannie@sbcglobal.net',1,180,'','','2013-08-30 15:11:30'),(155,2,'natalie','vishny',9494331822,'mvishny@aol.com',0,0,'','Make sure that our older friends inside and outside of our CBI community receive support','2013-08-30 16:39:31'),(156,1,'Lawrence','Wayne',9496798879,'waynelg@cox.net',3,360,'','','2013-08-30 17:41:23'),(157,1,'Francine & Ron','Morrison',9495096678,'romotustin@aol.com',2,360,'','','2013-08-30 18:37:24'),(158,1,'Ayal & Gila','Willner',7147309693,'hcoulter@cbi18.org',2,522,'','','2013-08-30 19:05:38'),(159,2,'JEREMY','SEGAL',7143894970,'jeremydsegal@gmail.com',0,0,'3,5,6,8,15','','2013-08-30 23:56:53'),(160,1,'JEREMY','SEGAL',7143894970,'jeremydsegal@gmail.com',1,36,'','','2013-08-30 23:57:21'),(161,1,'Mike and Sheila','Lefkowitz',9499030820,'Lefkowitzmike@gmail.com',1,360,'','','2013-08-31 17:48:57'),(162,1,'Barbara','Zwart',7144862658,'Barbzwart@aol.com',2,90,'','','2013-09-01 04:19:02'),(163,1,'Adina','Stowell',9496792799,'alwitzling@yahoo.com',1,360,'','','2013-09-01 18:27:11'),(164,1,'Arvin & Beth','Katlen',7144340606,'arvnbec@att.net',1,1800,'','','2013-09-01 19:35:15'),(165,1,'Hannah','Wachs',9493871765,'hwachs@gmail.com',1,180,'','','2013-09-01 21:03:47'),(166,2,'Hannah','Wachs',9493871765,'hwachs@gmail.com',0,0,'1,8','Make and deliver at least three meals as part of the Chesed committee','2013-09-01 21:05:32'),(167,1,'Perry','Bridger',9497487213,'perrybridger@yahoo.com',1,90,'','','2013-09-02 15:44:52'),(168,2,'Perry','Bridger',9497487213,'perrybridger@yahoo.com',0,0,'8,11,15','','2013-09-02 15:45:30'),(169,1,'Stacy','Leavitt',9494661472,'Leavitt.stacy@gmail.com',1,360,'','','2013-09-03 13:57:46'),(170,1,'Rhonda and Hal','Hurwitz',9498579400,'rhonda@hurwitzhome.com',1,72,'','','2013-09-03 19:31:13'),(171,1,'Shirley and Leonard','Kessler',9497861008,'rhonda@hurwitzhome.com',1,18,'','','2013-09-03 19:32:53'),(181,1,'Harry - add to my account','Krebs',7146360718,'H428K@aol.com',3,1080,'','','2013-09-03 22:56:13'),(182,1,'Mike','Mymon',9497163266,'mr3m2001@yahoo.com',1,36,'','','2013-09-03 22:56:59'),(183,2,'Mike','Mymon',9497163266,'mr3m2001@yahoo.com',0,0,'3,5,8,15,18','Continue to be a Shamash once a month','2013-09-03 22:59:16'),(184,1,'Fred and Diane','Reiss',9519265783,'dfreiss@roadrunner.com',3,180,'','','2013-09-03 23:50:38'),(191,2,'Cathy','Bardenstein',5853708020,'cjbardy@mac.com',0,0,'1,5,15','','2013-09-04 16:34:44'),(192,1,'Cathy','Bardenstein',5853708020,'cjbardy@mac.com',1,36,'','','2013-09-04 16:35:35'),(193,1,'Deborah','Goodman',7145355585,'deborahwgoodman@yahoo.com',1,36,'','','2013-09-04 17:35:53'),(194,1,'Nanci','Patchen',7145526435,'nanci.patchen@roadrunner.com',2,90,'','','2013-09-04 18:38:11'),(195,2,'Michael','Bare',7147954552,'michaelbare@yahoo.com',0,0,'1,3,5,14','','2013-09-04 18:40:23'),(196,1,'Michael','Bare',7147954552,'michaelbare@yahoo.com',1,180,'','','2013-09-04 18:41:38'),(197,1,'adrian','shandling',5625983200,'ashandling@aol.com',3,540,'','','2013-09-05 19:38:14'),(198,1,'Paul & Carol','Lehrer',7149629853,'lehrersc@aol.com',2,180,'','','2013-09-05 21:15:02'),(199,1,'Steven','Cohen',7145735835,'e-s_cohen@prodigy.net',1,18,'','','2013-09-06 02:27:41'),(200,1,'Larry','Danzig',9496400370,'sewheart@gmail.com',2,1800,'','','2013-09-06 03:17:42'),(201,1,'Philip','Blen',7147309469,'pblen@cox.net',3,180,'','','2013-09-07 20:10:02'),(203,1,'Howard and Judy','Brostoff',7145444116,'hjmj1@cox.net',1,540,'','','2013-09-08 01:51:51'),(204,1,'Marshall','Margolis',7149644507,'margolismarshall@hotmail.com',3,180,'','','2013-09-08 02:14:08'),(205,1,'Jane','Flynn',9498880898,'janeflynn3@gmail.com',3,54,'','','2013-09-08 15:41:53'),(206,1,'Andrew and Esther','Dosick',7147302224,'dosick@gmail.com',1,180,'','','2013-09-08 15:54:22'),(207,1,'Carl','Groner',7143805150,'Gronerfamily@gmail.com',1,18,'','','2013-09-08 16:37:02'),(208,1,'Matthew and Dana','Sperling',9493223328,'dpsmsw@gmail.com',1,36,'','','2013-09-08 17:40:16'),(209,1,'Norman & Pepita','Katz',7147315403,'katz2032@cox.net',1,1080,'','','2013-09-08 20:47:06'),(210,1,'Johanna','Rose',9497918226,'jrodevelopment@gmail.com',1,1080,'','','2013-09-08 21:41:23'),(211,1,'Benjamin + Sandie','Goelman',7148384229,'bengoelman@cox.net',3,3600,'','','2013-09-08 22:14:59'),(212,1,'Charles','Samson',9498618363,'chalkysamson@cox.net',1,180,'','','2013-09-09 00:11:07'),(213,1,'Bruce','Erenkrantz',7147340084,'bruce@erenkrantz.com',1,360,'','','2013-09-09 00:58:40'),(214,1,'Mitch and Nancy','Moss',7143689695,'Ngmoss@yahoo.com',1,90,'','','2013-09-09 03:05:03'),(215,1,'leslie','kaufman',7146516192,'wormfamily@cox.net',2,90,'','','2013-09-09 03:38:20'),(217,1,'Edward & Fredda','Sussman',7149687526,'sussmanfv@verizon.net',2,540,'','','2013-09-09 14:28:03'),(218,2,'Edward & Fredda','Sussman',7149687526,'sussmanfv@verizon.net',0,0,'4,8,11','','2013-09-09 14:29:36'),(219,1,'ann','bialy',5860288,'abialy@gmail.com',1,180,'','','2013-09-09 14:36:51'),(220,1,'Michael','Rosenthal',9497668094,'mikerose@cox.net',1,180,'','','2013-09-09 16:44:07'),(221,2,'Gila','Willner',9496777005,'gilawillner@earthlink.net',0,0,'5,6,11,15','','2013-09-09 17:25:52'),(222,1,'Herman','Birch',7147309693,'hcoulter@cbi18.org',2,3600,'','','2013-09-09 19:22:11'),(223,1,'Bob','Messe',7147309693,'hcoulter@cbi18.org',3,100,'','','2013-09-09 19:22:37'),(224,1,'Hayim and Miriam','Ninyo',7145440995,'mirninyo@gmail.com',1,360,'','','2013-09-09 19:42:15'),(225,1,'larry','passo',9495590283,'125deb.passo@gmail.com',1,54,'','','2013-09-09 20:31:26'),(226,1,'David & Phyllis','Iser',7147722298,'Philjoys@aol.com',1,90,'','','2013-09-09 20:54:28'),(227,1,'Phyllis & Al','Steinberg',7148428029,'a2steinberg@verizon.net',3,180,'','','2013-09-09 20:56:50'),(228,2,'Al','Steinberg',7148428029,'a2steinberg@verizon.net',0,0,'4,8','','2013-09-09 20:57:33'),(229,1,'Michael','Wolf',9497069907,'ymikewolf@yahoo.com',1,256,'','','2013-09-09 20:58:17'),(230,1,'Ahuva and Winston','Ho',7142891410,'savtaho@yahoo.com',1,1080,'','','2013-09-09 21:07:57'),(231,1,'Cynthia','Furst',9498541235,'cindy.furst@cox.net',1,1800,'','','2013-09-09 21:30:21'),(232,1,'Sharon','Refael',7146658223,'Sharonrefael@att.net',1,180,'','','2013-09-09 21:57:56'),(233,2,'Sharon and Doron','Refael',7146658223,'Sharonrefael@att.net',0,0,'8','','2013-09-09 22:00:53'),(234,1,'Sue ann','Cross',9496736777,'Cross.sa@sbcglibal.net',1,540,'','','2013-09-09 22:37:36'),(235,1,'Paula','Goldberg',7148383995,'Pfzgold@gmail.com',2,90,'','','2013-09-09 23:19:10'),(236,1,'Gary & Phyllis','Segal',7147309693,'hcoulter@cbi18.org',2,500,'','','2013-09-09 23:24:49'),(237,1,'Katherine','Coster',9493876542,'Katherine.coster@gmail.com',1,90,'','','2013-09-09 23:44:22'),(245,1,'Leane','Kahrs',7145732521,'lkahrs223@gmail.com',1,540,'','','2013-09-10 01:11:14'),(246,1,'Brian & Sarah','Chisick',7145442712,'bc41339@gmail.com',3,2500,'','','2013-09-10 02:04:09'),(247,1,'Blossom','Siegel',9496452334,'savtablos@earthlink.net',1,1800,'','','2013-09-10 02:45:14'),(248,1,'Sandy and Earl','Stein',9495523779,'ethep18@aol.com',2,180,'','','2013-09-10 03:05:06'),(249,1,'Pamela','Kauss',7147440602,'Winwaysdirector@aol.com',2,360,'','','2013-09-10 03:43:10'),(250,1,'Zane','Gerber',9494542898,'zanegerber@cox.net',1,180,'','','2013-09-10 04:36:03'),(251,2,'Joel','Reiss',7143120921,'Jreiss18@gmail.com',0,0,'5,8','','2013-09-10 04:37:38'),(252,2,'Lilya','Reiss',7143120921,'Lilyar17@gmail.com',0,0,'8,17','','2013-09-10 04:38:06'),(253,1,'Joel and Lilya','Reiss',7143120921,'Jreiss18@gmail.com',2,7200,'','','2013-09-10 04:38:43'),(254,1,'Jonathan','Fine',7148386636,'jmfine2000@gmail.com',1,72,'','','2013-09-10 04:43:29'),(255,2,'Jonathan','Fine',7148386636,'jmfine2000@gmail.com',0,0,'18','','2013-09-10 04:44:17'),(256,1,'Eileen','Slipakoff',7143525645,'Esf3s3@aol.com',2,180,'','','2013-09-10 04:44:50'),(257,1,'Matthew','Brenner',9497060475,'mhbrenner0900@mac.com',1,540,'','','2013-09-10 04:47:13'),(258,1,'David & Ofra','Willner',9498375236,'kc1et@cox.net',1,54,'','','2013-09-10 05:09:35'),(259,1,'Morris','FLEISHMAN',9497683940,'bumper70@cox.net',1,36,'','','2013-09-10 05:58:58'),(260,1,'LISA AND MICHAEL','SHATZKIN/ FISCHER',7143894491,'MICHAELANDLISA@COX.NET',1,36,'','','2013-09-10 16:05:24'),(261,1,'Edita','Szekely',7147309693,'hcoulter@cbi18.org',2,36,'','','2013-09-10 20:16:32'),(262,1,'Shirley','Shlachter',7147309693,'hcoulter@cbi18.org',1,36,'','','2013-09-10 21:38:14'),(263,1,'John and Helaine','Yeskel',9492612332,'jayeskel@cox.net',2,180,'','','2013-09-11 02:44:49'),(264,1,'Blake','Michaels',9494228561,'blakesterr1@yahoo.com',2,270,'','','2013-09-11 03:13:45'),(265,1,'Blake','Michaels',9494228561,'blakesterr1@yahoo.com',2,270,'','','2013-09-11 03:14:56'),(266,1,'cindy','jacobs',7147308273,'xleftiesbrigade@yahoo.com',1,100,'','','2013-09-11 03:48:37');
-/*!40000 ALTER TABLE `pledges` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
 -- Table structure for table `privileges`
 --
 
@@ -473,31 +416,6 @@ LOCK TABLES `privileges` WRITE;
 /*!40000 ALTER TABLE `privileges` DISABLE KEYS */;
 INSERT INTO `privileges` VALUES (1,'control',500,1),(2,'admin',400,1),(10,'assign',300,1),(11,'office',200,1);
 /*!40000 ALTER TABLE `privileges` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `spiritual`
---
-
-DROP TABLE IF EXISTS `spiritual`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `spiritual` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `spiritualType` tinyint(4) NOT NULL,
-  `description` char(128) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `spiritual`
---
-
-LOCK TABLES `spiritual` WRITE;
-/*!40000 ALTER TABLE `spiritual` DISABLE KEYS */;
-INSERT INTO `spiritual` VALUES (1,1,'Learn to read Hebrew or increase my Hebrew skills'),(2,1,'Learn to put on a tallit or tefillin'),(3,1,'Attend Adult Education classes'),(4,1,'Celebrate an Adult Bar/Bat Mitzvah'),(5,2,'Chant Torah/Haftorah'),(6,2,'Attend Sunday and/or Wednesday morning Minyan'),(7,2,'Learn to lead services'),(8,2,'Attend Shabbat Services'),(9,2,'Incorporate meditation into my day'),(10,3,'Prepare food for the Family Promise program'),(11,3,'Attend a Shivah Minyan'),(12,3,'Join the Chessed committee'),(13,3,'Visit the elderly or ill'),(14,3,'Become an usher at Shabbat Services'),(15,3,'Invite guests for Shabbat Dinner'),(16,3,'Become a Buddy for a new family'),(17,3,'Volunteer at Sunday supper'),(18,3,'Donate blood'),(19,3,'Volunteer in the CBI office');
-/*!40000 ALTER TABLE `spiritual` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -541,4 +459,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-07-09 16:23:09
+-- Dump completed on 2015-07-09 16:25:56
