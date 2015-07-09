@@ -111,6 +111,9 @@ switch( $gAction ) {
 			if( $func == "add" ) {
 				AssignAdd();
 				$gAction = "Assign";
+			} elseif( $func == "del" ) {
+				AssignDel();
+				$gAction = "Assign";
 			}
 		
 		} elseif( $gFrom == "DisplayDates" ) {

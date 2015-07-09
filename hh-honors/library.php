@@ -22,14 +22,14 @@ function Assign() {
 	$member_assigned = [];
 	DoQuery( "select * from assignments" );
 	while( $row = mysql_fetch_array( $GLOBALS['mysql_result']) ) {
-		$honor_assigned[$row['honor_id']] = 1;
-		$member_assigned[$row['member_id']] = 1;
+		$honor_assigned[$row['honor_id']] = $row['member_id'];
+		$member_assigned[$row['member_id']] = $row['honor_id'];
 	}
 	
 	DoQuery( "select id, service, honor from honors order by sort" );
 	echo "<script type='text/javascript'>\n";
 	while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
-		$used = array_key_exists( $id, $honor_assigned ) ? 1 : 0;
+		$used = array_key_exists( $id, $honor_assigned ) ? $honor_assigned[$id] : 0;
 		printf( "honors_db.push( { id:%d, service:'day-%s', honor:'%s', selected:0, assigned:$used } );\n", $id, $service, mysql_escape_string($honor) );
 	}
 	echo "</script>";
@@ -50,7 +50,7 @@ function Assign() {
 		$tmp[] = sprintf( "%s:%d", "cohen", $cohen );
 		$tmp[] = sprintf( "%s:%d", "levi", $levi );
 		$tmp[] = sprintf( "%s:%d", "selected", 0 );
-		$used = array_key_exists( $row['id'], $member_assigned ) ? 1 : 0;
+		$used = array_key_exists( $row['id'], $member_assigned ) ? $member_assigned[$row['id']] : 0;
 		$tmp[] = sprintf( "%s:%d", "assigned", $used );
 		printf( "cong_db.push( { %s } );\n", join( ', ', $tmp ) );
 	 }
@@ -102,7 +102,7 @@ function Assign() {
       <input type="button" id="opt-new" value="New Member" onclick="myCategoryClick('opt-new');"/>      
       <input type="button" id="opt-volb" value="Vol B" onclick="myCategoryClick('opt-volb');"/>      
       <input type="button" id="opt-pastpres" value="Past Pres" onclick="myCategoryClick('opt-pastpres');"/>      
-      <input type="button" id="opt-all" value="None" onclick="myFilterReset('opt-all');"/>      
+      <input type="button" id="opt-all" value="All" onclick="myFilterReset('opt-all');"/>      
 </div>
   <div style="clear:both"></div>
 <hr />
@@ -136,7 +136,19 @@ function Assign() {
   $tmp[] = "saveChoices()";
   $tmp[] = "addAction('Update')";
   $js = join(';',$tmp );
-  echo "<input type=button onclick=\"$js\" value=\"Add\">";
+  echo "<div id=div-action-assign>";
+  echo "<input id=action-assign type=button disabled onclick=\"$js\" value=\"Add\">";
+  echo "</div>";
+  
+  $tmp = [];
+  $tmp[] = "setValue('from','Assign')";
+  $tmp[] = "setValue('func','del')";
+  $tmp[] = "saveChoices()";
+  $tmp[] = "addAction('Update')";
+  $js = join(';',$tmp );
+  echo "<div id=div-action-view>";
+  echo "<input id=action-view type=button disabled onclick=\"$js\" value=\"Delete\">";
+  echo "</div>";
 ?>
 </div>
 
@@ -156,7 +168,7 @@ function Assign() {
 </body>
 <script type='text/javascript'>
   button_init();
-  myDisplayMode('view');
+  mySetMode('view');
 </script>
 </html>
 	<?php
@@ -171,8 +183,6 @@ function AssignAdd() {
 	}
 
 	$tmp = preg_split("/,/", $_POST['fields'] );
-	echo "tmp: ";
-	print_r( $tmp );
 	foreach( $tmp as $field ) {
 			$tmp2 = preg_split( "/_/", $field );
 			if( $tmp2[0] == "honor" ) {
@@ -182,6 +192,26 @@ function AssignAdd() {
 			}
 	}
 	DoQuery( "insert into assignments set honor_id = $honor_id, member_id = $member_id");
+	
+	if( $gTrace ) array_pop( $gFunction );
+}
+
+function AssignDel() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+
+	$tmp = preg_split("/,/", $_POST['fields'] );
+	foreach( $tmp as $field ) {
+			$tmp2 = preg_split( "/_/", $field );
+			if( $tmp2[0] == "honor" ) {
+				DoQuery( "delete from assignments where honor_id = $tmp2[1]" );
+			} elseif( $tmp2[0] == "member" ) {
+				DoQuery( "delete from assignments where member_id = $tmp2[1]" );
+			}
+	}
 	
 	if( $gTrace ) array_pop( $gFunction );
 }
@@ -1193,6 +1223,7 @@ function DisplayMain() {
 	echo "  <th>Name</th>";
 	echo "  <th>Male<br>Tribe</th>";
 	echo "  <th>Female<br>Tribe</th>";
+	echo "  <th>New</th>";
 	echo "  <th>Board</th>";
 	echo "  <th>Past Pres</th>";
 	echo "  <th>Staff</th>";
@@ -1208,6 +1239,9 @@ function DisplayMain() {
 
 		printf( "<td class=c>%s</td>", $attributes[$id]['mtribe'] );
 		printf( "<td class=c>%s</td>", $attributes[$id]['ftribe'] );
+		$checked = ( $attributes[$id]['new'] ) ? "checked" : "";
+		$sort_key =( $attributes[$id]['new'] ) ? 1 : 0;
+		printf( "<td class=c sorttable_customkey=$sort_key><input type=checkbox $checked disabled></td>" );
 		
 		foreach( array( "board", "pastpres", "staff", "donor", "vola", "volb", "volc" ) as $cat ) {
 			$itag = sprintf( "%s_%s", $cat, $id );
@@ -1215,13 +1249,14 @@ function DisplayMain() {
 			$checked = "";
 			if( array_key_exists( $id, $attributes ) ) {
 				$checked = empty( $attributes[$id][$cat] ) ? "" : "checked";
+				$sort_key = empty( $attributes[$id][$cat] ) ? "0" : "1";
 			}
 			$jsx = array();
 			$jsx[] = "setValue('from','DisplayMembers')";
 			$jsx[] = "addField('$itag')";
 			$jsx[] = "toggleBgRed('update')";
 			$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-			echo "<td class=c><input type=\"checkbox\" $tag $checked $js value=1></td>";
+			echo "<td class=c sorttable_customkey=$sort_key><input type=\"checkbox\" $tag $checked $js value=1></td>";
 		}
 		
 		echo "</tr>";

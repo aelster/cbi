@@ -49,6 +49,7 @@ function myCongClick(id) {
 			cong_db[i].selected = 0;			
 		}
 	}
+	myHighlightAction();
 	myDisplayCong();
 }
 
@@ -105,7 +106,7 @@ function myDisplayCong()  {
 					found = 1;
 				}
 			}
-			if ( found ) {
+			if ( found && ! cong_db[i].assigned ) {
 				e.style.display='block';
 				if ( cong_db[i].selected ) {
 					e.className = "closed";
@@ -120,8 +121,7 @@ function myDisplayCong()  {
 	}
 }
 
-function myDisplayHonors()  {
-	var i, j, e, ok;
+function myDisplayHonors()  {	var i, j, e, ok;
 	for( i=0; i<day_buttons.length; i++ ) {
 		e = document.getElementById(day_buttons[i]);
 		e.className = "";
@@ -140,6 +140,20 @@ function myDisplayHonors()  {
 			} else {
 				e.style.display = 'none';
 			}
+			if ( honors_db[i].selected ) {
+				e.className = "closed";
+				for( j=0; j < cong_db.length; j++ ) {
+					var f = document.getElementById( 'cong_' + cong_db[j].id );
+					if( cong_db[j].id != honors_db[i].assigned ) {
+						f.className = "";
+					} else {
+						f.className = "closed";
+					}
+				}
+			} else {
+				e.className = "";
+			}
+
 		} else {
 			var found = 0;
 			for( j=0; j<day_buttons_live.length; j++ ) {
@@ -147,7 +161,7 @@ function myDisplayHonors()  {
 					found = 1;
 				}
 			}
-			if ( found ) {
+			if ( found && ! honors_db[i].assigned ) {
 				e.style.display = 'block';
 				if ( honors_db[i].selected ) {
 					e.className = "closed";
@@ -159,14 +173,6 @@ function myDisplayHonors()  {
 			}
 		}
 	}
-}
-
-function myDisplayMode(id) {
-	var e = document.getElementById('mode-' + id );
-	e.className = "closed";
-	assign_mode = id;
-	myDisplayHonors();
-	myDisplayCong();
 }
 
 function myFilterReset(mode) {
@@ -182,8 +188,46 @@ function myFilterReset(mode) {
 			day_buttons_live = [];
 			e.value = "All";
 		}
+	} else if( mode == 'opt-all' ) {
+		var e = document.getElementById('opt-all');
+		if ( e.value == "All" ) {
+			cong_buttons_live = cong_buttons;
+			e.value = "None";
+		} else {
+			cong_buttons_live = [];
+			e.value = "All";
+		}
 	}
 	myDisplayHonors();
+	myDisplayCong();
+}
+
+function myHighlightAction() {
+	var e, i, needed;
+	if ( assign_mode == 'view' ) { // Option to delete, only need 1 click
+		e = document.getElementById( 'action-view' );
+		e.className = 'del';
+		e.disabled = false;
+
+	} else { // Option to add, need 2 clicks
+		needed = 0;
+		for( i=0; i<honors_db.length; i++ ) {
+			if ( honors_db[i].selected ) {
+				needed++;
+			}
+		}
+		for( i=0; i<cong_db.length; i++ ) {
+			if ( cong_db[i].selected ) {
+				needed++;
+			}
+		}
+		if ( needed == 2 ) {
+			e = document.getElementById( 'action-assign');
+			e.className = 'add';
+			e.disabled = false;
+		}
+	}
+	
 }
 
 function myHonorsClick(id) {
@@ -194,6 +238,7 @@ function myHonorsClick(id) {
 			honors_db[i].selected = 0;			
 		}
 	}
+	myHighlightAction();
 	myDisplayHonors();
 }
 
@@ -214,7 +259,15 @@ function mySetMode(id) {
 			assign_mode = id;
 		}
 	}
-	myDisplayHonors(1);
+	document.getElementById('div-action-' + id ).style.display = "block";
+	if ( id == 'view' ) {
+		document.getElementById('div-action-assign' ).style.display = "none";
+	} else {
+		document.getElementById('div-action-view' ).style.display = "none";
+	}
+
+	myDisplayHonors();
+	myDisplayCong();
 }
 
 function saveChoices() {

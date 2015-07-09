@@ -130,6 +130,22 @@ div.assign-top {
 	-webkit-border-radius: 5px;
 }
 
+.container input.add {
+	width:80px;
+	background-color: #9F9;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.container input.del {
+	width:80px;
+	background-color: #F00;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
 .container .cong-box1 {
 	float: left;
 	height: 500px;
