@@ -304,4 +304,11 @@ function saveChoices() {
 			addField( 'member_' + cong_db[i].id );
 		}
 	}
+	for( i=0; i<day_buttons_live.length; i++ ) {
+		addField( 'day_' + day_buttons_live[i] );
+	}
+	for( i=0; i<cong_buttons_live.length; i++ ) {
+		addField( 'cong_' + cong_buttons_live[i] );
+	}
+	addField( 'mode_' + assign_mode );
 }

@@ -168,7 +168,26 @@ function Assign() {
 </body>
 <script type='text/javascript'>
   button_init();
-  mySetMode('view');
+<?php
+	$mode_set = 0;
+	$tmp = preg_split( '/,/', $_POST['fields']);
+	foreach( $tmp as $field ) {
+		if( preg_match( "/^day_/", $field ) ) {
+			$tmp2 = preg_split( "/_/", $field );
+			echo "myDayClick('" . $tmp2[1] . "');\n";
+		} elseif( preg_match( "/^cong_/", $field ) ) {
+			$tmp2 = preg_split( "/_/", $field );
+			echo "myCategoryClick('" . $tmp2[1] . "');\n";
+		} elseif( preg_match( "/^mode/", $field ) ) {
+			$mode_set = 1;
+			$tmp2 = preg_split( "/_/", $field );
+			echo "mySetMode('" . $tmp2[1] . "');\n";
+		}
+	}
+	if( ! $mode_set ) {
+		echo "mySetMode('view');\n";
+	}
+?>
 </script>
 </html>
 	<?php
