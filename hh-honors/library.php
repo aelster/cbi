@@ -108,7 +108,7 @@ function Assign() {
 <hr />
 
 <div class="cong-box1">
-<p>Honors <div id=tot-honors></div></p>
+<p>Honors</p><p id=tot-honors></p>
 <div class=honors-div>
 <?php
   $last_service = "";
@@ -153,7 +153,7 @@ function Assign() {
 </div>
 
 <div class="cong-box3">
-<p>Congregants</p>
+<p>Congregants</p><p id=tot-cong></p>
 <div class=cong-div>
 <?php
   while( list( $id, $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
@@ -2191,8 +2191,8 @@ function WriteHeader() {
 	}
 
 	$scripts = array();
-//	$scripts[] = "/scripts/overlib/overlib.js";
-//	$scripts[] = "/scripts/overlib/overlib_hideform.js";
+	$scripts[] = "/scripts/overlib/overlib.js";
+	$scripts[] = "/scripts/overlib/overlib_hideform.js";
 	$scripts[] = "/scripts/commonv2.js";
 	$scripts[] = "/scripts/sha256.js";
 	$scripts[] = "/scripts/sorttable.js";

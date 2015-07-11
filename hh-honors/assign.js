@@ -54,7 +54,7 @@ function myCongClick(id) {
 }
 
 function myDayClick(id) {
-	var i, found;
+	var i, found, e;
 	var new_live = [];
 	found = 0;
 	for( i=0; i<day_buttons_live.length; i++ ) {
@@ -72,11 +72,17 @@ function myDayClick(id) {
 	} else {
 		day_buttons_live.push(id);
 	}
+	e = document.getElementById('day-all');
+	if ( day_buttons_live.length == day_buttons.length ) {
+		e.value = 'None';
+	} else {
+		e.value = 'All';
+	}
 	myDisplayHonors();
 }
 
 function myDisplayCong()  {
-	var i, j, e, ok;
+	var i, j, e, ok, found;
 	// Turn off the color of all Congregant Button Selectors
 	for( i=0; i<cong_buttons.length; i++ ) {
 		e = document.getElementById(cong_buttons[i]);
@@ -87,25 +93,30 @@ function myDisplayCong()  {
 		e = document.getElementById(cong_buttons_live[i]);
 		e.className = "closed";
 	}
-	var visible = 0;
+	var num_visible = 0;
+	var num_assigned = 0;
 	
 	for( i=0; i<cong_db.length; i++ ) {
 		e = document.getElementById( 'cong_' + cong_db[i].id );
+		found = 0;
+		for( j=0; j<cong_buttons_live.length; j++ ) {
+			var tmp = cong_buttons_live[j].split("-");
+			var attr = tmp[1];
+			if ( cong_db[i][attr] ) {
+				found = 1;
+				num_visible++;
+				if ( cong_db[i].assigned ) {
+					num_assigned++;
+				}
+			}
+		}
 		if ( assign_mode == 'view' ) {
-			if ( cong_db[i].assigned ) {
+			if ( found && cong_db[i].assigned ) {
 				e.style.display = 'block';
 			} else {
 				e.style.display = 'none';
 			}
 		} else {
-			var found = 0;
-			for( j=0; j<cong_buttons_live.length; j++ ) {
-				var tmp = cong_buttons_live[j].split("-");
-				var attr = tmp[1];
-				if ( cong_db[i][attr] ) {
-					found = 1;
-				}
-			}
 			if ( found && ! cong_db[i].assigned ) {
 				e.style.display='block';
 				if ( cong_db[i].selected ) {
@@ -113,15 +124,18 @@ function myDisplayCong()  {
 				} else {
 					e.className = "";
 				}
-				visible++;
 			} else {
 				e.style.display='none';
 			}
 		}
 	}
+	e = document.getElementById('tot-cong');
+	e.innerHTML = num_assigned.toString() + '/' + num_visible.toString();
 }
 
-function myDisplayHonors()  {	var i, j, e, ok;
+function myDisplayHonors()  {
+	var i, j, e, ok, found;
+	
 	for( i=0; i<day_buttons.length; i++ ) {
 		e = document.getElementById(day_buttons[i]);
 		e.className = "";
@@ -130,12 +144,24 @@ function myDisplayHonors()  {	var i, j, e, ok;
 		e = document.getElementById(day_buttons_live[i]);
 		e.className = "closed";
 	}
-	var visible = 0;
+	var num_visible = 0;
+	var num_assigned = 0;
 	
 	for( i=0; i < honors_db.length; i++ ) {
 		e = document.getElementById( 'honor_' + honors_db[i].id );
+		
+		for( j=0; j<day_buttons_live.length; j++ ) {
+			if ( honors_db[i].service.match( day_buttons_live[j] ) ) {
+				found = 1;
+				num_visible++;
+				if ( honors_db[i].assigned ) {
+						num_assigned++;
+				}
+			}
+		}
+		
 		if ( assign_mode == 'view' ) {
-			if ( honors_db[i].assigned ) {
+			if ( found && honors_db[i].assigned ) {
 				e.style.display = 'block';
 			} else {
 				e.style.display = 'none';
@@ -155,12 +181,6 @@ function myDisplayHonors()  {	var i, j, e, ok;
 			}
 
 		} else {
-			var found = 0;
-			for( j=0; j<day_buttons_live.length; j++ ) {
-				if ( honors_db[i].service.match( day_buttons_live[j] ) ) {
-					found = 1;
-				}
-			}
 			if ( found && ! honors_db[i].assigned ) {
 				e.style.display = 'block';
 				if ( honors_db[i].selected ) {
@@ -173,6 +193,8 @@ function myDisplayHonors()  {	var i, j, e, ok;
 			}
 		}
 	}
+	e = document.getElementById('tot-honors');
+	e.innerHTML = num_assigned.toString() + '/' + num_visible.toString();
 }
 
 function myFilterReset(mode) {
