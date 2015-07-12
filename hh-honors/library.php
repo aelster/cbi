@@ -88,14 +88,14 @@ function Assign() {
   </div>
   
   <div class="content-box1">
-      <input type="button" value="All" onclick="myDayClick('day-all');"/>      
-      <input type="button" id="day-rh1" value="Rosh 1" onclick="myDayClick('day-rh1');"/>
-      <input type="button" id="day-kn" value="Kol Nidre" onclick="myDayClick('day-kn');"/>
-      <input type="button" id="day-ykp" value="YK - PM" onclick="myDayClick('day-ykp');"/>
+      <input type="button" value="All" onclick="myDayClick('day-all');myDisplayRefresh();"/>      
+      <input type="button" id="day-rh1" value="Rosh 1" onclick="myDayClick('day-rh1');myDisplayRefresh();"/>
+      <input type="button" id="day-kn" value="Kol Nidre" onclick="myDayClick('day-kn');myDisplayRefresh();"/>
+      <input type="button" id="day-ykp" value="YK - PM" onclick="myDayClick('day-ykp');myDisplayRefresh();"/>
 <br />
-      <input type="button" value="None" onclick="myDayClick('day-none');"/>      
-      <input type="button" id="day-rh2" value="Rosh 2" onclick="myDayClick('day-rh2');"/>
-      <input type="button" id="day-yka" value="YK - AM" onclick="myDayClick('day-yka');"/>
+      <input type="button" value="None" onclick="myDayClick('day-none');myDisplayRefresh();"/>      
+      <input type="button" id="day-rh2" value="Rosh 2" onclick="myDayClick('day-rh2');myDisplayRefresh();"/>
+      <input type="button" id="day-yka" value="YK - AM" onclick="myDayClick('day-yka');myDisplayRefresh();"/>
   <!-- end .content -->
   </div>
   
@@ -103,20 +103,20 @@ function Assign() {
 	</div>
 	
   <div class="content-box3">
-      <input type="button" value="All" onclick="myCategoryClick('opt-all');"/>      
-      <input type="button" id="opt-cohen" value="Cohen" onclick="myCategoryClick('opt-cohen');"/>
-      <input type="button" id="opt-board" value="Board" onclick="myCategoryClick('opt-board');"/>
-      <input type="button" id="opt-staff" value="Staff" onclick="myCategoryClick('opt-staff');"/>
-      <input type="button" id="opt-vola" value="Vol A" onclick="myCategoryClick('opt-vola');"/>
-      <input type="button" id="opt-volc" value="Vol C" onclick="myCategoryClick('opt-volc');"/>
+      <input type="button" value="All" onclick="myCategoryClick('opt-all');myDisplayRefresh();"/>      
+      <input type="button" id="opt-cohen" value="Cohen" onclick="myCategoryClick('opt-cohen');myDisplayRefresh();"/>
+      <input type="button" id="opt-board" value="Board" onclick="myCategoryClick('opt-board');myDisplayRefresh();"/>
+      <input type="button" id="opt-staff" value="Staff" onclick="myCategoryClick('opt-staff');myDisplayRefresh();"/>
+      <input type="button" id="opt-vola" value="Vol A" onclick="myCategoryClick('opt-vola');myDisplayRefresh();"/>
+      <input type="button" id="opt-volc" value="Vol C" onclick="myCategoryClick('opt-volc');myDisplayRefresh();"/>
 <br />
-      <input type="button" value="None" onclick="myCategoryClick('opt-none');"/>      
-      <input type="button" id="opt-levi" value="Levi" onclick="myCategoryClick('opt-levi');"/>
-      <input type="button" id="opt-donor" value="Donor" onclick="myCategoryClick('opt-donor');"/>
-      <input type="button" id="opt-new" value="New Member" onclick="myCategoryClick('opt-new');"/>      
-      <input type="button" id="opt-volb" value="Vol B" onclick="myCategoryClick('opt-volb');"/>      
-      <input type="button" id="opt-pastpres" value="Past Pres" onclick="myCategoryClick('opt-pastpres');"/>      
-      <input type="button" id="opt-other" value="Other" onclick="myCategoryClick('opt-other');"/>      
+      <input type="button" value="None" onclick="myCategoryClick('opt-none');myDisplayRefresh();"/>
+      <input type="button" id="opt-levi" value="Levi" onclick="myCategoryClick('opt-levi');myDisplayRefresh();"/>
+      <input type="button" id="opt-donor" value="Donor" onclick="myCategoryClick('opt-donor');myDisplayRefresh();"/>
+      <input type="button" id="opt-new" value="New Member" onclick="myCategoryClick('opt-new');myDisplayRefresh();"/>      
+      <input type="button" id="opt-volb" value="Vol B" onclick="myCategoryClick('opt-volb');myDisplayRefresh();"/>      
+      <input type="button" id="opt-pastpres" value="Past Pres" onclick="myCategoryClick('opt-pastpres');myDisplayRefresh();"/>      
+      <input type="button" id="opt-other" value="Other" onclick="myCategoryClick('opt-other');myDisplayRefresh();"/>      
 </div>
   <div style="clear:both"></div>
 <hr />
@@ -125,13 +125,8 @@ function Assign() {
 <p>Honors</p><p id=tot-honors></p>
 <div class=honors-div>
 <?php
-  $last_service = "";
   while( list( $id, $service, $honor ) = mysql_fetch_array( $honors_res ) ) {
-    if( $service != $last_service && ! empty($last_service) ) {
-      echo "<hr>";
-    }
     echo "<p id=honor_$id style='display:none' onclick=\"myHonorsClick($id);\">$service: $honor</p>\n";
-    $last_service = $service;
   }
 ?>
 </div>
@@ -228,7 +223,16 @@ function AssignAdd() {
 				$member_id = $tmp2[1];
 			}
 	}
-	DoQuery( "insert into assignments set honor_id = $honor_id, member_id = $member_id");
+	DoQuery( "select * from assignments where honor_id = $honor_id or member_id = $member_id" );
+	if( $GLOBALS['mysql_numrows'] > 0 ) {
+		?>
+<script type='text/javascript'>
+	alert( "Duplicate assignment rejected" );
+</script>
+<?php
+	} else {
+		DoQuery( "insert into assignments set honor_id = $honor_id, member_id = $member_id");
+	}
 	
 	if( $gTrace ) array_pop( $gFunction );
 }
@@ -1162,6 +1166,10 @@ function DisplayMain() {
 		
 	} else {
 		printf( "User: %s<br>", $GLOBALS['gUserName'] );
+
+		echo "<br>";
+		echo "<input type=button onclick=\"addAction('Logout');\" value=Logout>";
+
 		if( UserManager( 'authorized', 'control' ) ) {
 			echo "<div class=control>";
 			echo "<h3>Control User Features</h3>";
@@ -1215,9 +1223,6 @@ function DisplayMain() {
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 			echo "<input type=button $js value='View'>";	
 		}
-
-		echo "<br>";
-		echo "<input type=button onclick=\"addAction('Logout');\" value=Logout>";
 	}
 	
 	if( $gTrace ) array_pop( $gFunction );
