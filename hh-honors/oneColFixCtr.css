@@ -85,20 +85,17 @@ div.assign-top {
 	border-bottom-style: solid;
 	border-left-style: solid;
 	height: 50px;
-	width: 12%;
+	width: 36%;
+	text-align: left;
 }
 
 .container .content-box2 {
 	float: left;
-	background-color:#9FCFE0;
-	border-color: #000;
-	border-width: 1px;
-	border-top-style: solid;
-	border-right-style: solid;
-	border-bottom-style: solid;
-	border-left-style: solid;
+	background-color:#fff;
+	border: none;
 	height: 50px;
-	width: 30%;
+	width: 10px;
+	text-align: left;
 }
 
 .container .content-box3 {

@@ -17,6 +17,7 @@ function Assign() {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
+	$assign = UserManager( 'authorized', 'assign' );
 
 	$honor_assigned = [];
 	$member_assigned = [];
@@ -35,26 +36,39 @@ function Assign() {
 	echo "</script>";
 	DoQuery( "select * from member_attributes order by id asc" );
 	echo "<script type='text/javascript'>\n";
+	$tot_other = 0;
 	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
 		$tmp = array();
+		$other = 1;
+		$cohen = $levi = 0;
 		foreach( $row as $key => $val ) {
-			if( $key == "mtribe" || $key == "ftribe" ) continue;
-			if( is_numeric( $val ) ) {
+			if( $key == 'id' ) {
 				$tmp[] = sprintf( "%s:%d", $key, $val );
+
+			} elseif( $key == "ftribe" || $key == "mtribe" ) {
+				$cohen = $cohen || ( $val == "Kohen" );
+				$levi = $levi || ( $val == "Levi" );
 			} else {
-			  $tmp[] = sprintf( "%s:'%s'", $key, $val );
+				$tmp[] = sprintf( "%s:%d", $key, $val );
+				if( $val ) {
+					$other = 0;
+				}
 			}
 		}
-		$cohen = ( $row["mtribe"] == "Kohen" || $row["ftribe"] == "Kohen" ) ? 1 : 0;
-		$levi = ! $cohen && ( $row["mtribe"] == "Levi" || $row["ftribe"] == "Levi" ) ? 1 : 0;
+		if( $cohen || $levi ) {
+			if( $cohen ) {
+				$levi = 0;
+			}
+			$other = 0;
+		}
 		$tmp[] = sprintf( "%s:%d", "cohen", $cohen );
 		$tmp[] = sprintf( "%s:%d", "levi", $levi );
 		$tmp[] = sprintf( "%s:%d", "selected", 0 );
 		$used = array_key_exists( $row['id'], $member_assigned ) ? $member_assigned[$row['id']] : 0;
 		$tmp[] = sprintf( "%s:%d", "assigned", $used );
+		$tmp[] = sprintf( "%s:%d", "other", $other );
 		printf( "cong_db.push( { %s } );\n", join( ', ', $tmp ) );
 	 }
-
   echo "</script>\n";
   DoQuery( "select id, service, honor from honors order by sort" );
   $honors_res = $GLOBALS['mysql_result'];
@@ -72,37 +86,37 @@ function Assign() {
     <br>
     <br>
   </div>
-
-  <div class="content-box1">
-   <p>Filters
-    <input type="button" id="filter-reset" value="Reset" onclick="myFilterReset('reset');"/>
-    </p>
-    <!-- end .content -->
-  </div>
   
-  <div class="content-box2">
+  <div class="content-box1">
+      <input type="button" value="All" onclick="myDayClick('day-all');"/>      
       <input type="button" id="day-rh1" value="Rosh 1" onclick="myDayClick('day-rh1');"/>
       <input type="button" id="day-kn" value="Kol Nidre" onclick="myDayClick('day-kn');"/>
       <input type="button" id="day-ykp" value="YK - PM" onclick="myDayClick('day-ykp');"/>
 <br />
+      <input type="button" value="None" onclick="myDayClick('day-none');"/>      
       <input type="button" id="day-rh2" value="Rosh 2" onclick="myDayClick('day-rh2');"/>
       <input type="button" id="day-yka" value="YK - AM" onclick="myDayClick('day-yka');"/>
-      <input type="button" id="day-all" value="All" onclick="myFilterReset('day-all');"/>      
   <!-- end .content -->
   </div>
+  
+	<div class="content-box2">
+	</div>
+	
   <div class="content-box3">
+      <input type="button" value="All" onclick="myCategoryClick('opt-all');"/>      
       <input type="button" id="opt-cohen" value="Cohen" onclick="myCategoryClick('opt-cohen');"/>
       <input type="button" id="opt-board" value="Board" onclick="myCategoryClick('opt-board');"/>
       <input type="button" id="opt-staff" value="Staff" onclick="myCategoryClick('opt-staff');"/>
       <input type="button" id="opt-vola" value="Vol A" onclick="myCategoryClick('opt-vola');"/>
       <input type="button" id="opt-volc" value="Vol C" onclick="myCategoryClick('opt-volc');"/>
 <br />
+      <input type="button" value="None" onclick="myCategoryClick('opt-none');"/>      
       <input type="button" id="opt-levi" value="Levi" onclick="myCategoryClick('opt-levi');"/>
       <input type="button" id="opt-donor" value="Donor" onclick="myCategoryClick('opt-donor');"/>
       <input type="button" id="opt-new" value="New Member" onclick="myCategoryClick('opt-new');"/>      
       <input type="button" id="opt-volb" value="Vol B" onclick="myCategoryClick('opt-volb');"/>      
       <input type="button" id="opt-pastpres" value="Past Pres" onclick="myCategoryClick('opt-pastpres');"/>      
-      <input type="button" id="opt-all" value="All" onclick="myFilterReset('opt-all');"/>      
+      <input type="button" id="opt-other" value="Other" onclick="myCategoryClick('opt-other');"/>      
 </div>
   <div style="clear:both"></div>
 <hr />
@@ -126,29 +140,33 @@ function Assign() {
 <div class="cong-box2">
 <p>Mode</p>
 <input id=mode-view type=button onclick="mySetMode('view');" value='View'>
+<?php
+	if( $assign ) {
+?>
 <input id=mode-assign type=button onclick="mySetMode('assign');" value='Assign'>
 <br><br><br><br>
 <p>Action</p>
 <?php
-  $tmp = [];
-  $tmp[] = "setValue('from','Assign')";
-  $tmp[] = "setValue('func','add')";
-  $tmp[] = "saveChoices()";
-  $tmp[] = "addAction('Update')";
-  $js = join(';',$tmp );
-  echo "<div id=div-action-assign>";
-  echo "<input id=action-assign type=button disabled onclick=\"$js\" value=\"Add\">";
-  echo "</div>";
-  
-  $tmp = [];
-  $tmp[] = "setValue('from','Assign')";
-  $tmp[] = "setValue('func','del')";
-  $tmp[] = "saveChoices()";
-  $tmp[] = "addAction('Update')";
-  $js = join(';',$tmp );
-  echo "<div id=div-action-view>";
-  echo "<input id=action-view type=button disabled onclick=\"$js\" value=\"Delete\">";
-  echo "</div>";
+		$tmp = [];
+		$tmp[] = "setValue('from','Assign')";
+		$tmp[] = "setValue('func','add')";
+		$tmp[] = "saveChoices()";
+		$tmp[] = "addAction('Update')";
+		$js = join(';',$tmp );
+		echo "<div id=div-action-assign>";
+		echo "<input id=action-assign type=button disabled onclick=\"$js\" value=\"Add\">";
+		echo "</div>";
+		
+		$tmp = [];
+		$tmp[] = "setValue('from','Assign')";
+		$tmp[] = "setValue('func','del')";
+		$tmp[] = "saveChoices()";
+		$tmp[] = "addAction('Update')";
+		$js = join(';',$tmp );
+		echo "<div id=div-action-view>";
+		echo "<input id=action-view type=button disabled onclick=\"$js\" value=\"Delete\">";
+		echo "</div>";
+	}
 ?>
 </div>
 
@@ -1175,16 +1193,13 @@ function DisplayMain() {
 		
 		if( UserManager( 'authorized', 'assign' ) ) {
 			echo "<div class=assign>";
-			echo "<h3>Assignor Features</h3>";
+			echo "<h3>Assignor</h3>";
 			
 			$jsx = array();
 			$jsx[] = "setValue('area','assign')";
 			$jsx[] = "addAction('Assign')";
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-			echo "<input type=button $js value=Assign>";
-
-			echo "<input type=button onclick=\"setValue('func','Back');addAction('Main');\" value=Refresh>";
-
+			echo "<input type=button $js value='Assign/View'>";
 			
 			echo "</div>";
 			echo "<br>";
@@ -1192,9 +1207,13 @@ function DisplayMain() {
 		
 		if( UserManager( 'authorized', 'office' ) ) {
 			echo "<div class=assign>";
-			echo "<h3>Office Features</h3>";
-			
-			echo "<input type=button onclick=\"setValue('func','Back');addAction('Main');\" value=Refresh>";
+			echo "<h3>Office Staff</h3>";
+	
+			$jsx = array();
+			$jsx[] = "setValue('area','assign')";
+			$jsx[] = "addAction('Assign')";
+			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
+			echo "<input type=button $js value='View'>";	
 		}
 
 		echo "<br>";
@@ -1262,7 +1281,7 @@ function DisplayMain() {
 		$sort_key =( $attributes[$id]['new'] ) ? 1 : 0;
 		printf( "<td class=c sorttable_customkey=$sort_key><input type=checkbox $checked disabled></td>" );
 		
-		foreach( array( "board", "pastpres", "staff", "donor", "vola", "volb", "volc" ) as $cat ) {
+		foreach( array( "board", "pastpres", "staff", "donor", "vola", "volb", "volc", "other" ) as $cat ) {
 			$itag = sprintf( "%s_%s", $cat, $id );
 			$tag = MakeTag($itag);
 			$checked = "";

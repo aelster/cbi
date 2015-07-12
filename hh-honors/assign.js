@@ -22,21 +22,30 @@ function button_init() {
 function myCategoryClick(id) {
 	var i, found;
 	var new_live = [];
-	found = 0;
-	for( i=0; i<cong_buttons_live.length; i++ ) {
-		if( id == cong_buttons_live[i] ) {
-			found = 1;
-		}
-	}
-	if ( found ) {
+	
+	if ( id == 'opt-all' ) {
+		cong_buttons_live = cong_buttons;
+		
+	} else if ( id == 'opt-none' ) {
+		cong_buttons_live = [];
+		
+	} else {
+		found = 0;
 		for( i=0; i<cong_buttons_live.length; i++ ) {
-			if ( id != cong_buttons_live[i] ) {
-				new_live.push( cong_buttons_live[i] );
+			if( id == cong_buttons_live[i] ) {
+				found = 1;
 			}
 		}
-		cong_buttons_live = new_live;
-	} else {
-		cong_buttons_live.push(id);
+		if ( found ) {
+			for( i=0; i<cong_buttons_live.length; i++ ) {
+				if ( id != cong_buttons_live[i] ) {
+					new_live.push( cong_buttons_live[i] );
+				}
+			}
+			cong_buttons_live = new_live;
+		} else {
+			cong_buttons_live.push(id);
+		}
 	}
 	myDisplayCong();
 }
@@ -56,27 +65,30 @@ function myCongClick(id) {
 function myDayClick(id) {
 	var i, found, e;
 	var new_live = [];
-	found = 0;
-	for( i=0; i<day_buttons_live.length; i++ ) {
-		if( id == day_buttons_live[i] ) {
-			found = 1;
-		}
-	}
-	if ( found ) {
+	
+	if ( id == 'day-all' ) {
+		day_buttons_live = day_buttons
+		
+	} else if ( id == 'day-none' ) {
+		day_buttons_live = [];
+
+	} else {
+		found = 0;
 		for( i=0; i<day_buttons_live.length; i++ ) {
-			if ( id != day_buttons_live[i] ) {
-				new_live.push( day_buttons_live[i] );
+			if( id == day_buttons_live[i] ) {
+				found = 1;
 			}
 		}
-		day_buttons_live = new_live;
-	} else {
-		day_buttons_live.push(id);
-	}
-	e = document.getElementById('day-all');
-	if ( day_buttons_live.length == day_buttons.length ) {
-		e.value = 'None';
-	} else {
-		e.value = 'All';
+		if ( found ) {
+			for( i=0; i<day_buttons_live.length; i++ ) {
+				if ( id != day_buttons_live[i] ) {
+					new_live.push( day_buttons_live[i] );
+				}
+			}
+			day_buttons_live = new_live;
+		} else {
+			day_buttons_live.push(id);
+		}
 	}
 	myDisplayHonors();
 }
@@ -104,10 +116,12 @@ function myDisplayCong()  {
 			var attr = tmp[1];
 			if ( cong_db[i][attr] ) {
 				found = 1;
-				num_visible++;
-				if ( cong_db[i].assigned ) {
-					num_assigned++;
-				}
+			}
+		}
+		if ( found ) {
+			num_visible++;
+			if ( cong_db[i].assigned ) {
+				num_assigned++;
 			}
 		}
 		if ( assign_mode == 'view' ) {
@@ -195,33 +209,6 @@ function myDisplayHonors()  {
 	}
 	e = document.getElementById('tot-honors');
 	e.innerHTML = num_assigned.toString() + '/' + num_visible.toString();
-}
-
-function myFilterReset(mode) {
-	if ( mode == 'reset' ) {
-		day_buttons_live = [];
-		cong_buttons_live = [];
-	} else if( mode == 'day-all' ) {
-		var e = document.getElementById('day-all');
-		if ( e.value == "All" ) {
-			day_buttons_live = day_buttons;
-			e.value = "None";
-		} else {
-			day_buttons_live = [];
-			e.value = "All";
-		}
-	} else if( mode == 'opt-all' ) {
-		var e = document.getElementById('opt-all');
-		if ( e.value == "All" ) {
-			cong_buttons_live = cong_buttons;
-			e.value = "None";
-		} else {
-			cong_buttons_live = [];
-			e.value = "All";
-		}
-	}
-	myDisplayHonors();
-	myDisplayCong();
 }
 
 function myHighlightAction() {
