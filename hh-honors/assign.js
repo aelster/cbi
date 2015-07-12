@@ -19,6 +19,26 @@ function button_init() {
 	}
 }
 
+function cong_select(id) {
+	for( var i=0; i<cong_db.length; i++ ) {
+		if ( cong_db[i].id == id ) {
+			cong_db[i].selected = 1;
+		} else if ( cong_db[i].selected ) {
+			cong_db[i].selected = 0;
+		}
+	}
+}
+
+function honors_select(id) {
+	for( var i=0; i<honors_db.length; i++ ) {
+		if ( honors_db[i].id == id ) {
+			honors_db[i].selected = 1;
+		} else if ( honors_db[i].selected ) {
+			honors_db[i].selected = 0;
+		}
+	}
+}
+
 function myCategoryClick(id,forced_state) {
 	var pos;
 	
@@ -47,16 +67,17 @@ function myCategoryClick(id,forced_state) {
 }
 
 function myCongClick(id) {
+	var e = document.getElementById('cong-div');
+	
 	if ( assign_mode == 'assign' ) {
-		for( var i=0; i<cong_db.length; i++ ) {
-			if( cong_db[i].id == id ) {
-				cong_db[i].selected = 1;
-				document.getElementById('cong_' + cong_db[i].id ).className = "closed";
-			} else if ( cong_db[i].selected ) {
-				cong_db[i].selected = 0;			
-				document.getElementById('cong_' + cong_db[i].id ).className = "";
+		for( var i=0; i<e.children.length; i++ ) {
+			if ( e.children[i].id == "cong_" + id ) {
+				e.children[i].className = "closed";
+			} else {
+				e.children[i].className = "";
 			}
 		}
+		cong_select(id);
 		
 	} else {
 		for( var i=0; i<cong_db.length; i++ ) {
@@ -269,16 +290,17 @@ function myHighlightAction() {
 }
 
 function myHonorsClick(id) {
+	var e = document.getElementById('honors-div');
+	
 	if ( assign_mode == 'assign' ) {
-		for( var i=0; i<honors_db.length; i++ ) {
-			if( honors_db[i].id == id ) {
-				honors_db[i].selected = 1;
-				document.getElementById('honor_' + honors_db[i].id ).className = "closed";
-			} else if( honors_db[i].selected ) {
-				honors_db[i].selected = 0;			
-				document.getElementById('honor_' + honors_db[i].id ).className = "";
+		for( var i=0; i<e.children.length; i++ ) {
+			if( e.children[i].id == "honor_" + id ) {
+				e.children[i].className = "closed";
+			} else {
+				e.children[i].className = "";
 			}
 		}
+		honors_select(id);
 
 	} else {
 		for( var i=0; i<honors_db.length; i++ ) {
@@ -294,6 +316,7 @@ function myHonorsClick(id) {
 		}
 	}
 	myHighlightAction();
+	myDisplayHonors();
 }
 
 function myPress(id) {

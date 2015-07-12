@@ -123,7 +123,7 @@ function Assign() {
 
 <div class="cong-box1">
 <p>Honors</p><p id=tot-honors></p>
-<div class=honors-div>
+<div id=honors-div class=honors-div>
 <?php
   while( list( $id, $service, $honor ) = mysql_fetch_array( $honors_res ) ) {
     echo "<p id=honor_$id style='display:none' onclick=\"myHonorsClick($id);\">$service: $honor</p>\n";
@@ -167,7 +167,7 @@ function Assign() {
 
 <div class="cong-box3">
 <p>Congregants</p><p id=tot-cong></p>
-<div class=cong-div>
+<div id=cong-div class=cong-div>
 <?php
   while( list( $id, $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
     echo "<p id=cong_$id style='display:none' onclick=\"myCongClick($id);\">$last, $ff $mf</p>\n";
