@@ -1,7 +1,7 @@
 @charset "UTF-8";
 body {
 	background-color: #fff;
-	margin: 0;
+	margin: 0 auto;
 	padding: 0;
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 100%;
@@ -40,10 +40,31 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 /* ~~ this fixed width container surrounds all other elements ~~ */
 .container {
-	width: 960px;
+	width: 1200px;
+	margin: 0 auto;
 	background-color: #FFF;
-	margin: 0 auto; /* the auto value on the sides, coupled with the width, centers the layout */
 }
+
+.container input {
+	width:80px;
+	background-color: #fff;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+
+.container input.highlighted { 
+	background-color: #9f9;
+}
+
+.container input.add {
+	background-color: #fa0;
+}
+
+.container input.del {
+	background-color: #F00;
+}
+
 
 /* ~~ This is the layout information. ~~ 
 
@@ -75,7 +96,14 @@ div.assign-top {
 	text-align: center;
 }
 
-.container .content-box1 {
+.button-bar {
+	text-align: center;
+	margin: 0 auto;
+	margin-top: 20px;
+	width: 1000px;
+}
+
+.day-buttons {
 	float: left;
 	background-color:#9FCFE0;
 	border-color: #000;
@@ -89,16 +117,7 @@ div.assign-top {
 	text-align: left;
 }
 
-.container .content-box2 {
-	float: left;
-	background-color:#fff;
-	border: none;
-	height: 50px;
-	width: 10px;
-	text-align: left;
-}
-
-.container .content-box3 {
+.container .category-buttons {
 	float:left;
 	background-color:#9FCFE0;
 	border-color: #000;
@@ -109,121 +128,143 @@ div.assign-top {
 	border-left-style: solid;
 	height: 50px;
 	text-align: left;
+	margin-left: 10px;
 }
-	
-.container input {
-	width:80px;
-	background-color: #fff;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-}
-
-.container input.closed {
-	width:80px;
-	background-color: #9F9;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-}
-
-.container input.add {
-	width:80px;
-	background-color: #fa0;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-}
-
-.container input.del {
-	width:80px;
-	background-color: #F00;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-}
-
-.container .cong-box1 {
+.container .honors-box {
 	float: left;
 	height: 500px;
 	width: 50%;
 }
 
-.container .cong-box2 {
+.container .mode-box {
 	float: left;
 	width: 10%;
 	height: 500px;
 }
 
-.container .cong-box3 {
+.container .member-box {
 	float: left;
 	width: 40%;
 	height: 500px;
 }
 
-#form1 .container .cong-box1 #honors {
+#form1 .container .honors-box #honors {
 	border-top-width: 1px;
 	border-right-width: 1px;
 	border-bottom-width: 1px;
 	border-left-width: 1px;
 }
 
-.container .cong-box1 .honors-div {
+.honors-div {
 	border: thin solid #000;
 	float: left;
 	height: 100%;
 	overflow: scroll;
 }
 
-.container .cong-box1 .honors-div p {
+.honors-div p {
 	font-size: 12px;
 	font-weight: normal;
 	text-align: left;
 	padding: 0;
 	line-height:  1.0;
-	margin: 2;
+	margin: 2px;
 	text-indent: -2em;
 	padding-left:  2em;
 }
 
-.container .cong-box1 .honors-div p.closed {
+.honors-div p.hidden {
 	font-size: 12px;
 	font-weight: normal;
 	text-align: left;
 	padding: 0;
 	line-height:  1.0;
-	margin: 2;
+	margin: 2px;
 	text-indent: -2em;
 	padding-left:  2em;
+	background-color: #fff;
+	display: none;
+}
+
+ .honors-div p.visible {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+	padding: 0;
+	line-height:  1.0;
+	margin: 2px;
+	text-indent: -2em;
+	padding-left:  2em;
+	background-color: #fff;
+	display: block;
+}
+
+.honors-div p.highlighted {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+	padding: 0;
+	line-height:  1.0;
+	margin: 2px;
+	text-indent: -2em;
+	padding-left:  2em;
+	display: block;
 	background-color: #9f9;
 }
 
-.container .cong-box3 .cong-div {
+.members-div {
 	border: thin solid #000;
 	float: left;
 	height: 100%;
 	overflow: scroll;
 }
 
-.container .cong-box3 .cong-div p {
+.members-div p {
 	font-size: 12px;
 	font-weight: normal;
 	text-align: left;
 	padding: 0;
 	line-height:  1.0;
-	margin: 2;
+	margin: 2px;
 	text-indent: -2em;
 	padding-left:  2em;
 }
 
-.container .cong-box3 .cong-div p.closed {
+.members-div p.hidden {
 	font-size: 12px;
 	font-weight: normal;
 	text-align: left;
 	padding: 0;
 	line-height:  1.0;
-	margin: 2;
+	margin: 2px;
 	text-indent: -2em;
 	padding-left:  2em;
+	background-color: #fff;
+	display: none;
+}
+
+ .members-div p.visible {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+	padding: 0;
+	line-height:  1.0;
+	margin: 2px;
+	text-indent: -2em;
+	padding-left:  2em;
+	background-color: #fff;
+	display: block;
+}
+
+.members-div p.highlighted {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+	padding: 0;
+	line-height:  1.0;
+	margin: 2px;
+	text-indent: -2em;
+	padding-left:  2em;
+	display: block;
 	background-color: #9f9;
 }

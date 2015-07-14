@@ -31,7 +31,7 @@ function Assign() {
 	echo "<script type='text/javascript'>\n";
 	while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
 		$used = array_key_exists( $id, $honor_assigned ) ? $honor_assigned[$id] : 0;
-		printf( "honors_db.push( { id:%d, service:'day-%s', honor:'%s', selected:0, assigned:$used } );\n", $id, $service, mysql_escape_string($honor) );
+		printf( "honors_db[%d] = { service:'day-%s', honor:'%s', selected:0, assigned:$used };\n", $id, $service, mysql_escape_string($honor) );
 	}
 	echo "</script>";
 	DoQuery( "select * from member_attributes order by id asc" );
@@ -42,9 +42,8 @@ function Assign() {
 		$other = 1;
 		$cohen = $levi = 0;
 		foreach( $row as $key => $val ) {
-			if( $key == 'id' ) {
-				$tmp[] = sprintf( "%s:%d", $key, $val );
-
+			if( $key == "id" ) {
+				continue;
 			} elseif( $key == "ftribe" || $key == "mtribe" ) {
 				$cohen = $cohen || ( $val == "Kohen" );
 				$levi = $levi || ( $val == "Levi" );
@@ -67,7 +66,7 @@ function Assign() {
 		$used = array_key_exists( $row['id'], $member_assigned ) ? $member_assigned[$row['id']] : 0;
 		$tmp[] = sprintf( "%s:%d", "assigned", $used );
 		$tmp[] = sprintf( "%s:%d", "other", $other );
-		printf( "cong_db.push( { %s } );\n", join( ', ', $tmp ) );
+		printf( "members_db[%d] = { %s };\n", $row['id'], join( ', ', $tmp ) );
 	 }
   echo "</script>\n";
   DoQuery( "select id, service, honor from honors order by sort" );
@@ -81,71 +80,68 @@ function Assign() {
   ?>
   
 <div class="container">
-  <div class="assign-top">
-    <input type=button onclick="setValue('func','assign');addAction('Main');" value="Back">
-    <br>
-    <br>
-  </div>
+	<div class="assign-top">
+		<input type=button onclick="setValue('func','assign');addAction('Main');" value="Back">
+	</div>
   
-  <div class="content-box1">
-      <input type="button" value="All" onclick="myDayClick('day-all');myDisplayRefresh();"/>      
-      <input type="button" id="day-rh1" value="Rosh 1" onclick="myDayClick('day-rh1');myDisplayRefresh();"/>
-      <input type="button" id="day-kn" value="Kol Nidre" onclick="myDayClick('day-kn');myDisplayRefresh();"/>
-      <input type="button" id="day-ykp" value="YK - PM" onclick="myDayClick('day-ykp');myDisplayRefresh();"/>
-<br />
-      <input type="button" value="None" onclick="myDayClick('day-none');myDisplayRefresh();"/>      
-      <input type="button" id="day-rh2" value="Rosh 2" onclick="myDayClick('day-rh2');myDisplayRefresh();"/>
-      <input type="button" id="day-yka" value="YK - AM" onclick="myDayClick('day-yka');myDisplayRefresh();"/>
-  <!-- end .content -->
-  </div>
-  
-	<div class="content-box2">
+	<div class="button-bar">
+		<div class="day-buttons">
+			<input type="button" value="All" onclick="myClickDay('day-all');myDisplayRefresh();"/>      
+			<input type="button" id="day-rh1" value="Rosh 1" onclick="myClickDay('day-rh1');myDisplayRefresh();"/>
+			<input type="button" id="day-kn" value="Kol Nidre" onclick="myClickDay('day-kn');myDisplayRefresh();"/>
+			<input type="button" id="day-ykp" value="YK - PM" onclick="myClickDay('day-ykp');myDisplayRefresh();"/>
+			<br />
+			<input type="button" value="None" onclick="myClickDay('day-none');myDisplayRefresh();"/>      
+			<input type="button" id="day-rh2" value="Rosh 2" onclick="myClickDay('day-rh2');myDisplayRefresh();"/>
+			<input type="button" id="day-yka" value="YK - AM" onclick="myClickDay('day-yka');myDisplayRefresh();"/>
+		</div>
+	
+		<div class="category-buttons">
+	      <input type="button" value="All" onclick="myClickCategory('opt-all');myDisplayRefresh();"/>      
+	      <input type="button" id="opt-cohen" value="Cohen" onclick="myClickCategory('opt-cohen');myDisplayRefresh();"/>
+	      <input type="button" id="opt-board" value="Board" onclick="myClickCategory('opt-board');myDisplayRefresh();"/>
+	      <input type="button" id="opt-staff" value="Staff" onclick="myClickCategory('opt-staff');myDisplayRefresh();"/>
+	      <input type="button" id="opt-vola" value="Vol A" onclick="myClickCategory('opt-vola');myDisplayRefresh();"/>
+	      <input type="button" id="opt-volc" value="Vol C" onclick="myClickCategory('opt-volc');myDisplayRefresh();"/>
+			<br />
+	      <input type="button" value="None" onclick="myClickCategory('opt-none');myDisplayRefresh();"/>
+	      <input type="button" id="opt-levi" value="Levi" onclick="myClickCategory('opt-levi');myDisplayRefresh();"/>
+	      <input type="button" id="opt-donor" value="Donor" onclick="myClickCategory('opt-donor');myDisplayRefresh();"/>
+	      <input type="button" id="opt-new" value="New Member" onclick="myClickCategory('opt-new');myDisplayRefresh();"/>      
+	      <input type="button" id="opt-volb" value="Vol B" onclick="myClickCategory('opt-volb');myDisplayRefresh();"/>      
+	      <input type="button" id="opt-pastpres" value="Past Pres" onclick="myClickCategory('opt-pastpres');myDisplayRefresh();"/>      
+	      <input type="button" id="opt-other" value="Other" onclick="myClickCategory('opt-other');myDisplayRefresh();"/>      
+		</div>
+		<div style="clear:both"></div>
 	</div>
 	
-  <div class="content-box3">
-      <input type="button" value="All" onclick="myCategoryClick('opt-all');myDisplayRefresh();"/>      
-      <input type="button" id="opt-cohen" value="Cohen" onclick="myCategoryClick('opt-cohen');myDisplayRefresh();"/>
-      <input type="button" id="opt-board" value="Board" onclick="myCategoryClick('opt-board');myDisplayRefresh();"/>
-      <input type="button" id="opt-staff" value="Staff" onclick="myCategoryClick('opt-staff');myDisplayRefresh();"/>
-      <input type="button" id="opt-vola" value="Vol A" onclick="myCategoryClick('opt-vola');myDisplayRefresh();"/>
-      <input type="button" id="opt-volc" value="Vol C" onclick="myCategoryClick('opt-volc');myDisplayRefresh();"/>
-<br />
-      <input type="button" value="None" onclick="myCategoryClick('opt-none');myDisplayRefresh();"/>
-      <input type="button" id="opt-levi" value="Levi" onclick="myCategoryClick('opt-levi');myDisplayRefresh();"/>
-      <input type="button" id="opt-donor" value="Donor" onclick="myCategoryClick('opt-donor');myDisplayRefresh();"/>
-      <input type="button" id="opt-new" value="New Member" onclick="myCategoryClick('opt-new');myDisplayRefresh();"/>      
-      <input type="button" id="opt-volb" value="Vol B" onclick="myCategoryClick('opt-volb');myDisplayRefresh();"/>      
-      <input type="button" id="opt-pastpres" value="Past Pres" onclick="myCategoryClick('opt-pastpres');myDisplayRefresh();"/>      
-      <input type="button" id="opt-other" value="Other" onclick="myCategoryClick('opt-other');myDisplayRefresh();"/>      
-</div>
-  <div style="clear:both"></div>
-<hr />
+	<hr />
 
-<div class="cong-box1">
-<p>Honors</p><p id=tot-honors></p>
-<div id=honors-div class=honors-div>
+	<div class="honors-box">
+		<p>Honors</p><p id=tot-honors></p>
+		<div id=honors-div class=honors-div>
 <?php
   while( list( $id, $service, $honor ) = mysql_fetch_array( $honors_res ) ) {
-    echo "<p id=honor_$id style='display:none' onclick=\"myHonorsClick($id);\">$service: $honor</p>\n";
+    echo "<p id=honor_$id class='hidden' onclick=\"myClickHonor($id);\">$service: $honor</p>\n";
   }
 ?>
-</div>
-</div>
+		</div>
+	</div>
 
-<div class="cong-box2">
-<p>Mode</p>
-<input id=mode-view type=button onclick="mySetMode('view');" value='View'>
+	<div class="mode-box">
+		<p>Mode</p>
+		<input id=mode-view type=button onclick="mySetMode('view');" value='View'>
 <?php
 	if( $assign ) {
 ?>
-<input id=mode-assign type=button onclick="mySetMode('assign');" value='Assign'>
-<br><br><br><br>
-<p>Action</p>
+		<input id=mode-assign type=button onclick="mySetMode('assign');" value='Assign'>
+		<br><br><br><br>
+		<p>Action</p>
 <?php
 		$tmp = [];
 		$tmp[] = "setValue('from','Assign')";
 		$tmp[] = "setValue('func','add')";
-		$tmp[] = "saveChoices()";
+		$tmp[] = "mySaveChoices()";
 		$tmp[] = "addAction('Update')";
 		$js = join(';',$tmp );
 		echo "<div id=div-action-assign>";
@@ -155,7 +151,7 @@ function Assign() {
 		$tmp = [];
 		$tmp[] = "setValue('from','Assign')";
 		$tmp[] = "setValue('func','del')";
-		$tmp[] = "saveChoices()";
+		$tmp[] = "mySaveChoices()";
 		$tmp[] = "addAction('Update')";
 		$js = join(';',$tmp );
 		echo "<div id=div-action-view>";
@@ -163,34 +159,32 @@ function Assign() {
 		echo "</div>";
 	}
 ?>
-</div>
+	</div>
 
-<div class="cong-box3">
-<p>Congregants</p><p id=tot-cong></p>
-<div id=cong-div class=cong-div>
+	<div class="member-box">
+		<p>Congregants</p><p id=tot-members></p>
+		<div id=members-div class=members-div>
 <?php
   while( list( $id, $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
-    echo "<p id=cong_$id style='display:none' onclick=\"myCongClick($id);\">$last, $ff $mf</p>\n";
+    echo "<p id=member_$id class='hidden' onclick=\"myClickMember($id);\">$last, $ff $mf</p>\n";
   }
 ?>
-</div>
-</div>
+		</div>
+	</div>
 </div>
 
 </form>
 </body>
 <script type='text/javascript'>
-  button_init();
+  myButtonInit();
 <?php
 	$mode_set = 0;
 	$tmp = preg_split( '/,/', $_POST['fields']);
 	foreach( $tmp as $field ) {
-		if( preg_match( "/^day_/", $field ) ) {
-			$tmp2 = preg_split( "/_/", $field );
-			echo "myDayClick('" . $tmp2[1] . "');\n";
-		} elseif( preg_match( "/^cong_/", $field ) ) {
-			$tmp2 = preg_split( "/_/", $field );
-			echo "myCategoryClick('" . $tmp2[1] . "');\n";
+		if( preg_match( "/^day-/", $field ) ) {
+			echo "myClickDay('" . $field . "');\n";
+		} elseif( preg_match( "/^opt-/", $field ) ) {
+			echo "myClickCategory('" . $field . "');\n";
 		} elseif( preg_match( "/^mode/", $field ) ) {
 			$mode_set = 1;
 			$tmp2 = preg_split( "/_/", $field );
@@ -198,7 +192,7 @@ function Assign() {
 		}
 	}
 	if( ! $mode_set ) {
-		echo "mySetMode('view');\n";
+		echo "mySetMode('assign');\n";
 	}
 ?>
 </script>
@@ -1274,19 +1268,19 @@ function DisplayMain() {
 	echo "  <th>Vol A</th>";
 	echo "  <th>Vol B</th>";
 	echo "  <th>Vol C</th>";
-	echo "</tr>";
+	echo "</tr>\n";
 	
 	foreach( $members as $id => $row ) {
 		echo "<tr>";
-		echo "<td>" . sprintf( "%s, %s %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>";
+		echo "<td>" . sprintf( "%s, %s %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>\n";
 
 		printf( "<td class=c>%s</td>", $attributes[$id]['mtribe'] );
 		printf( "<td class=c>%s</td>", $attributes[$id]['ftribe'] );
 		$checked = ( $attributes[$id]['new'] ) ? "checked" : "";
 		$sort_key =( $attributes[$id]['new'] ) ? 1 : 0;
-		printf( "<td class=c sorttable_customkey=$sort_key><input type=checkbox $checked disabled></td>" );
+		printf( "<td class=c sorttable_customkey=$sort_key><input type=checkbox $checked disabled></td>\n" );
 		
-		foreach( array( "board", "pastpres", "staff", "donor", "vola", "volb", "volc", "other" ) as $cat ) {
+		foreach( array( "board", "pastpres", "staff", "donor", "vola", "volb", "volc" ) as $cat ) {
 			$itag = sprintf( "%s_%s", $cat, $id );
 			$tag = MakeTag($itag);
 			$checked = "";
@@ -1299,10 +1293,10 @@ function DisplayMain() {
 			$jsx[] = "addField('$itag')";
 			$jsx[] = "toggleBgRed('update')";
 			$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-			echo "<td class=c sorttable_customkey=$sort_key><input type=\"checkbox\" $tag $checked $js value=1></td>";
+			echo "<td class=c sorttable_customkey=$sort_key><input type=\"checkbox\" $tag $checked $js value=1></td>\n";
 		}
 		
-		echo "</tr>";
+		echo "</tr>\n";
 	}
 	echo "</table>";
 	echo "</div>";
