@@ -306,3 +306,20 @@ div.assign-top {
 	display: block;
 	background-color: #9f9;
 }
+
+.CommonV2 table.honors thead { display:block; }
+.CommonV2 table.honors thead td { text-align: center; background-color: #addfff; }
+.CommonV2 table.honors thead td.service { width: 60px; }
+.CommonV2 table.honors thead td.sort { width: 40px; }
+.CommonV2 table.honors thead td.si { width: 80px; }
+.CommonV2 table.honors thead td.se { width: 80px; }
+.CommonV2 table.honors thead td.honor { width: 400px; }
+.CommonV2 table.honors thead td.page { width: 40px; }
+
+.CommonV2 table.honors tbody { height:600px; overflow-y:scroll; display:block; }
+.CommonV2 table.honors td.service { width: 60px; }
+.CommonV2 table.honors td.sort { width: 40px; }
+.CommonV2 table.honors td.si { width: 80px; text-align: center; }
+.CommonV2 table.honors td.se { width: 80px; text-align: center; }
+.CommonV2 table.honors td.honor { width: 400px; }
+.CommonV2 table.honors td.page { width: 40px; }

@@ -1180,7 +1180,7 @@ function DisplayMain() {
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 			echo "<input type=button $js value=Dates>";
 
-			echo "<input type=button onclick=\"setValue('func','honors');addAction('Main');\" value=\"Honors List - All Days\">";
+			echo "<input type=button onclick=\"setValue('func','edit');addAction('Honors');\" value=\"Honors List - All Days\">";
 			echo "<input type=button onclick=\"setValue('func','members');addAction('Main');\" value=\"Member List - This Year\">";
 			echo "<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">";
 
@@ -1423,6 +1423,9 @@ function EditManager() {
 	if( $area == 'category' ) {
 		EditCategory();
 		
+	} elseif( $area == 'honors' ) {
+		HonorsEdit();
+		
 	} elseif( $area == 'item' ) {
 		EditItem();
 	}
@@ -1585,6 +1588,166 @@ function HashAdd() {
 	if( $gTrace ) array_pop( $gFunction );	
 }
 
+function HonorsEdit() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	echo "<div class=center>";
+	echo "<input type=button value=Back onclick=\"setValue('from', 'HonorsEdit');addAction('Back');\">";
+	
+	$tag = MakeTag('update');
+	$jsx = array();
+	$jsx[] = "setValue('from','HonorsEdit')";
+	$jsx[] = "setValue('area','honors')";
+	$jsx[] = "setValue('func','update')";
+	$jsx[] = "addAction('Update')";
+	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
+	echo "<input type=button value=Update $tag $js>";
+
+	echo "<div class=CommonV2>";
+	echo "<table class=honors>";
+	echo "<thead>";
+	echo "<tr>";
+	echo "  <td class=service>Service</td>";
+	echo "  <td class=sort>Sort</td>";
+	echo "  <td class=si>Shabbat<br>Include</td>";
+	echo "  <td class=se>Shabbat<br>Exclude</td>";
+	echo "  <td class=honor>Honor</td>";
+	echo "  <td class=page>Page</td>";
+	echo "</tr>\n";
+	echo "</thead>";
+	echo "<tbody>";
+
+	$services = [];
+	DoQuery( "select distinct service from honors_master order by sort asc" );
+	while( list( $service ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
+		$services[] = $service;
+	}
+	
+	DoQuery( "select * from honors_master order by sort asc" );
+	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+		$id = $row['id'];
+		echo "<tr>";
+		
+		$tag = sprintf( "%03d_%s", $id, "service" );
+		$jsx = array();
+		$jsx[] = "setValue('from','HonorsEdit')";
+		$jsx[] = "addField('$tag')";
+		$jsx[] = "toggleBgRed('update')";
+		$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
+		echo "<td class=service><select name=$tag $js>";
+		foreach( $services as $val ) {
+			$selected = ( $val == $row['service'] ) ? "selected" : "";
+			echo "<option value=$val $selected>$val</option>";
+		}
+		echo "</select></td>";
+		
+		$tag = sprintf( "%03d_%s", $id, "sort" );
+		$jsx = array();
+		$jsx[] = "setValue('from','HonorsEdit')";
+		$jsx[] = "addField('$tag')";
+		$jsx[] = "toggleBgRed('update')";
+		$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
+		printf( "<td class=sort><input type=text size=2 value=%d name=$tag $js></td>", $row['sort'] );
+	
+		$tag = sprintf( "%03d_%s", $id, "shabbat_include" );
+		$jsx = array();
+		$jsx[] = "setValue('from','HonorsEdit')";
+		$jsx[] = "addField('$tag')";
+		$jsx[] = "toggleBgRed('update')";
+		$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
+		$checked = $row['shabbat_include'] ? "checked" : "";
+		echo "<td class=si><input type=checkbox value=1 name=$tag $js $checked></td>";
+		
+		$tag = sprintf( "%03d_%s", $id, "shabbat_exclude" );
+		$jsx = array();
+		$jsx[] = "setValue('from','HonorsEdit')";
+		$jsx[] = "addField('$tag')";
+		$jsx[] = "toggleBgRed('update')";
+		$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
+		$checked = $row['shabbat_exclude'] ? "checked" : "";
+		echo "<td class=se><input type=checkbox value=1 name=$tag $js $checked></td>";
+		
+		$tag = sprintf( "%03d_%s", $id, "honor" );
+		$jsx = array();
+		$jsx[] = "setValue('from','HonorsEdit')";
+		$jsx[] = "addField('$tag')";
+		$jsx[] = "toggleBgRed('update')";
+		$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
+		echo "<td class=honor><textarea rows=3 cols=50 name=$tag $js>" . $row['honor'] . "</textarea></td>";
+		
+		$tag = sprintf( "%03d_%s", $id, "page" );
+		$jsx = array();
+		$jsx[] = "setValue('from','HonorsEdit')";
+		$jsx[] = "addField('$tag')";
+		$jsx[] = "toggleBgRed('update')";
+		$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
+		printf( "<td class=page><input type=text size=2 value=%d name=$tag $js></td>", $row['page'] );
+		
+		echo "</tr>";
+	}
+	
+	echo "</tbody>";
+	echo "</table>";
+	echo "</div>";
+	echo "</div>";
+	
+	if( $gTrace ) array_pop( $gFunction );	
+}
+
+function HonorsReSort() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	DoQuery( "select id from honors_master order by sort asc" );
+	$outer = $GLOBALS['mysql_result'];
+	$sort = 10;
+	while( list( $id ) = mysql_fetch_array( $outer ) ) {
+		DoQuery( "update honors_master set sort = $sort where id = $id" );
+		$sort += 10;
+	}
+	if( $gTrace ) array_pop( $gFunction );	
+}
+
+
+function HonorsUpdate() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	$tmp2 = preg_split( "/,/", $_POST['fields'] );
+	sort( $tmp2 );
+	$tmp = array_unique( $tmp2 );
+	$tmp[] = "999_endoftheline";
+	$arr = [];
+	$last_id = -1;
+	foreach( $tmp as $fld ) {
+		$id = intval( substr( $fld, 0, 3 ) );
+		if( $id != $last_id && ! empty( $arr ) ) {
+			$query = "update honors_master set " . join(",", $arr ) . " where id = $last_id";
+			DoQuery( $query );
+			$arr = [];
+		}
+		$key = substr( $fld, 4 );
+		$val = array_key_exists( $fld, $_POST ) ? $_POST[$fld] : 0;
+		if( is_int( $key ) ) {
+			$arr[] = sprintf( "`%s` = %d", $key, $val );
+		} else {
+			$arr[] = sprintf( "`%s` = '%s'", $key, mysql_escape_string( $val ) );
+		}
+		$last_id = $id;
+	}
+	HonorsReSort();
+	CreateHonors();
+	if( $gTrace ) array_pop( $gFunction );	
+}
+
+	
 function LocalInit() {
 	include( 'globals.php' );
 	$gDebug = 0;

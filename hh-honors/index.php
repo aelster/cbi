@@ -82,6 +82,10 @@ switch( $gAction ) {
    case( 'Continue' ):
       $gAction = "Start";
       break;
+	
+	case( 'Honors' ):
+		HonorsEdit();
+		$gAction = 'Main';
 
    case( 'Login' ):
       UserManager('verify');
@@ -92,10 +96,7 @@ switch( $gAction ) {
 		if( $func == "backup" ) {
 			exec( "perl /home/cbi18/site/my_backup.pl > /home/cbi18/backup_sql/manual.log", $out );
 		}
-		if( $func == "honors" ) {
-			CreateHonors();
-			$gAction = 'Main';
-		}
+
 		if( $func == "members" ) {
 			DisplayMembers();
 			exit;
@@ -125,6 +126,7 @@ switch( $gAction ) {
          MailUpdate();
          $gAction = 'Main';
 			$_POST['area'] = 'mail';
+			
 		} elseif( $gFrom == "DisplayMembers" ) {
 			MemberUpdate();
 			DisplayMembers();
@@ -147,6 +149,11 @@ switch( $gAction ) {
 				DoQuery( "commit" );
          }
          $gAction = 'Main';
+			
+		} elseif( $gFrom == "HonorsEdit" ) {
+			HonorsUpdate();
+			$gAction = "Edit";
+			$area = "honors";
          
       } elseif( $gFrom == "UserManagerPassword" ) {
          UserManager('update');
