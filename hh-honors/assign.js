@@ -1,14 +1,15 @@
 var honor_buttons = [];
 var honor_buttons_live = [];
-var honors_db = [];
-var honor_selected = 0;
 var honor_refresh = 0;
+var honor_selected = 0;
+var honors_db = [];
 
 var member_buttons = [];
 var member_buttons_live = [];
-var members_db = [];
-var member_selected = 0;
 var member_refresh = 0;
+var member_selected = 0;
+var members_status = [];
+var members_db = [];
 
 var display_mode = "view";  // View or Assign
 
@@ -36,69 +37,13 @@ function myHonorSelect(id) {
 }
 
 function myMemberSelect(id) {
-	for( var i=0; i<member_db.length; i++ ) {
-		if ( member_db[i].id == id ) {
-			member_db[i].selected = 1;
-		} else if ( member_db[i].selected ) {
-			member_db[i].selected = 0;
+	for( var i=0; i<members_db.length; i++ ) {
+		if ( members_db[i].id == id ) {
+			members_status[i].selected = 1;
+		} else if ( members_status[i].selected ) {
+			members_status[i].selected = 0;
 		}
 	}
-}
-
-function myClickHonor(id) {
-	if ( display_mode == 'assign' ) {
-		honors_db.forEach( function xx( obj, hid ) {
-									if ( hid == id ) {
-										obj.selected = 1;
-									} else {
-										obj.selected = 0;
-									}
-								}
-								);
-		
-	} else {
-		for( var i=0; i<honors_db.length; i++ ) {
-			if( honors_db[i].id == id ) {
-				honors_db[i].selected = 1;
-				document.getElementById('honor_' + honors_db[i].id ).className = "closed";
-				document.getElementById('member_' + honors_db[i].assigned ).className = "closed";
-			} else if ( honors_db[i].selected ) {
-				honors_db[i].selected = 0;			
-				document.getElementById('honor_' + honors_db[i].id ).className = "";
-				document.getElementById('member_' + honors_db[i].assigned ).className = "";
-			}
-		}
-	}
-	myHighlightAction();
-	myDisplayHonors();
-}
-
-function myClickMember(id) {
-	if ( display_mode == 'assign' ) {
-		members_db.forEach( function xx( obj, hid ) {
-									if ( hid == id ) {
-										obj.selected = 1;
-									} else {
-										obj.selected = 0;
-									}
-								}
-								);
-		
-	} else {
-		for( var i=0; i<member_db.length; i++ ) {
-			if( member_db[i].id == id ) {
-				member_db[i].selected = 1;
-				document.getElementById('member_' + member_db[i].id ).className = "closed";
-				document.getElementById('honor_' + member_db[i].assigned ).className = "closed";
-			} else if ( member_db[i].selected ) {
-				member_db[i].selected = 0;			
-				document.getElementById('member_' + member_db[i].id ).className = "";
-				document.getElementById('honor_' + member_db[i].assigned ).className = "";
-			}
-		}
-	}
-	myHighlightAction();
-	myDisplayMembers();
 }
 
 function myClickCategory(id,forced_state) {
@@ -157,6 +102,67 @@ function myClickDay(id,forced_state) {
 	honor_refresh = 1;
 }
 
+function myClickHonor(id,opt_click_members) {
+	if ( display_mode == 'assign' ) {
+		honors_db.forEach( function xx( honor, hid ) {
+			if ( hid == id ) {
+				honor.selected = 1;
+			} else {
+				honor.selected = 0;
+			}
+		} );
+		honor_refresh = 1;
+
+	} else {
+		honors_db.forEach( function xx( honor, hid ) {
+			if ( hid == id ) {
+				honors_db[hid].selected = 1;
+				for( cat in members_db[honor.assigned]) {
+					if ( members_db[honor.assigned][cat] ) {
+						myClickCategory('opt-' + cat,1);
+					}
+				}
+			} else {
+				honors_db[hid].selected = 0;
+			}
+		} );
+		if( arguments.length == 1 ) {
+			myClickMember( honors_db[id].assigned, 0 );
+		}
+
+		honor_refresh = 1;
+		member_refresh = 1;
+	}
+}
+
+function myClickMember(id, opt_click_honors) {
+	if ( display_mode == 'assign' ) {
+		members_db.forEach(function xx(member, mid) {
+			if (mid == id) {
+				members_status[mid].selected = 1;
+			} else {
+				members_status[mid].selected = 0;
+			}
+		});
+		member_refresh = 1;		
+
+	} else {
+		members_db.forEach( function xx( member, mid ) {
+			if ( mid == id ) {
+				members_status[mid].selected = 1;
+			} else {
+				members_status[mid].selected = 0;
+			}
+		})
+		if( arguments.length == 1 ) {
+			myClickHonor(members_status[id].assigned);
+		}
+
+		member_refresh = 1;
+		honor_refresh = 1;
+	}
+}
+
 function myDisplayHonors()  {
 	var i, j, e, ok, show;
 	
@@ -177,17 +183,39 @@ function myDisplayHonors()  {
 			var id = e.children[i].id.substr(6); // id's are honor_***
 			if ( honor_buttons_live.indexOf(honors_db[id].service) >= 0 ) {
 				num_visible++;
-				if( honors_db[id].assigned ) {
+				if( honors_db[id].selected ) {
+					e.children[i].className = "highlighted";
+					num_assigned++;
+				} else if( honors_db[id].assigned ) {
 					e.children[i].className = "hidden";
 					num_assigned++;
-				} else if( honors_db[id].selected ) {
-					e.children[i].className = "highlighted";
 				} else {
 					e.children[i].className = "visible";
 				}
 			} else {
 				e.children[i].className = "hidden";
 			}
+		}
+		
+	} else {
+		e = document.getElementById( 'honors-div' );
+		for( i=0; i<e.children.length; i++ ) {
+			var id = e.children[i].id.substr(6); // id's are honor_***
+			if ( honor_buttons_live.indexOf(honors_db[id].service) >= 0 ) {
+				num_visible++;
+				if( honors_db[id].selected ) {
+					e.children[i].className = "highlighted";
+					num_assigned++;
+				} else if( honors_db[id].assigned ) {
+					e.children[i].className = "visible";
+					num_assigned++;
+				} else {
+					e.children[i].className = "hidden";
+				}
+			} else {
+				e.children[i].className = "hidden";
+			}
+
 		}
 	}
 /*	
@@ -210,9 +238,9 @@ function myDisplayHonors()  {
 			}
 			if ( honors_db[i].selected ) {
 				e.className = "closed";
-				for( j=0; j < member_db.length; j++ ) {
-					var f = document.getElementById( 'member_' + member_db[j].id );
-					if( member_db[j].id != honors_db[i].assigned ) {
+				for( j=0; j < members_db.length; j++ ) {
+					var f = document.getElementById( 'member_' + members_db[j].id );
+					if( members_db[j].id != honors_db[i].assigned ) {
 						f.className = "";
 					} else {
 						f.className = "closed";
@@ -257,8 +285,7 @@ function myDisplayMembers()  {
 	if ( display_mode == 'assign' ) {
 		e = document.getElementById( 'members-div' );
 		for( i=0; i < e.children.length; i++ ) {
-			var tmp = e.children[i].id.split(/_/);
-			var id=tmp[1];
+			var id = e.children[i].id.substr(7); // id's are honor_***
 			ok = 0;
 			for( cat of member_buttons_live ) {
 				if ( members_db[id][cat.substr(4)] ) { // categories are opt-***
@@ -267,51 +294,80 @@ function myDisplayMembers()  {
 			}
 			if ( ok ) {
 				num_visible++;
-				if( members_db[id].assigned ) {
+				if( members_status[id].selected ) {
+					e.children[i].className = "highlighted";
+					num_assigned++;
+				} else {if( members_status[id].assigned ) {
 					e.children[i].className = "hidden";
 					num_assigned++;
-				} else if( members_db[id].selected ) {
-					e.children[i].className = "highlighted";
-				} else {
+				} else 
 					e.children[i].className = "visible";
 				}
 			} else {
 					e.children[i].className = "hidden";
 			}
 		}
+		
+	} else {
+		e = document.getElementById( 'members-div' );
+		for( i=0; i<e.children.length; i++ ) {
+			var id = e.children[i].id.substr(7); // id's are honor_***
+			ok = 0;
+			for( cat of member_buttons_live ) {
+				if ( members_db[id][cat.substr(4)] ) { // categories are opt-***
+					ok = 1;
+				}
+			}
+			if ( ok ) {
+				num_visible++;
+				if ( members_status[id].selected ) {
+					e.children[i].className = "highlighted";
+					num_assigned++;
+				} else if( members_status[id].assigned ) {
+					e.children[i].className = "visible";
+					num_assigned++;
+				} else {
+					e.children[i].className = "hidden";
+				}
+			} else {
+				e.children[i].className = "hidden";
+			}
+
+		}
 	}
+
 	/*
-	for( i=0; i<member_db.length; i++ ) {
-		e = document.getElementById( 'member_' + member_db[i].id );
+	for( i=0; i<members_db.length; i++ ) {
+		e = document.getElementById( 'member_' + members_db[i].id );
 
 		show = 0;
 		for( j=0; j<member_buttons_live.length; j++ ) {
 			var tmp = member_buttons_live[j].split("-");
 			var attr = tmp[1];
-			if ( member_db[i][attr] ) {
+			if ( members_db[i][attr] ) {
 				show = 1;
 			}
 		}
 		
 		if ( show ) {
 			num_visible++;
-			if ( member_db[i].assigned ) {
+			if ( members_status[i].assigned ) {
 				num_assigned++;
 			}
 		}
 		
 		if ( display_mode == 'view' ) {
-			if ( show && member_db[i].assigned ) {
+			if ( show && members_status[i].assigned ) {
 				e.style.display = 'block';
 			} else {
 				e.style.display = 'none';
 			}
 			
-			if ( member_db[i].selected ) {
+			if ( members_status[i].selected ) {
 				e.className = "closed";
 				for( j=0; j < honors_db.length; j++ ) {
 					var f = document.getElementById( 'honor_' + honors_db[j].id );
-					if ( honors_db[j].id != member_db[i].assigned ) {
+					if ( honors_db[j].id != members_status[i].assigned ) {
 						f.className = "";
 					} else {
 						f.className = "closed";
@@ -323,9 +379,9 @@ function myDisplayMembers()  {
 			}
 			
 		} else {
-			if ( show && ! member_db[i].assigned ) {
+			if ( show && ! members_status[i].assigned ) {
 				e.style.display='block';
-				if ( member_db[i].selected ) {
+				if ( members_status[i].selected ) {
 					e.className = "closed";
 				} else {
 					e.className = "";
@@ -349,6 +405,7 @@ function myDisplayRefresh() {
 		myDisplayMembers();
 		member_refresh = 0;
 	}
+	myHighlightAction();
 }
 
 function myHighlightAction() {
@@ -361,7 +418,7 @@ function myHighlightAction() {
 	} else { // Option to add, need 2 clicks
 		needed = 0;
 		honors_db.forEach( function xx( obj ) { if ( obj.selected ) { needed++; } } );
-		members_db.forEach( function xx( obj ) { if ( obj.selected ) { needed++; } } );
+		members_db.forEach( function xx( obj, id ) { if ( members_status[id].selected ) { needed++; } } );
 		if ( needed == 2 ) {
 			e = document.getElementById( 'action-assign');
 			e.className = 'add';
@@ -382,13 +439,11 @@ function mySetMode(id) {
 			display_mode = id;
 		}
 	}
-	document.getElementById('div-action-' + id ).style.display = "block";
-	if ( id == 'view' ) {
-		document.getElementById('div-action-assign' ).style.display = "none";
-	} else {
-		document.getElementById('div-action-view' ).style.display = "none";
-	}
+	honors_db.forEach( function xx(honor) { honor.selected = 0; } );
+	members_status.forEach( function xx(member) { member.selected = 0; } );
 
+	honor_refresh = 1;
+	member_refresh = 1;
 	myDisplayRefresh();
 }
 

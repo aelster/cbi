@@ -28,14 +28,14 @@ function Assign() {
 	}
 	
 	DoQuery( "select id, service, honor from honors order by sort" );
-	echo "<script type='text/javascript'>\n";
+	echo "<script type='text/javascript' id=honors-database>\n";
 	while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
 		$used = array_key_exists( $id, $honor_assigned ) ? $honor_assigned[$id] : 0;
 		printf( "honors_db[%d] = { service:'day-%s', honor:'%s', selected:0, assigned:$used };\n", $id, $service, mysql_escape_string($honor) );
 	}
 	echo "</script>";
 	DoQuery( "select * from member_attributes order by id asc" );
-	echo "<script type='text/javascript'>\n";
+	echo "<script type='text/javascript' id=member-database>\n";
 	$tot_other = 0;
 	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
 		$tmp = array();
@@ -62,11 +62,10 @@ function Assign() {
 		}
 		$tmp[] = sprintf( "%s:%d", "cohen", $cohen );
 		$tmp[] = sprintf( "%s:%d", "levi", $levi );
-		$tmp[] = sprintf( "%s:%d", "selected", 0 );
-		$used = array_key_exists( $row['id'], $member_assigned ) ? $member_assigned[$row['id']] : 0;
-		$tmp[] = sprintf( "%s:%d", "assigned", $used );
 		$tmp[] = sprintf( "%s:%d", "other", $other );
 		printf( "members_db[%d] = { %s };\n", $row['id'], join( ', ', $tmp ) );
+		$used = array_key_exists( $row['id'], $member_assigned ) ? $member_assigned[$row['id']] : 0;
+		printf( "members_status[%d] = { selected:0, assigned:%d };\n", $row['id'], $used);
 	 }
   echo "</script>\n";
   DoQuery( "select id, service, honor from honors order by sort" );
@@ -122,7 +121,7 @@ function Assign() {
 		<div id=honors-div class=honors-div>
 <?php
   while( list( $id, $service, $honor ) = mysql_fetch_array( $honors_res ) ) {
-    echo "<p id=honor_$id class='hidden' onclick=\"myClickHonor($id);\">$service: $honor</p>\n";
+    echo "<p id=honor_$id class='hidden' onclick=\"myClickHonor($id);myDisplayRefresh();\">$service: $honor</p>\n";
   }
 ?>
 		</div>
@@ -166,7 +165,7 @@ function Assign() {
 		<div id=members-div class=members-div>
 <?php
   while( list( $id, $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
-    echo "<p id=member_$id class='hidden' onclick=\"myClickMember($id);\">$last, $ff $mf</p>\n";
+    echo "<p id=member_$id class='hidden' onclick=\"myClickMember($id);myDisplayRefresh();\">$last, $ff $mf</p>\n";
   }
 ?>
 		</div>
