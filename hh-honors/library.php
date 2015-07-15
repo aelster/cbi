@@ -129,11 +129,11 @@ function Assign() {
 
 	<div class="mode-box">
 		<p>Mode</p>
-		<input id=mode-view type=button onclick="mySetMode('view');" value='View'>
+		<input id=mode-view type=button class=mode-off onclick="mySetMode('view');" value='View'>
 <?php
 	if( $assign ) {
 ?>
-		<input id=mode-assign type=button onclick="mySetMode('assign');" value='Assign'>
+		<input id=mode-assign type=button class=mode-off onclick="mySetMode('assign');" value='Assign'>
 		<br><br><br><br>
 		<p>Action</p>
 <?php
@@ -143,9 +143,7 @@ function Assign() {
 		$tmp[] = "mySaveChoices()";
 		$tmp[] = "addAction('Update')";
 		$js = join(';',$tmp );
-		echo "<div id=div-action-assign>";
-		echo "<input id=action-assign type=button disabled onclick=\"$js\" value=\"Add\">";
-		echo "</div>";
+		echo "<input id=action-assign type=button class=mode-assign-hidden onclick=\"$js\" value=\"Add\">";
 		
 		$tmp = [];
 		$tmp[] = "setValue('from','Assign')";
@@ -153,9 +151,7 @@ function Assign() {
 		$tmp[] = "mySaveChoices()";
 		$tmp[] = "addAction('Update')";
 		$js = join(';',$tmp );
-		echo "<div id=div-action-view>";
-		echo "<input id=action-view type=button disabled onclick=\"$js\" value=\"Delete\">";
-		echo "</div>";
+		echo "<input id=action-view type=button class=mode-view-hidden onclick=\"$js\" value=\"Delete\">";
 	}
 ?>
 	</div>

@@ -26,26 +26,6 @@ function myButtonInit() {
 	}
 }
 
-function myHonorSelect(id) {
-	for( var i=0; i<honors_db.length; i++ ) {
-		if ( honors_db[i].id == id ) {
-			honors_db[i].selected = 1;
-		} else if ( honors_db[i].selected ) {
-			honors_db[i].selected = 0;
-		}
-	}
-}
-
-function myMemberSelect(id) {
-	for( var i=0; i<members_db.length; i++ ) {
-		if ( members_db[i].id == id ) {
-			members_status[i].selected = 1;
-		} else if ( members_status[i].selected ) {
-			members_status[i].selected = 0;
-		}
-	}
-}
-
 function myClickCategory(id,forced_state) {
 	var pos;
 	
@@ -218,52 +198,6 @@ function myDisplayHonors()  {
 
 		}
 	}
-/*	
-	for( i=0; i < honors_db.length; i++ ) {
-		e = document.getElementById( 'honor_' + honors_db[i].id );
-		
-		show = honor_buttons_live.indexOf( honors_db[i].service ) >= 0;
-		if ( show ) {
-			num_visible++;
-			if ( honors_db[i].assigned ) {
-				num_assigned++;
-			}
-		}
-		
-		if ( display_mode == 'view' ) {
-			if ( show && honors_db[i].assigned ) {
-				e.style.display = 'block';
-			} else {
-				e.style.display = 'none';
-			}
-			if ( honors_db[i].selected ) {
-				e.className = "closed";
-				for( j=0; j < members_db.length; j++ ) {
-					var f = document.getElementById( 'member_' + members_db[j].id );
-					if( members_db[j].id != honors_db[i].assigned ) {
-						f.className = "";
-					} else {
-						f.className = "closed";
-					}
-				}
-			} else {
-				e.className = "";
-			}
-
-		} else {
-			if ( show && ! honors_db[i].assigned ) {
-				e.style.display = 'block';
-				if ( honors_db[i].selected ) {
-					e.className = "closed";
-				} else {
-					e.className = "";
-				}
-			} else {
-				e.style.display = 'none';
-			}
-		}
-	}
-	*/
 	e = document.getElementById('tot-honors');
 	e.innerHTML = num_assigned.toString() + '/' + num_visible.toString() + " assigned";
 }
@@ -335,63 +269,6 @@ function myDisplayMembers()  {
 
 		}
 	}
-
-	/*
-	for( i=0; i<members_db.length; i++ ) {
-		e = document.getElementById( 'member_' + members_db[i].id );
-
-		show = 0;
-		for( j=0; j<member_buttons_live.length; j++ ) {
-			var tmp = member_buttons_live[j].split("-");
-			var attr = tmp[1];
-			if ( members_db[i][attr] ) {
-				show = 1;
-			}
-		}
-		
-		if ( show ) {
-			num_visible++;
-			if ( members_status[i].assigned ) {
-				num_assigned++;
-			}
-		}
-		
-		if ( display_mode == 'view' ) {
-			if ( show && members_status[i].assigned ) {
-				e.style.display = 'block';
-			} else {
-				e.style.display = 'none';
-			}
-			
-			if ( members_status[i].selected ) {
-				e.className = "closed";
-				for( j=0; j < honors_db.length; j++ ) {
-					var f = document.getElementById( 'honor_' + honors_db[j].id );
-					if ( honors_db[j].id != members_status[i].assigned ) {
-						f.className = "";
-					} else {
-						f.className = "closed";
-						myClickDay( honors_db[j].service, 1 );
-					}
-				}
-			} else {
-				e.className = "";
-			}
-			
-		} else {
-			if ( show && ! members_status[i].assigned ) {
-				e.style.display='block';
-				if ( members_status[i].selected ) {
-					e.className = "closed";
-				} else {
-					e.className = "";
-				}
-			} else {
-				e.style.display='none';
-			}
-		}
-	}
-	*/
 	e = document.getElementById('tot-members');
 	e.innerHTML = num_assigned.toString() + '/' + num_visible.toString() + " assigned";
 }
@@ -410,41 +287,19 @@ function myDisplayRefresh() {
 
 function myHighlightAction() {
 	var e, i, needed;
-	if ( display_mode == 'view' ) { // Option to delete, only need 1 click
-		e = document.getElementById( 'action-view' );
-		e.className = 'del';
+	needed = 0;
+	honors_db.forEach( function xx( obj ) { if ( obj.selected ) { needed++; } } );
+	members_db.forEach( function xx( obj, id ) { if ( members_status[id].selected ) { needed++; } } );
+
+	e = document.getElementById( 'action-' + display_mode );
+
+	if ( needed == 2 ) {
+		e.className = "action-" + display_mode + "-active";
 		e.disabled = false;
-
-	} else { // Option to add, need 2 clicks
-		needed = 0;
-		honors_db.forEach( function xx( obj ) { if ( obj.selected ) { needed++; } } );
-		members_db.forEach( function xx( obj, id ) { if ( members_status[id].selected ) { needed++; } } );
-		if ( needed == 2 ) {
-			e = document.getElementById( 'action-assign');
-			e.className = 'add';
-			e.disabled = false;
-		}
+	} else {
+		e.className = "action-" + display_mode + "-visible";
+		e.disabled = true;
 	}
-	
-}
-
-function mySetMode(id) {
-	var e = document.getElementsByTagName( "input");
-	for ( var i=0; i < e.length; i++ ) {
-		if (e[i].id.match(/^mode-/) ) {
-			e[i].className = "";
-			if ( e[i].id == 'mode-' + id ) {
-				e[i].className = "highlighted";
-			}
-			display_mode = id;
-		}
-	}
-	honors_db.forEach( function xx(honor) { honor.selected = 0; } );
-	members_status.forEach( function xx(member) { member.selected = 0; } );
-
-	honor_refresh = 1;
-	member_refresh = 1;
-	myDisplayRefresh();
 }
 
 function mySaveChoices() {
@@ -467,4 +322,22 @@ function mySaveChoices() {
 		addField( member_buttons_live[i] );
 	}
 	addField( 'mode_' + display_mode );
+}
+
+function mySetMode(mode) {
+	var e;
+	
+	document.getElementById( 'mode-' + display_mode ).className = "mode-off";
+	document.getElementById( 'action-' + display_mode ).className = "action-" + mode + "-hidden";
+	
+	document.getElementById( 'mode-' + mode ).className = "mode-on";
+	document.getElementById( 'action-' + mode ).className = "action-" + mode + "-visible";
+	display_mode = mode;
+
+	honors_db.forEach( function xx(honor) { honor.selected = 0; } );
+	members_status.forEach( function xx(member) { member.selected = 0; } );
+
+	honor_refresh = 1;
+	member_refresh = 1;
+	myDisplayRefresh();
 }

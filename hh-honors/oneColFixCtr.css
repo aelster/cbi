@@ -53,18 +53,54 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	-webkit-border-radius: 5px;
 }
 
-.container input.highlighted { 
+.container input.highlighted {
+	width:80px;
 	background-color: #9f9;
 }
 
-.container input.add {
-	background-color: #fa0;
+.container input.mode-off {
+	width:80px;
+	background-color: #fff;
 }
 
-.container input.del {
-	background-color: #F00;
+.container input.mode-on {
+	width:80px;
+	background-color: #9f9;
 }
 
+.container input.action-assign-hidden {
+	width:80px;
+	display: none;
+}
+
+.container input.action-assign-visible {
+	width:80px;
+	display: block;
+	background-color:  #fff;
+}
+
+.container input.action-assign-active {
+	width:80px;
+	display: block;
+	background-color:  #fa0;
+}
+
+.container input.action-view-hidden {
+	width:80px;
+	display: none;
+}
+
+.container input.action-view-visible {
+	width:80px;
+	display: block;
+	background-color:  #fff;
+}
+
+.container input.action-view-active {
+	width:80px;
+	display: block;
+	background-color:  #f00;
+}
 
 /* ~~ This is the layout information. ~~ 
 
@@ -138,14 +174,16 @@ div.assign-top {
 
 .container .mode-box {
 	float: left;
-	width: 10%;
+	width: 8%;
 	height: 500px;
+
 }
 
 .container .member-box {
 	float: left;
 	width: 40%;
 	height: 500px;
+
 }
 
 #form1 .container .honors-box #honors {
