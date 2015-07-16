@@ -323,3 +323,14 @@ div.assign-top {
 .CommonV2 table.honors td.se { width: 80px; text-align: center; }
 .CommonV2 table.honors td.honor { width: 400px; }
 .CommonV2 table.honors td.page { width: 40px; }
+
+.CommonV2 table.members thead { display:block; }
+.CommonV2 table.members thead td { text-align: center; background-color: #addfff; }
+.CommonV2 table.members thead td.name { width: 450px; }
+.CommonV2 table.members thead td.tribe { width: 60px; text-align: center;}
+.CommonV2 table.members thead td.box { width: 50px; text-align: center; }
+
+.CommonV2 table.members tbody { height:600px; overflow-y:scroll; display:block; }
+.CommonV2 table.members td.name { width: 450px; }
+.CommonV2 table.members td.tribe { width: 60px; text-align: center; }
+.CommonV2 table.members td.box { width: 50px; text-align: center; }

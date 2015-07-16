@@ -1217,89 +1217,6 @@ function DisplayMain() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
- function DisplayMembers() {
-	include( 'globals.php' );
-	if( $gTrace ) {
-		$gFunction[] = __FUNCTION__;
-		Logger();
-	}
-	echo "<div class=center>";
-	
-	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
-	
-	$tag = MakeTag('update');
-	$jsx = array();
-	$jsx[] = "setValue('area','$area')";
-	$jsx[] = "setValue('from','DisplayMembers')";
-	$jsx[] = "setValue('func','update')";
-	$jsx[] = "addAction('Update')";
-	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-	echo "<input type=button value=Update $tag $js>";
-	
-	DoQuery( "select * from members order by `Last Name` asc" );
-	$members = array();
-	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
-		$id = $row['ID'];
-		$members[$id] = $row;
-	}
-
-	DoQuery( "select * from member_attributes");
-	$attributes = array();
-	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
-		$attributes[$row['id']] = $row;
-	}
-	
-	echo "<div class=CommonV2>";
-	echo "<table class=sortable>";
-	echo "<tr>";
-	echo "  <th>Name</th>";
-	echo "  <th>Male<br>Tribe</th>";
-	echo "  <th>Female<br>Tribe</th>";
-	echo "  <th>New</th>";
-	echo "  <th>Board</th>";
-	echo "  <th>Past Pres</th>";
-	echo "  <th>Staff</th>";
-	echo "  <th>Donor</th>";
-	echo "  <th>Vol A</th>";
-	echo "  <th>Vol B</th>";
-	echo "  <th>Vol C</th>";
-	echo "</tr>\n";
-	
-	foreach( $members as $id => $row ) {
-		echo "<tr>";
-		echo "<td>" . sprintf( "%s, %s %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>\n";
-
-		printf( "<td class=c>%s</td>", $attributes[$id]['mtribe'] );
-		printf( "<td class=c>%s</td>", $attributes[$id]['ftribe'] );
-		$checked = ( $attributes[$id]['new'] ) ? "checked" : "";
-		$sort_key =( $attributes[$id]['new'] ) ? 1 : 0;
-		printf( "<td class=c sorttable_customkey=$sort_key><input type=checkbox $checked disabled></td>\n" );
-		
-		foreach( array( "board", "pastpres", "staff", "donor", "vola", "volb", "volc" ) as $cat ) {
-			$itag = sprintf( "%s_%s", $cat, $id );
-			$tag = MakeTag($itag);
-			$checked = "";
-			if( array_key_exists( $id, $attributes ) ) {
-				$checked = empty( $attributes[$id][$cat] ) ? "" : "checked";
-				$sort_key = empty( $attributes[$id][$cat] ) ? "0" : "1";
-			}
-			$jsx = array();
-			$jsx[] = "setValue('from','DisplayMembers')";
-			$jsx[] = "addField('$itag')";
-			$jsx[] = "toggleBgRed('update')";
-			$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-			echo "<td class=c sorttable_customkey=$sort_key><input type=\"checkbox\" $tag $checked $js value=1></td>\n";
-		}
-		
-		echo "</tr>\n";
-	}
-	echo "</table>";
-	echo "</div>";
-	echo "</div>";
-	
-	if( $gTrace ) array_pop( $gFunction );
-}
-
 function EditItem() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -1828,7 +1745,95 @@ function MailUpdate() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
-function MemberUpdate() {
+
+ function MembersEdit() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	echo "<div class=center>";
+	
+	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
+	
+	$tag = MakeTag('update');
+	$jsx = array();
+	$jsx[] = "setValue('area','$area')";
+	$jsx[] = "setValue('from','DisplayMembers')";
+	$jsx[] = "setValue('func','update')";
+	$jsx[] = "addAction('Update')";
+	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
+	echo "<input type=button value=Update $tag $js>";
+	
+	DoQuery( "select * from members order by `Last Name` asc" );
+	$members = array();
+	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+		$id = $row['ID'];
+		$members[$id] = $row;
+	}
+
+	DoQuery( "select * from member_attributes");
+	$attributes = array();
+	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+		$attributes[$row['id']] = $row;
+	}
+	
+	echo "<div class=CommonV2>";
+	echo "<table class=members>";
+	echo "<thead>";
+	echo "<tr>";
+	echo "  <td class=name>Name</td>";
+	echo "  <td class=tribe>Male<br>Tribe</td>";
+	echo "  <td class=tribe>Female<br>Tribe</td>";
+	echo "  <td class=box>New</td>";
+	echo "  <td class=box>Board</td>";
+	echo "  <td class=box>Past Pres</td>";
+	echo "  <td class=box>Staff</td>";
+	echo "  <td class=box>Donor</td>";
+	echo "  <td class=box>Vol A</td>";
+	echo "  <td class=box>Vol B</td>";
+	echo "  <td class=box>Vol C</td>";
+	echo "</tr>\n";
+	echo "</thead>";
+	echo "<tbody>";
+	
+	foreach( $members as $id => $row ) {
+		echo "<tr>";
+		echo "<td class=name>" . sprintf( "%s, %s %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>\n";
+
+		printf( "<td class=tribe>%s</td>", $attributes[$id]['mtribe'] );
+		printf( "<td class=tribe>%s</td>", $attributes[$id]['ftribe'] );
+		$checked = ( $attributes[$id]['new'] ) ? "checked" : "";
+		$sort_key =( $attributes[$id]['new'] ) ? 1 : 0;
+		printf( "<td class=box sorttable_customkey=$sort_key><input type=checkbox $checked disabled></td>\n" );
+		
+		foreach( array( "board", "pastpres", "staff", "donor", "vola", "volb", "volc" ) as $cat ) {
+			$itag = sprintf( "%s_%s", $cat, $id );
+			$tag = MakeTag($itag);
+			$checked = "";
+			if( array_key_exists( $id, $attributes ) ) {
+				$checked = empty( $attributes[$id][$cat] ) ? "" : "checked";
+				$sort_key = empty( $attributes[$id][$cat] ) ? "0" : "1";
+			}
+			$jsx = array();
+			$jsx[] = "setValue('from','DisplayMembers')";
+			$jsx[] = "addField('$itag')";
+			$jsx[] = "toggleBgRed('update')";
+			$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
+			echo "<td class=box sorttable_customkey=$sort_key><input type=\"checkbox\" $tag $checked $js value=1></td>\n";
+		}
+		
+		echo "</tr>\n";
+	}
+	echo "</tbody>";
+	echo "</table>";
+	echo "</div>";
+	echo "</div>";
+	
+	if( $gTrace ) array_pop( $gFunction );
+}
+
+function MembersUpdate() {
 	include( 'globals.php' );
 	if( $gTrace ) {
 		$gFunction[] = __FUNCTION__;

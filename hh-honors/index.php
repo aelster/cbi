@@ -98,7 +98,7 @@ switch( $gAction ) {
 		}
 
 		if( $func == "members" ) {
-			DisplayMembers();
+			MembersEdit();
 			exit;
 		}
 		if( $func == "lkjsd" ) {
@@ -127,9 +127,9 @@ switch( $gAction ) {
          $gAction = 'Main';
 			$_POST['area'] = 'mail';
 			
-		} elseif( $gFrom == "DisplayMembers" ) {
-			MemberUpdate();
-			DisplayMembers();
+		} elseif( $gFrom == "MembersEdit" ) {
+			MembersUpdate();
+			MembersEdit();
 			exit;
 			
 		} elseif( $gFrom == "DisplayFinancial" ) {
