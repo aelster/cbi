@@ -51,8 +51,9 @@ CREATE TABLE `assignments` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `honor_id` int(11) NOT NULL,
   `member_id` int(11) NOT NULL,
+  `hash` varchar(6) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,7 +62,7 @@ CREATE TABLE `assignments` (
 
 LOCK TABLES `assignments` WRITE;
 /*!40000 ALTER TABLE `assignments` DISABLE KEYS */;
-INSERT INTO `assignments` VALUES (1,110,1217),(2,118,1392),(3,22,1264),(4,134,1654),(5,90,945),(6,97,128);
+INSERT INTO `assignments` VALUES (1,110,1217,''),(2,118,1392,''),(3,22,1264,''),(4,134,1654,''),(5,90,945,''),(6,97,128,''),(7,91,259,'05fbe8'),(8,98,448,'bb0824'),(9,108,486,'e1696a');
 /*!40000 ALTER TABLE `assignments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -460,4 +461,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2015-07-16  0:56:26
+-- Dump completed on 2015-07-17  1:09:56

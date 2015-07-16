@@ -304,13 +304,13 @@ function myHighlightAction() {
 
 function mySaveChoices() {
 	var i;
-	honors_db.forEach( function xx( obj, id ) {
-		if ( obj.selected ) {
+	honors_db.forEach( function xx( honor, id ) {
+		if ( honor.selected ) {
 			addField( 'honor_' + id );
 		}
 	});
-	members_db.forEach( function xx( obj, id ) {
-		if ( obj.selected ) {
+	members_status.forEach( function xy( member, id ) {
+		if ( member.selected ) {
 			addField( 'member_' + id );
 		}
 	});

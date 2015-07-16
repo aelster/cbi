@@ -220,7 +220,13 @@ function AssignAdd() {
 </script>
 <?php
 	} else {
-		DoQuery( "insert into assignments set honor_id = $honor_id, member_id = $member_id");
+		$unique = 0;
+		while( ! $unique ) {
+			$random_hash = substr(md5(uniqid(rand(), true)), 8, 6); // 6 characters long
+			DoQuery( "select * from assignments where hash = '$random_hash'" );
+			$unique = $GLOBALS['mysql_numrows'] == 0 ? 1 : 0;
+		}					  
+		DoQuery( "insert into assignments set honor_id = $honor_id, member_id = $member_id, hash = '$random_hash'" );
 	}
 	
 	if( $gTrace ) array_pop( $gFunction );
