@@ -1847,6 +1847,7 @@ function MembersUpdate() {
 		Logger();
 	}
 	
+	DoQuery( "start transaction" );
 	$tmp = array_unique( preg_split( '/,/', $_POST['fields'] ) );
 	foreach( $tmp as $field ) {
 		if( empty( $field ) ) continue;
@@ -1859,6 +1860,8 @@ function MembersUpdate() {
 			DoQuery( "insert into member_attributes set `$f` = $new_val, `id` = $id" );
 		}
 	}
+	DoQuery( "commit" );
+	
 	if( $gTrace ) array_pop( $gFunction );
 }
 	
