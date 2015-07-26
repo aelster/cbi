@@ -101,7 +101,7 @@ switch( $gAction ) {
 			MembersEdit();
 			exit;
 		}
-		if( $func == "lkjsd" ) {
+		if( $func == "build-memb" ) {
 			CreateMembers();
 			$gAction = 'Main';
 		}

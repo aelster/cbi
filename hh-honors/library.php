@@ -1172,6 +1172,7 @@ function DisplayMain() {
 			echo "<input type=button onclick=\"setValue('func','backup');addAction('Main');\" value=\"Backup\">";
 			echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
 			echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
+			echo "<input type=button onclick=\"setValue('func','build-memb');addAction('Main');\" value=\"Build Members\">";
 
 			echo "</div>";
 		}
