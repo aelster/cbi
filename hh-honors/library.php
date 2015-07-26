@@ -212,11 +212,14 @@ function AssignAdd() {
 				$member_id = $tmp2[1];
 			}
 	}
+	DoQuery( "start transaction" );
+	
 	DoQuery( "select * from assignments where honor_id = $honor_id or member_id = $member_id" );
 	if( $GLOBALS['mysql_numrows'] > 0 ) {
 		?>
 <script type='text/javascript'>
 	alert( "Duplicate assignment rejected" );
+	DoQuery( "rollback" );
 </script>
 <?php
 	} else {
@@ -227,6 +230,7 @@ function AssignAdd() {
 			$unique = $GLOBALS['mysql_numrows'] == 0 ? 1 : 0;
 		}					  
 		DoQuery( "insert into assignments set honor_id = $honor_id, member_id = $member_id, hash = '$random_hash'" );
+		DoQuery( "commit" );
 	}
 	
 	if( $gTrace ) array_pop( $gFunction );
@@ -1187,6 +1191,7 @@ function DisplayMain() {
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 			echo "<input type=button $js value=Dates>";
 
+			echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
 			echo "<input type=button onclick=\"setValue('func','edit');addAction('Honors');\" value=\"Honors List - All Days\">";
 			echo "<input type=button onclick=\"setValue('func','members');addAction('Main');\" value=\"Member List - This Year\">";
 			echo "<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">";
