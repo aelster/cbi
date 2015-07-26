@@ -1766,7 +1766,7 @@ function MailUpdate() {
 	$tag = MakeTag('update');
 	$jsx = array();
 	$jsx[] = "setValue('area','$area')";
-	$jsx[] = "setValue('from','DisplayMembers')";
+	$jsx[] = "setValue('from','" . __FUNCTION__ . "')";
 	$jsx[] = "setValue('func','update')";
 	$jsx[] = "addAction('Update')";
 	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
