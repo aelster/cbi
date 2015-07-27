@@ -185,6 +185,9 @@ function myDisplayHonors()  {
 				num_visible++;
 				if( honors_db[id].selected ) {
 					e.children[i].className = "highlighted";
+					var j = num_assigned - 10;
+					if ( j < 0 ) { j = 0; }
+					e.scrollTop = e.children[i].scrollHeight * j;
 					num_assigned++;
 				} else if( honors_db[id].assigned ) {
 					e.children[i].className = "visible";
@@ -256,6 +259,9 @@ function myDisplayMembers()  {
 				num_visible++;
 				if ( members_status[id].selected ) {
 					e.children[i].className = "highlighted";
+					var j = num_assigned - 10;
+					if ( j < 0 ) { j = 0; }
+					e.scrollTop = e.children[i].scrollHeight * j;
 					num_assigned++;
 				} else if( members_status[id].assigned ) {
 					e.children[i].className = "visible";

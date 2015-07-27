@@ -71,7 +71,7 @@ function Assign() {
   DoQuery( "select id, service, honor from honors order by sort" );
   $honors_res = $GLOBALS['mysql_result'];
   
-  $query = "select id, `Last Name`, `Female 1st Name`, `Male 1st Name` from members";
+  $query = "select id, `Last Name`, `Female 1st Name`, `Male 1st Name`, `Female Tribe`, `Male Tribe` from members";
   $query .= " where Status not like 'Non-Member'";
   $query .= " order by `Last Name` asc";
   DoQuery( $query );
@@ -160,9 +160,29 @@ function Assign() {
 		<p>Congregants</p><p id=tot-members></p>
 		<div id=members-div class=members-div>
 <?php
-  while( list( $id, $last, $ff, $mf ) = mysql_fetch_array( $member_res ) ) {
-    echo "<p id=member_$id class='hidden' onclick=\"myClickMember($id);myDisplayRefresh();\">$last, $ff $mf</p>\n";
-  }
+	while( list( $id, $last, $ff, $mf, $ft, $mt ) = mysql_fetch_array( $member_res ) ) {
+		$str = "$last,";
+		if( ! empty( $ff ) ) {
+			if( $ft == "Kohen" ) {
+				$str .= " (C) $ff";
+			} elseif( $ft == "Levi" ) {
+				$str .= "(L) $ff";
+			} else {
+				$str .= " $ff";
+			}
+		}
+		if( ! empty( $mf ) ) {
+			if( $mt == "Kohen" ) {
+				$str .= " (C) $mf";
+			} elseif( $mt == "Levi" ) {
+				$str .= "(L) $mf";
+			} else {
+				$str .= " $mf";
+			}
+		}
+
+		echo "<p id=member_$id class='hidden' onclick=\"myClickMember($id);myDisplayRefresh();\">$str</p>\n";
+	}
 ?>
 		</div>
 	</div>

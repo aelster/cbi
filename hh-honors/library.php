@@ -1771,7 +1771,7 @@ function	SendConfirmation() {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
-	$subject = "5775 CBI High Holy Day Honor";
+	$subject = "5776 CBI High Holy Day Honor";
 	
 	$message = Swift_Message::newInstance($subject);
 	
