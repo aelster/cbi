@@ -42,6 +42,8 @@ switch( $gAction )
 			ExcelSpiritual();
 		} elseif( $area == "items" ) {
 			ExcelItems();
+		} elseif( $area == "gabbai" ) {
+			ExcelGabbai();
 		}
 		break;
 	

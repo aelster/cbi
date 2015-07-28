@@ -1242,7 +1242,10 @@ function DisplayMain() {
 			$jsx[] = "setValue('area','assign')";
 			$jsx[] = "addAction('Assign')";
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-			echo "<input type=button $js value='View'>";	
+			echo "<input type=button $js value='View'>";
+			
+			echo "<input type=button onclick=\"setValue('area','gabbai');addAction('Download');\" value=\"Excel Download\">";
+
 		}
 	}
 	
@@ -1380,6 +1383,49 @@ function EditManager() {
 	}
 	
 	if( $gTrace ) array_pop( $gFunction );
+}
+
+function ExcelGabbai() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	$ts = time() + $time_offset;
+	$str = date( 'Ymj', $ts );
+	header("Content-type: application/csv");
+	header("Content-Disposition: attachment;Filename=CBI-HH-Honors-$str.csv");
+
+	$query = "select a.honor_id, a.member_id,";
+	$query .= " b.service, b.page, b.honor,";
+	$query .= " c.`female 1st name`, c.`male 1st name`, c.`last name`";
+	$query .= " from assignments a";
+	$query .= " join honors b on a.honor_id=b.id";
+	$query .= " join members c on a.member_id=c.id";
+	$query .= " order by b.sort asc";
+	DoQuery( $query );
+	
+	$body = [];
+	$body[] = '"Service","Page","Honor","Member"';
+	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+		$values = [];
+		$values[] = '"' . $row["service"] . '"';
+		$values[] = $row["page"];
+		$values[] = '"' . $row["honor"] . '"';
+		if( empty( $row["female 1st name"] ) ) {
+			$values[] = sprintf( '"%s %s"', $row["male 1st name"], $row["last name" ] );
+		} elseif( empty( $row["male 1st name"] ) ) {
+			$values[] = sprintf( '"%s %s"', $row["female 1st name"], $row["last name" ] );
+		} else {
+			$values[] = sprintf( '"%s %s %s"', $row["female 1st name"], $row["male 1st name"], $row["last name" ] );
+		}
+		$body[] = join( ",", $values );
+	}
+
+	echo join("\n", $body );
+	exit;
+	
+	if( $gTrace ) array_pop( $gFunction );	
 }
 
 function ExcelItems() {
