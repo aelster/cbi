@@ -11,12 +11,15 @@ global $gAccessLevel;
 global $gAction;
 global $gActive;
 global $gDb;
+global $gDb2;
 global $gDebug;
 global $gEnabled;
 global $gFrom;
 global $gFunction;
+global $gJewishYear;
 global $gLF;
 global $gMailAdmin;
+global $gService;
 global $gSourceCode;
 global $gSpiritIDtoDesc;
 global $gSpiritIDtoType;
@@ -87,4 +90,12 @@ $gSendTop = 1;
 $gSendOld = 2;
 $gSendBought = 3;
 $gSendOldBought = 4;
+
+$gService = [];
+$gService['rh1'] = "Rosh Hashanah Day #1";
+$gService['rh2'] = "Rosh Hashanah Day #2";
+$gService['kn'] = "Kol Nidre";
+$gService['yka'] = "Yom Kippur Morning";
+$gService['ykp'] = "Yom Kippur Afternoon";
+
 ?>

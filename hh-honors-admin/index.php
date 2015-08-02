@@ -56,11 +56,12 @@ switch( $gAction )
 }
 SessionStuff('start');
 WriteHeader();
+LocalInit();
+
 	echo "<div class=center>$gLF";
 	if( $area != 'assign') echo "<img src=\"assets/CBI_ner_tamid.png\">$gLF";
-	echo "<h2>5776 CBI High Holy Day Honors</h2>$gLF";
+	echo "<h2>$gJewishYear CBI High Holy Day Honors</h2>$gLF";
 	echo "</div>$gLF";
-LocalInit();
 AddForm();
 
 if( $gDebug ) { DumpPostVars( "After SessionStuff(start): gAction=[$gAction]" ); }
@@ -107,6 +108,11 @@ switch( $gAction ) {
 			CreateMembers();
 			$gAction = 'Main';
 		}
+		
+		if( $func == "mails" ) {
+			MailAssignments();
+			$gAction = "Main";
+		}
 		break;
 	
 	case( 'Update' ):
@@ -117,6 +123,12 @@ switch( $gAction ) {
 			} elseif( $func == "del" ) {
 				AssignDel();
 				$gAction = "Assign";
+			} elseif( $func == "mail" ) {
+				MailAssignment();
+				$gAction = "Assign";
+			} elseif( $func == "mails" ) {
+				MailAssignments();
+				$gAction = "Assign";
 			}
 		
 		} elseif( $gFrom == "DisplayDates" ) {
@@ -124,7 +136,7 @@ switch( $gAction ) {
          $gAction = 'Main';
 			$_POST['area'] = 'dates';
          
-		} elseif( $gFrom == "DisplayMail" ) {
+		} elseif( $gFrom == "MailDisplay" ) {
          MailUpdate();
          $gAction = 'Main';
 			$_POST['area'] = 'mail';

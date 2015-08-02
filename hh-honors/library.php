@@ -1510,6 +1510,14 @@ function LocalInit() {
 			DoQuery( "insert into dates set label = '$label', date = $val");
 		}
 	}
+#============
+	DoQuery( "select date from dates where id = 1", $gDb2 );
+	list( $td ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	$date = new DateTime($td);
+	$date->add(new DateInterval('P1D'));
+	$jd = cal_to_jd( CAL_GREGORIAN, $date->format('m'), $date->format('d'), $date->format('Y') );
+	$arr = cal_from_jd( $jd, CAL_JEWISH );
+	$gJewishYear = $arr['year'];
 	
 #============
 	$date_server = new DateTime( '2000-01-01' );

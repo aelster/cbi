@@ -235,7 +235,7 @@ function myDisplayMembers()  {
 					e.children[i].className = "highlighted";
 					num_assigned++;
 				} else {if( members_status[id].assigned ) {
-					e.children[i].className = "hidden";
+					e.children[i].className = "assigned";
 					num_assigned++;
 				} else 
 					e.children[i].className = "visible";
@@ -302,6 +302,12 @@ function myHighlightAction() {
 	if ( needed == 2 ) {
 		e.className = "action-" + display_mode + "-active";
 		e.disabled = false;
+		
+		if ( display_mode == 'view' ) {
+			e = document.getElementById('action-mail');
+			e.className = "action-mail-active";
+			e.disabled = false;
+		}
 	} else {
 		e.className = "action-" + display_mode + "-visible";
 		e.disabled = true;
@@ -339,6 +345,12 @@ function mySetMode(mode) {
 	document.getElementById( 'mode-' + mode ).className = "mode-on";
 	document.getElementById( 'action-' + mode ).className = "action-" + mode + "-visible";
 	display_mode = mode;
+
+	if ( display_mode == 'view' ) {
+		document.getElementById('action-mail').className = "action-mail-visible";
+	} else {
+		document.getElementById('action-mail').className = "action-mail-hidden";
+	}
 
 	honors_db.forEach( function xx(honor) { honor.selected = 0; } );
 	members_status.forEach( function xx(member) { member.selected = 0; } );

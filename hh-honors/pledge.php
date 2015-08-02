@@ -19,7 +19,51 @@
 </head>
 <body onload="firstName();">
 <?php
+include('globals.php');
 AddForm();
+$hash = $_REQUEST['hash'];
+DoQuery( "select member_id, honor_id from assignments where hash = '$hash'", $gDb2 );
+list( $mid, $hid ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+DoQuery( "select * from members where id = $mid", $gDb2 );
+$member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+DoQuery( "select * from honors where id = $hid", $gDb2 );
+$honor = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+
+DoQuery( "select date from dates where id = 1", $gDb2 );
+list( $td ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+$date = new DateTime( $td );
+
+$service = $honor['service'];
+
+switch( $service ) {
+	case( 'rh1' ):
+		$date->add( new DateInterval('P1D') );
+		break;
+	
+	case( 'rh2' ):
+		$date->add( new DateInterval('P2D') );
+		break;
+	
+	case( 'kn' ):
+		$date->add( new DateInterval('P9D') );
+		break;
+	
+	case( 'yka' ):
+	case( 'ykb' ):
+		$date->add( new DateInterval('P10D') );
+		break;
+}
+
+if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
+	$name = $member['Female 1st Name'];
+} elseif( empty( $member['Female 1st Name'] ) && ! empty( $memeber['Male 1st Name'] ) ) {
+	$name = $member['Male 1st Name' ];
+} else {
+	$name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+}
+
+$name .= sprintf( " %s", $member['Last Name'] );
+$hstr = sprintf( "%s during the %s service, on %s.", $honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
 ?>
 <div id="FloatPage">
 <div id="page">
@@ -63,12 +107,8 @@ AddForm();
     
     <div class="fltrt" id="rightContents">
   <p><strong>5776 High Holy Day Honors</strong></p>
-  <strong>Name</strong>:&nbsp;<span id="sprytextfield1">
-  <input name="hh-name" type="text" size="64" />
-  <span class="textfieldRequiredMsg">A value is required.</span></span><br />
-  <strong>E-mail</strong>:&nbsp;<span id="sprytextfield2">
-  <input name="hh-email" type="text" size="64" />
-  <span class="textfieldRequiredMsg">A value is required.</span></span>
+  <strong>Name</strong>:&nbsp;<?php echo $name ?><br />
+  <strong>Honor</strong>:&nbsp;<?php echo $hstr ?><br />
     <div id="spryradio1">
       <table width="700" border="0">
         <tr>
@@ -87,7 +127,7 @@ AddForm();
       </td>
       </div>
     <p><strong>Comments:</strong><br />
-  <textarea name="hh-comment" cols="132" rows="1"></textarea></p>
+  <textarea name="hh-comment" cols="120" rows="2"></textarea></p>
   <div>It is customary for those receiving honors to make a donation to the shul in honor of that participatory role, usually in a multiple of 18, or Chai, the Jewish numerical symbol for life.<br />
   </div>
   <div>Please accept my contribution to CBI of $&nbsp;<input name="hh-amount" type="text" size="5" /></div>

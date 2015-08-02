@@ -153,6 +153,18 @@ function Assign() {
 		$js = join(';',$tmp );
 		echo "<input id=action-view type=button class=mode-view-hidden onclick=\"$js\" value=\"Delete\">";
 	}
+	
+	if( UserManager( 'authorized', 'admin' ) ) {
+		$tmp = [];
+		$tmp[] = "setValue('from','Assign')";
+		$tmp[] = "setValue('func','mail')";
+		$tmp[] = "mySaveChoices()";
+		$tmp[] = "addAction('Update')";
+		$js = join(';',$tmp );
+		echo "<input id=action-mail type=button disabled class=mode-mail-hidden onclick=\"$js\" value=\"Mail\">";
+
+	}
+
 ?>
 	</div>
 
@@ -401,7 +413,7 @@ function CreateHonors() {
 		Logger();
 	}
 	
-	DoQuery( "select date from dates" );
+	DoQuery( "select date from dates where id = 1" );
 	if( $GLOBALS['mysql_numrows'] == 0 ) {
 		?>
 		<script type='text/javascript'>
@@ -623,7 +635,7 @@ function DateUpdate() {
 		$qx[] = "date = '$val'";
 		if( empty($id) ) {
 			$qx[] = "label = '$label'";
-			$query = sprintf( "insert into dates set %s", join( ',', $qx ) );
+			$query = sprintf( "insert into dates set %s where id = 1", join( ',', $qx ) );
 		} else {
 			$query = sprintf( "update dates set %s where id = %d", join( ',', $qx ), $id );
 		}
@@ -814,7 +826,7 @@ function DisplayDates() {
 	echo "<th>Date</th>";
 	echo "</tr>\n";
 
-	DoQuery( "select * from dates order by `date` asc" );
+	DoQuery( "select * from dates where id = 1" );
 	$num_dates = $GLOBALS['mysql_numrows'];
 	if( $num_dates ) {
 		$row = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
@@ -834,25 +846,25 @@ function DisplayDates() {
 		
 		$date->add(new DateInterval('P1D'));
 		echo "<tr>";
-		echo "<td>Rosh Hashanah Day #1</td>";
+		echo "<td>" . $gService['rh1'] . "</td>";
 		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
 		echo "</tr>";
 		
 		$date->add(new DateInterval('P1D'));
 		echo "<tr>";
-		echo "<td>Rosh Hashanah Day #2</td>";
+		echo "<td>" . $gService['rh2'] . "</td>";
 		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
 		echo "</tr>";
 				
-		$date->add(new DateInterval('P5D'));
+		$date->add(new DateInterval('P7D'));
 		echo "<tr>";
-		echo "<td>Kol Nidre</td>";
+		echo "<td>" . $gService['kn'] . "</td>";
 		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
 		echo "</tr>";
 				
 		$date->add(new DateInterval('P1D'));
 		echo "<tr>";
-		echo "<td>Yom Kippur</td>";
+		echo "<td>" . $gService['yka'] . "</td>";
 		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
 		echo "</tr>";
 				
@@ -1092,46 +1104,6 @@ function DisplayItems() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
-function DisplayMail() {
-	include( 'globals.php' );
-	if( $gTrace ) {
-		$gFunction[] = __FUNCTION__;
-		Logger();
-	}
-	$area = $_POST['area'];
-	$func = $_POST['func'];
-	
-	echo "<div class=CommonV2>";
-	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
-
-	echo "<table>";	
-	DoQuery( "select date from dates where label = 'mail'" );
-	list( $val ) = mysql_fetch_array( $mysql_result );
-	echo "<tr>";
-	echo "<th>Mail Confirmations</th>";
-	if( $val ) {
-		echo "<td class=cok>Enabled</td>";
-		$new = 0;
-	} else {
-		echo "<td class=cbad>Disabled</td>";
-		$new = 1;
-	}
-	$tag = MakeTag('update');
-	$jsx = array();
-	$jsx[] = "setValue('area','$area')";
-	$jsx[] = "setValue('from','DisplayMail')";
-	$jsx[] = "setValue('func','update')";
-	$jsx[] = "addField($new)";
-	$jsx[] = "addAction('Update')";
-	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-	echo "<td><input type=button value=Toggle $tag $js></td>";
-	
-	echo "</tr>";
-
-	echo "</table>";
-	if( $gTrace ) array_pop( $gFunction );
-}
-
 function DisplayMain() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -1163,7 +1135,7 @@ function DisplayMain() {
 		DisplayItems();
 	
 	} elseif( $area == 'mail' ) {
-		DisplayMail();
+		MailDisplay();
 	
 	} elseif( $area == 'showbids' ) {
 		ShowBids();
@@ -1771,6 +1743,20 @@ function LocalInit() {
 
 	$gCategories = array();
 	$gCategories[0] = '__Unassigned';
+
+#============
+	DoQuery( "select date from dates where id = 1" );
+	list( $td ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	$date = new DateTime($td);
+	$date->add(new DateInterval('P1D'));
+	$jd = cal_to_jd( CAL_GREGORIAN, $date->format('m'), $date->format('d'), $date->format('Y') );
+	$arr = cal_from_jd( $jd, CAL_JEWISH );
+	$gJewishYear = $arr['year'];
+	
+#============
+	DoQuery( "select date from dates where id = 2" );
+	list( $date ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	$mail_live = ( $date == "2000-01-01" ) ? 0 : 1;
 	
 #============
 	$date_server = new DateTime( '2000-01-01' );
@@ -1810,6 +1796,265 @@ function LocalInit() {
 	$gDebug = $x;
 }
 
+function MailAssignment() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+
+	$subject = "$gJewishYear CBI High Holy Day Honor";
+	
+	$message = Swift_Message::newInstance($subject);
+	
+	$tmp = preg_split( '/,/', $_POST['fields'] );
+	foreach( $tmp as $fld ) {
+		if( preg_match( "/^honor_/", $fld ) ) {
+			list( $xx, $honor_id ) = preg_split( '/_/', $fld );
+		} elseif( preg_match( "/^member_/", $fld ) ) {
+			list( $xx, $member_id ) = preg_split( '/_/', $fld );
+		}
+	}
+	DoQuery( "select * from members where id = $member_id" );
+	$member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+	
+	DoQuery( "select * from honors where id = $honor_id" );
+	$honor = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+	
+	DoQuery( "select * from assignments where honor_id = $honor_id and member_id = $member_id" );
+	$assignment = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+	$hash = $assignment['hash'];
+
+	if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
+		$name = $member['Female 1st Name'];
+	} elseif( empty( $member['Female 1st Name'] ) && ! empty( $memeber['Male 1st Name'] ) ) {
+		$name = $member['Male 1st Name' ];
+	} else {
+		$name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+	}
+	
+	$name .= sprintf( " %s", $member['Last Name'] );
+	$email = $member['E-mail Address'];
+	
+	DoQuery( "select date from dates where id = 1" );
+	list( $td ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	$date = new DateTime( $td );
+	
+	$service = $honor['service'];
+	switch( $service ) {
+		case( 'rh1' ):
+			$date->add( new DateInterval('P1D') );
+			break;
+		
+		case( 'rh2' ):
+			$date->add( new DateInterval('P2D') );
+			break;
+		
+		case( 'kn' ):
+			$date->add( new DateInterval('P9D') );
+			break;
+		
+		case( 'yka' ):
+		case( 'ykb' ):
+			$date->add( new DateInterval('P10D') );
+			break;
+	}
+
+
+	$html = $text = array();
+	$cid = $message->embed(Swift_Image::fromPath('assets/CBI_ner_tamid.png'));
+
+	$html[] = "<html><head></head><body>";
+	$html[] = '<img src="' . $cid . '" alt="Image" />';
+	
+	$html[] = "Congregation B'nai Israel";
+	$text[] = "Congregation B'nai Israel";
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$html[] = sprintf( "Dear %s,", $name );
+	$text[] = sprintf( "Dear %s,", $name );
+
+	$html[] = "";
+	$text[] = "";
+	
+	$str = "Thank you for the support you have given to Congregation B'nai Israel during the past year.";
+	$str .= sprintf( " In an effort to show our appreciation, we would like to offer you the honor of %s during the %s service, on %s.",
+							$honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
+
+	$html[] = $str;
+	$text[] = $str;
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$str = "We ask that you be in the sanctuary at least 30 minutes prior to your honor";
+	$str .= " (15 minutes prior if it occurs at the beginning of the service,) and check in with";
+	$str .= " the Shamash, the person in charge of making sure that everyone who has an honor";
+	$str .= " is in the right place at the right time. We will send you additional detailed";
+	$str .= " information about your honor closer to the date.";
+	
+	$html[] = $str;
+	$text[] = $str;
+	
+	$html[] = "";
+	$text[] = "";
+
+	$html[] = "<a href=\"http://cbi18.org/hh-honors/?hash=$hash\">Click here</a> to confirm or decline this honor by August 14th, 2015.";
+	$text[] = "Click on the following link, http://cbi18.org/hh-honors/?hash=$hash, to confirm or decline this honor by August 14th, 2015.";
+
+	$html[] = "";
+	$text[] = "";
+
+	$str = "If you have any questions, please do not hesitate to contact the CBI office at (714) 730-9693, or through e-mail at 
+ cbi18@cbi18.org.";
+	$html[] = $str;
+	$text[] = $str;
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$str = "Thank you again and we wish you and your family a happy and healthy New Year.";
+	$html[] = $str;
+	$text[] = $str;
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$html[] = "L&rsquo;Shana Tova,";
+	$text[] = "L'Shana Tova,";
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$html[] = "Phyllis Abrams and Marshall Margolis";
+	$text[] = "Phyllis Abrams and Marshall Margolis";
+	
+	$html[] = "Ritual Vice Presidents";
+	$text[] = "Ritual Vice Presidents";
+	
+	if( 1 ) {
+		echo "<hr>" . join('<br>', $html );
+	
+	} else {
+		$message->setTo( array(
+			'andy.elster@gmail.com' => 'Andy Elster',
+			'bethelster1@gmail.com' => 'Beth Elster'
+			) );
+		$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
+		/*
+		$message->setBcc(array(
+			'andy.elster@gmail.com' => 'Andy Elster'
+		) );
+	*/
+		$message
+		->setBody( join('<br>',$html), 'text/html' )
+		->addPart( join('\n',$text), 'text/plain' )
+		;
+	
+		MyMail($message);
+	}	
+	return;
+
+	$message->setTo( array( $email => "$firstName" ) );
+	$message->setBcc(array());
+	MyMail($message);
+
+	DoQuery( "update assignments set sent = 1 where hash = '$hash'");
+	
+	if( $gTrace ) array_pop( $gFunction );
+}
+
+function MailAssignments() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
+	DoQuery( "select honor_id, member_id from assignments order by member_id" );
+	$outer = $GLOBALS['mysql_result'];
+	while( list( $hid, $mid ) = mysql_fetch_array( $outer ) ) {
+		$_POST['fields'] = sprintf( "honor_%d,member_%d", $hid, $mid );
+		MailAssignment();
+	}
+	if( $gTrace ) array_pop( $gFunction );
+}
+
+function MailDisplay() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	$area = $_POST['area'];
+	$func = $_POST['func'];
+	
+	echo "<div class=CommonV2>";
+	echo "<input type=button value=Refresh onclick=\"setValue('from', '$func');setValue('area','mail');addAction('Main');\">";
+	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
+
+	echo "<br><br>";
+	echo "<table>";
+	
+	echo "<tr>";
+	echo "<th>Mail Enabled</th>";
+	if( $GLOBALS['mail_enabled']) {
+		echo "<td class=cok colspan=2>Master Enabled - Hard Coded in Local_Settings</td>";
+	} else {
+		echo "<td class=cbad colspan=2>Master Disabled - Hard Coded in Local_Settings</td>";
+	}
+	echo "</tr>";
+	
+	echo "<tr>";
+	echo "<th>Mail Admin - Hard Coded in Local_Settings</th>";
+	echo "<td colspan=2>" . array_keys($GLOBALS['mail_admin'])[0] . "</td>";
+	echo "</tr>";
+	
+	echo "<tr>";
+	echo "<th>Mail Server - Hard Coded in Local_Settings</th>";
+	echo "<td colspan=2>" . $GLOBALS['mail_servers'][0]['server'] . "</td>";
+	echo "</tr>";
+	echo "</table>";
+	
+	echo "<br><br>";
+	
+	echo "<table>";
+	echo "<tr>";
+	echo "<th>Live Mail</th>";
+	if( $mail_live ) {
+		echo "<td class=cok>Enabled - Live to members</td>";
+		$new = "2000-01-01";
+	} else {
+		echo "<td class=cbad>Disabled - Test Mode - Send to Mail Admin</td>";
+		$new = "2015-08-01";
+	}
+	$tag = MakeTag('update');
+	$jsx = array();
+	$jsx[] = "setValue('area','$area')";
+	$jsx[] = "setValue('from','MailDisplay')";
+	$jsx[] = "setValue('func','update')";
+	$jsx[] = "addField('$new')";
+	$jsx[] = "addAction('Update')";
+	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
+	echo "<td class=c><input type=button value=Toggle $tag $js></td>";
+	
+	echo "</tr>";
+	echo "</table>";
+
+	echo "<br><br>";
+	
+	DoQuery( "select count(*), sum(sent), sum(accepted), sum(rejected) from assignments" );
+	list( $total, $sent, $accepted, $rejected ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	printf( "%d/%d Aliyot mailed, %d accepted, %d rejected<br>", $sent, $total, $accepted, $rejected );
+	
+	echo "<input type=button value='Mail All Unsent' onclick=\"setValue('from', '$func');setValue('func','mails');addAction('Main');\">";
+
+
+	if( $gTrace ) array_pop( $gFunction );
+}
+
 function MailUpdate() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -1818,8 +2063,9 @@ function MailUpdate() {
 	}
 	
 	$val = $_POST['fields'];
-	DoQuery( "update dates set date = $val where label = 'mail'" );
-	
+	DoQuery( "update dates set date = '$val' where id = 2" );
+	$mail_live = ( $val == "2000-01-01" ) ? 0 : 1;
+
 	if( $gTrace ) array_pop( $gFunction );
 }
 
@@ -2177,7 +2423,7 @@ function	SendConfirmation() {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
-	$subject = "5775 CBI High Holy Day Honor";
+	$subject = "$gJewishYear CBI High Holy Day Honor";
 	
 	$message = Swift_Message::newInstance($subject);
 	
