@@ -63,7 +63,7 @@ if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) 
 }
 
 $name .= sprintf( " %s", $member['Last Name'] );
-$hstr = sprintf( "%s during the %s service, on %s.", $honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
+$hstr = sprintf( "%s during the %s service on %s.", $honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
 ?>
 <div id="FloatPage">
 <div id="page">
@@ -106,9 +106,9 @@ $hstr = sprintf( "%s during the %s service, on %s.", $honor['honor'], $gService[
   <div class="content">
     
     <div class="fltrt" id="rightContents">
-  <p><strong>5776 High Holy Day Honors</strong></p>
   <strong>Name</strong>:&nbsp;<?php echo $name ?><br />
-  <strong>Honor</strong>:&nbsp;<?php echo $hstr ?><br />
+  <strong>Honor</strong>:&nbsp;<?php echo ucfirst($hstr) ?><br />
+  <strong>Please check one:</strong>
     <div id="spryradio1">
       <table width="700" border="0">
         <tr>
@@ -130,7 +130,17 @@ $hstr = sprintf( "%s during the %s service, on %s.", $honor['honor'], $gService[
   <textarea name="hh-comment" cols="120" rows="2"></textarea></p>
   <div>It is customary for those receiving honors to make a donation to the shul in honor of that participatory role, usually in a multiple of 18, or Chai, the Jewish numerical symbol for life.<br />
   </div>
-  <div>Please accept my contribution to CBI of $&nbsp;<input name="hh-amount" type="text" size="5" /></div>
+  <div>Please accept my contribution to CBI of $&nbsp;
+  <select name="hh-amount">
+	 <option value=0>-- Click Here --</option>
+	 <?php
+	 $price_points = [ 18, 36, 54, 72, 108, 144, 180, 270, 360, 540, 720, 1080 ];
+	 foreach( $price_points as $val ) {
+		printf( "<option value=%d>%d</option>", $val, $val );
+	 }
+	 ?>
+  </select>
+  </div>
   <div><br />
   </div>
   <div><strong>Payment method</strong> (select one)</div>
@@ -138,7 +148,7 @@ $hstr = sprintf( "%s during the %s service, on %s.", $honor['honor'], $gService[
   <div><input name="hh-payment" type="radio" value="check" />&nbsp;I will send a check to the office</div>
   <div><input name="hh-payment" type="radio" value="call" />&nbsp;Contact me about payment</div>
   <br />
-  <input name="" type="submit" onClick="addAction('honor');"/><input name="" type="reset" />  </div>
+  <input name="" value="Submit" type="submit" disabled onClick="addAction('honor');"/><input name="" type="reset" />  </div>
     
     <br />
     <div id="bottom_buttons">

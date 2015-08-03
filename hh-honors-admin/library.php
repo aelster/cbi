@@ -1880,7 +1880,7 @@ function MailAssignment() {
 	$text[] = "";
 	
 	$str = "Thank you for the support you have given to Congregation B'nai Israel during the past year.";
-	$str .= sprintf( " In an effort to show our appreciation, we would like to offer you the honor of %s during the %s service, on %s.",
+	$str .= sprintf( " In an effort to show our appreciation, we would like to offer you the honor of %s during the %s service on %s.",
 							$honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
 
 	$html[] = $str;
@@ -1901,8 +1901,9 @@ function MailAssignment() {
 	$html[] = "";
 	$text[] = "";
 
-	$html[] = "<a href=\"http://cbi18.org/hh-honors/?hash=$hash\">Click here</a> to confirm or decline this honor by August 14th, 2015.";
-	$text[] = "Click on the following link, http://cbi18.org/hh-honors/?hash=$hash, to confirm or decline this honor by August 14th, 2015.";
+	$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
+	$html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by August 14th, 2015.";
+	$text[] = "Click on the following link, $url, to confirm or decline this honor by August 14th, 2015.";
 
 	$html[] = "";
 	$text[] = "";
