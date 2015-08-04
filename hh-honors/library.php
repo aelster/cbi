@@ -1785,8 +1785,7 @@ function	SendConfirmation() {
 	
 	$firstName = $_POST['hh-name'];
 	$lastName = "";
-	$email = $_POST['hh-email'];
-
+	
 	$html = $text = array();
 	$cid = $message->embed(Swift_Image::fromPath('assets/CBI_ner_tamid.png'));
 
@@ -1805,38 +1804,43 @@ function	SendConfirmation() {
 	$html[] = "";
 	$text[] = "";
 	
+	$qarr = [];
+	
 	$button = $_POST['RadioGroup2'];
 	if( $button == 'accept' ) {
-		$html[] = sprintf( "Thank you for allowing us to honor you." );
-		$text[] = sprintf( "Thank you for allowing us to honor you." );
+		$str_html = sprintf( "Thank you for allowing us to honor you." );
+		$str_text = sprintf( "Thank you for allowing us to honor you." );
+		$qarr[] = "accepted = 1";
 		
 	} elseif( $button == 'decline' ) {
-		$html[] = sprintf( "Thank you for letting us know you are declining your honor." );
-		$text[] = sprintf( "Thank you for letting us know you are declining your honor." );
+		$str_html = sprintf( "Thank you for letting us know you are declining your honor." );
+		$str_text = sprintf( "Thank you for letting us know you are declining your honor." );
+		$qarr[] = "rejected = 1";
 
 	}
 
 	$amount = $_POST['hh-amount'];
 	if( ! empty( $amount ) ) {
-		$html[] = sprintf( "  In addition, thank you for your generous donation of \$ %s.", number_format( $amount, 2 ) );
-		$text[] = sprintf( "  In addition, thank you for your generous donation of \$ %s.", number_format( $amount, 2 ) );
+		$str_html .= sprintf( " We also thank you for your generous donation of \$ %s.", number_format( $amount, 2 ) );
+		$str_text .= sprintf( " We also, thank you for your generous donation of \$ %s.", number_format( $amount, 2 ) );
+		$qarr[] = "donation = $amount";
 
-		$html[] = "";
-		$text[] = "";
-	
 		$payment = $_POST['hh-payment'];
 		if( $payment == 'credit' ) {
-			$html[] = sprintf( "  We will be charging your credit card on file." );
-			$text[] = sprintf( "  We will be charging your credit card on file." );
+			$str_html .= sprintf( " We will be charging your credit card on file." );
+			$str_text .= sprintf( " We will be charging your credit card on file." );
 		} elseif( $payment == 'check' ) {
-			$html[] = sprintf( "  We will be expecting your check in the next few days." );
-			$text[] = sprintf( "  We will be expecting your check in the next few days." );
+			$str_html .= sprintf( " We will be expecting your check in the next few days." );
+			$str_text .= sprintf( " We will be expecting your check in the next few days." );
 		} elseif( $payment == 'call' ) {
-			$html[] = sprintf( "  We will be contacting you to arrange for payment." );
-			$text[] = sprintf( "  We will be contacting you to arrange for payment." );
+			$str_html .= sprintf( " We will be contacting you to arrange for payment." );
+			$str_text .= sprintf( " We will be contacting you to arrange for payment." );
 		}
 	}
 		
+	$html[] = $str_html;
+	$text[] = $str_text;
+	
 	$html[] = "";
 	$text[] = "";
 	
@@ -1846,17 +1850,40 @@ function	SendConfirmation() {
 		$text[] = sprintf( "We appreciate your following comments:" );
 		$html[] = "";
 		$text[] = "";
-		$html[] = $comment;
-		$text[] = $comment;
+		$html[] = "    $comment";
+		$text[] = "    $comment";
+		$qarr[] = sprintf( "comment = '%s'", mysql_escape_string( $comment ) );
 		
 	}
 	
-	$message->setTo( array( $email => "$firstName" ) );
+	$query = sprintf( "update assignments set %s where hash = '%s'", join(',', $qarr ), $_REQUEST['hash'] );
+	DoQuery( $query, $gDb2 );
+	
+	$html[] = "";
+	$text[] = "";
+
+	$html[] = "Sincerely,";
+	$text[] = "Sincerely";
+	
+	$html[] = "The CBI HH Honors Committee";
+	$text[] = "The CBI HH Honors Committee";	
+
+	$str = $_POST['hh-email'];
+	if( preg_match( "/,/", $str ) ) {
+		$email = preg_split( "/,/", $str );
+	} elseif( preg_match( "/ /", $str ) ) {
+		$email = preg_split( "/ /", $str );
+	} else {
+		$email = $str;
+	}
+	$message->setTo( $email );
 	$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
 	$message->setBcc(array(
 		'andy.elster@gmail.com' => 'Andy Elster'
 	) );
 
+	// beth, hcoulter@cbi18.org, cbi18@cbi18.org
+	
 	$message
 	->setBody( join('<br>',$html), 'text/html' )
 	->addPart( join('\n',$text), 'text/plain' )

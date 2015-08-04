@@ -1834,7 +1834,6 @@ function MailAssignment() {
 	}
 	
 	$name .= sprintf( " %s", $member['Last Name'] );
-	$email = $member['E-mail Address'];
 	
 	DoQuery( "select date from dates where id = 1" );
 	list( $td ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
@@ -1958,7 +1957,16 @@ function MailAssignment() {
 	}	
 	return;
 
-	$message->setTo( array( $email => "$firstName" ) );
+	$str = $member['E-mail Address'];
+	if( preg_match( "/,/", $str ) ) {
+		$email = preg_split( "/,/", $str );
+	} elseif( preg_match( "/ /", $str ) ) {
+		$email = preg_split( "/ /", $str );
+	} else {
+		$email = $str;
+	}
+
+	$message->setTo( $email );
 	$message->setBcc(array());
 	MyMail($message);
 
