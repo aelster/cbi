@@ -1850,7 +1850,7 @@ function	SendConfirmation() {
 		$text[] = sprintf( "We appreciate your following comments:" );
 		$html[] = "";
 		$text[] = "";
-		$html[] = "    $comment";
+		$html[] = "&nbsp;&nbsp;&nbsp;&nbsp;$comment";
 		$text[] = "    $comment";
 		$qarr[] = sprintf( "comment = '%s'", mysql_escape_string( $comment ) );
 		
