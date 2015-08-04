@@ -24,6 +24,9 @@ AddForm();
 $hash = $_REQUEST['hash'];
 DoQuery( "select member_id, honor_id from assignments where hash = '$hash'", $gDb2 );
 list( $mid, $hid ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+printf( "<input type=hidden name=honor_id value=$hid>" );
+printf( "<input type=hidden name=member_id value=$mid>" );
+
 DoQuery( "select * from members where id = $mid", $gDb2 );
 $member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
 DoQuery( "select * from honors where id = $hid", $gDb2 );
@@ -56,13 +59,15 @@ switch( $service ) {
 
 if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
 	$name = $member['Female 1st Name'];
-} elseif( empty( $member['Female 1st Name'] ) && ! empty( $memeber['Male 1st Name'] ) ) {
+} elseif( empty( $member['Female 1st Name'] ) && ! empty( $member['Male 1st Name'] ) ) {
 	$name = $member['Male 1st Name' ];
 } else {
 	$name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
 }
 
 $name .= sprintf( " %s", $member['Last Name'] );
+printf( "<input type=hidden name=hh-name value=\"%s\">", $name );
+printf( "<input type=hidden name=hh-email value=\"%s\">", $member['E-Mail Address'] );
 $hstr = sprintf( "%s during the %s service on %s.", $honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
 ?>
 <div id="FloatPage">
@@ -148,7 +153,7 @@ $hstr = sprintf( "%s during the %s service on %s.", $honor['honor'], $gService[ 
   <div><input name="hh-payment" type="radio" value="check" />&nbsp;I will send a check to the office</div>
   <div><input name="hh-payment" type="radio" value="call" />&nbsp;Contact me about payment</div>
   <br />
-  <input name="" value="Submit" type="submit" disabled onClick="addAction('honor');"/><input name="" type="reset" />  </div>
+  <input name="" value="Submit" type="submit" onClick="addAction('honor');"/><input name="" type="reset" />  </div>
     
     <br />
     <div id="bottom_buttons">

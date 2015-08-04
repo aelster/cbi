@@ -1854,9 +1854,6 @@ function	SendConfirmation() {
 	$message->setTo( array( $email => "$firstName" ) );
 	$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
 	$message->setBcc(array(
-		'cbi18@cbi18.org' => 'Debbie Hebron',
-		'bertil@askelid.com' => 'Bertil Askelid',
-		'bethelster1@gmail.com' => 'Beth Elster',
 		'andy.elster@gmail.com' => 'Andy Elster'
 	) );
 

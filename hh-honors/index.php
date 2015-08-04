@@ -41,32 +41,12 @@ if( $action == "confirm" ) {
 	$gAction = $action = "pledge";
 }
 
-if( $action == "bid" ) {
-	include( "bids.php" );
-	
-} elseif( $action == 'honor' ) {
+if( $action == 'honor' ) {
 	SendConfirmation();
 	include( "ThankYou.html" );
 
 } elseif( $action == "pledge" ) {
 	include( "pledge.php" );
-	
-} elseif( $action == "pledge_now" ) {
-	include( "pledge_now.php" );
-
-} elseif( $action == "financial" ) {
-	include( "financial.php" );
-
-} elseif( $action == "spiritual" ) {
-	include( "spiritual.php" );
-
-} elseif( $action == "paynow" ) {
-	$id = PledgeStore();
-	SendConfirmation( $id );
-	include( "thank_you.php" );
-	
-} elseif( $action == "paypal" ) {
-	PayPal();
 	
 } else {
 	echo "uh-oh, not sure what to do with action: [$action]<br>";
