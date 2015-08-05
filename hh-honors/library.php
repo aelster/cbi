@@ -1811,11 +1811,13 @@ function	SendConfirmation() {
 		$str_html = sprintf( "Thank you for allowing us to honor you." );
 		$str_text = sprintf( "Thank you for allowing us to honor you." );
 		$qarr[] = "accepted = 1";
+		$qarr[] = "rejected = 0";
 		
 	} elseif( $button == 'decline' ) {
 		$str_html = sprintf( "Thank you for letting us know you are declining your honor." );
 		$str_text = sprintf( "Thank you for letting us know you are declining your honor." );
 		$qarr[] = "rejected = 1";
+		$qarr[] = "accepted = 0";
 
 	}
 
@@ -1836,8 +1838,10 @@ function	SendConfirmation() {
 			$str_html .= sprintf( " We will be contacting you to arrange for payment." );
 			$str_text .= sprintf( " We will be contacting you to arrange for payment." );
 		}
+	} else {
+		$qarr[] = "donation = $amount";		
 	}
-		
+	
 	$html[] = $str_html;
 	$text[] = $str_text;
 	
@@ -1854,6 +1858,8 @@ function	SendConfirmation() {
 		$text[] = "    $comment";
 		$qarr[] = sprintf( "comment = '%s'", mysql_escape_string( $comment ) );
 		
+	} else {
+		$qarr[] = "comment = ''";
 	}
 	
 	$query = sprintf( "update assignments set %s where hash = '%s'", join(',', $qarr ), $_REQUEST['hash'] );
@@ -1879,10 +1885,11 @@ function	SendConfirmation() {
 	$message->setTo( $email );
 	$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
 	$message->setBcc(array(
-		'andy.elster@gmail.com' => 'Andy Elster'
+		'andy.elster@gmail.com' => 'Andy Elster',
+		'bethelster1@gmail.com' => 'Beth Elster',
+		'hcoulter@cbi18.org' => 'Helene Coulter',
+		'cbi18@cbi18.org' => 'Ana Cottle'
 	) );
-
-	// beth, hcoulter@cbi18.org, cbi18@cbi18.org
 	
 	$message
 	->setBody( join('<br>',$html), 'text/html' )

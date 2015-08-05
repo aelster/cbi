@@ -4,7 +4,7 @@ function AddForm() {
 	include( 'globals.php' );
 	echo "<form name=fMain id=fMain method=post action=\"$gSourceCode\">";
 	
-	$hidden = array( 'action', 'area', 'fields', 'func', 'from', 'id' );
+	$hidden = array( 'action', 'area', 'fields', 'func', 'from', 'id', 'bypass' );
 	foreach( $hidden as $var ) {
 		$tag = MakeTag($var);
 		echo "<input type=hidden $tag>";
@@ -21,10 +21,15 @@ function Assign() {
 
 	$honor_assigned = [];
 	$member_assigned = [];
+	$member_rejected = [];
 	DoQuery( "select * from assignments" );
-	while( $row = mysql_fetch_array( $GLOBALS['mysql_result']) ) {
-		$honor_assigned[$row['honor_id']] = $row['member_id'];
-		$member_assigned[$row['member_id']] = $row['honor_id'];
+	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result']) ) {
+		if( $row['rejected'] ) {
+			$member_rejected[$row['member_id']] = $row['honor_id'];
+		} else {
+			$honor_assigned[$row['honor_id']] = $row['member_id'];
+			$member_assigned[$row['member_id']] = $row['honor_id'];
+		}
 	}
 	
 	DoQuery( "select id, service, honor from honors order by sort" );
@@ -65,7 +70,8 @@ function Assign() {
 		$tmp[] = sprintf( "%s:%d", "other", $other );
 		printf( "members_db[%d] = { %s };\n", $row['id'], join( ', ', $tmp ) );
 		$used = array_key_exists( $row['id'], $member_assigned ) ? $member_assigned[$row['id']] : 0;
-		printf( "members_status[%d] = { selected:0, assigned:%d };\n", $row['id'], $used);
+		$rej = array_key_exists( $row['id'], $member_rejected ) ? $member_rejected[$row['id']] : 0;
+		printf( "members_status[%d] = { selected:0, assigned:%d, rejected:%d };\n", $row['id'], $used, $rej);
 	 }
   echo "</script>\n";
   DoQuery( "select id, service, honor from honors order by sort" );
@@ -77,7 +83,6 @@ function Assign() {
   DoQuery( $query );
   $member_res = $GLOBALS['mysql_result'];
   ?>
-  
 <div class="container">
 	<div class="assign-top">
 		<input type=button onclick="setValue('func','assign');addAction('Main');" value="Back">
@@ -199,7 +204,6 @@ function Assign() {
 		</div>
 	</div>
 </div>
-
 </form>
 </body>
 <script type='text/javascript'>
@@ -237,23 +241,43 @@ function AssignAdd() {
 
 	$tmp = preg_split("/,/", $_POST['fields'] );
 	foreach( $tmp as $field ) {
-			$tmp2 = preg_split( "/_/", $field );
-			if( $tmp2[0] == "honor" ) {
-				$honor_id = $tmp2[1];
-			} elseif( $tmp2[0] == "member" ) {
-				$member_id = $tmp2[1];
-			}
+		$tmp2 = preg_split( "/_/", $field );
+		if( $tmp2[0] == "honor" ) {
+			$honor_id = $tmp2[1];
+		} elseif( $tmp2[0] == "member" ) {
+			$member_id = $tmp2[1];
+		}
 	}
+	$bypass = $_POST['bypass'];
 	DoQuery( "start transaction" );
-	
-	DoQuery( "select * from assignments where honor_id = $honor_id or member_id = $member_id" );
-	if( $GLOBALS['mysql_numrows'] > 0 ) {
-		?>
+
+	DoQuery( "select honor_id from assignments where member_id = $member_id" );
+	if( $GLOBALS['mysql_numrows'] > 0 && ! $bypass ) {
+		list( $hid ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		DoQuery( "select honor from honors where id = $hid" );
+		list( $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		DoQuery( "select `Last Name` from members where id = $member_id" );
+		list( $name ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$str2 = ucfirst($honor);
+		$str = sprintf( "The following honor was already assigned to the %s family:\\n\\n%s", $name, mysql_escape_string($str2) );
+?>
 <script type='text/javascript'>
-	alert( "Duplicate assignment rejected" );
-	DoQuery( "rollback" );
+	var x = window.confirm("<?php echo $str ?>");
+	if ( x ) {
+		setValue('fields', '<?php echo $_POST['fields'] ?>');
+		setValue('func', 'add');
+		setValue('from', 'Assign');
+		setValue('bypass', 1 );
+		addAction('Update');
+	} else {
+		setValue('from','assign');
+		setValue('fields','<?php echo $_POST['fields'] ?>');
+		addAction('Assign');
+	}
 </script>
 <?php
+	DoQuery( "rollback" );
+
 	} else {
 		$unique = 0;
 		while( ! $unique ) {

@@ -234,6 +234,8 @@ function myDisplayMembers()  {
 				if( members_status[id].selected ) {
 					e.children[i].className = "highlighted";
 					num_assigned++;
+				} else if( members_status[id].rejected > 0 ) {
+					e.children[i].className = "rejected";
 				} else {if( members_status[id].assigned ) {
 					e.children[i].className = "assigned";
 					num_assigned++;

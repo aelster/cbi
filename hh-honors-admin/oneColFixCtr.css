@@ -337,6 +337,19 @@ div.assign-top {
 	background-color: #ff0;
 }
 
+.members-div p.rejected {
+	font-size: 12px;
+	font-weight: normal;
+	text-align: left;
+	padding: 0;
+	line-height:  1.0;
+	margin: 2px;
+	text-indent: -2em;
+	padding-left:  2em;
+	display: block;
+	background-color: #f7b;
+}
+
 .CommonV2 table.honors thead { display:block; }
 .CommonV2 table.honors thead td { text-align: center; background-color: #addfff; }
 .CommonV2 table.honors thead td.service { width: 60px; }
