@@ -1958,44 +1958,36 @@ function MailAssignment() {
 	$html[] = "Ritual Vice Presidents";
 	$text[] = "Ritual Vice Presidents";
 	
-	if( 1 ) {
+	$area = $_POST['area'];
+
+	if( $area == "display" ) {
 		echo "<hr>" . join('<br>', $html );
 	
-	} else {
-		$message->setTo( array(
+	} elseif( $area == "unsent" ) {
+		$str = $member['E-mail Address'];
+		if( preg_match( "/,/", $str ) ) {
+			$email = preg_split( "/,/", $str );
+		} elseif( preg_match( "/ /", $str ) ) {
+			$email = preg_split( "/ /", $str );
+		} else {
+			$email = $str;
+		}
+
+		$message->setTo( $email );
+		$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
+		$message->setBcc( array(
 			'andy.elster@gmail.com' => 'Andy Elster',
 			'bethelster1@gmail.com' => 'Beth Elster'
-			) );
-		$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
-		/*
-		$message->setBcc(array(
-			'andy.elster@gmail.com' => 'Andy Elster'
-		) );
-	*/
+			));
 		$message
 		->setBody( join('<br>',$html), 'text/html' )
 		->addPart( join('\n',$text), 'text/plain' )
 		;
 	
-		MyMail($message);
+		if( MyMail($message) ) {
+			DoQuery( "update assignments set sent = 1 where hash = '$hash'");
+		}
 	}	
-	return;
-
-	$str = $member['E-mail Address'];
-	if( preg_match( "/,/", $str ) ) {
-		$email = preg_split( "/,/", $str );
-	} elseif( preg_match( "/ /", $str ) ) {
-		$email = preg_split( "/ /", $str );
-	} else {
-		$email = $str;
-	}
-
-	$message->setTo( $email );
-	$message->setBcc(array());
-	MyMail($message);
-
-	DoQuery( "update assignments set sent = 1 where hash = '$hash'");
-	
 	if( $gTrace ) array_pop( $gFunction );
 }
 
@@ -2006,7 +1998,12 @@ function MailAssignments() {
 		Logger();
 	}
 	
-	DoQuery( "select honor_id, member_id from assignments order by member_id" );
+	$area = $_POST['area'];
+	if( $area == "display" ) {
+		DoQuery( "select honor_id, member_id from assignments order by member_id" );
+	} elseif( $area == "unsent" ) {
+		DoQuery( "select honor_id, member_id from assignments where sent = 0 order by member_id" );
+	}
 	$outer = $GLOBALS['mysql_result'];
 	while( list( $hid, $mid ) = mysql_fetch_array( $outer ) ) {
 		$_POST['fields'] = sprintf( "honor_%d,member_%d", $hid, $mid );
@@ -2082,8 +2079,21 @@ function MailDisplay() {
 	list( $total, $sent, $accepted, $rejected ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	printf( "%d/%d Aliyot mailed, %d accepted, %d rejected<br>", $sent, $total, $accepted, $rejected );
 	
-	echo "<input type=button value='Mail All Unsent' onclick=\"setValue('from', '$func');setValue('func','mails');addAction('Main');\">";
-
+	$jsx = array();
+	$jsx[] = "setValue('from','$func')";
+	$jsx[] = "setValue('func','mails')";
+	$jsx[] = "setValue('area','display')";
+	$jsx[] = "addAction('Main')";
+	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
+	echo "<input type=button value='Display All Mail' $js>";
+	
+	$jsx = array();
+	$jsx[] = "setValue('from','$func')";
+	$jsx[] = "setValue('func','mails')";
+	$jsx[] = "setValue('area','unsent')";
+	$jsx[] = "addAction('Main')";
+	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
+	echo "<input type=button value='Send All Unsent' $js>";
 
 	if( $gTrace ) array_pop( $gFunction );
 }
