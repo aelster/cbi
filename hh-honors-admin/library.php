@@ -122,7 +122,7 @@ function Assign() {
 	<hr />
 
 	<div class="honors-box">
-		<p>Honors</p><p id=tot-honors></p>
+		<p id=tot-honors>Honors</p>
 		<div id=honors-div class=honors-div>
 <?php
   while( list( $id, $service, $honor ) = mysql_fetch_array( $honors_res ) ) {
@@ -174,7 +174,7 @@ function Assign() {
 	</div>
 
 	<div class="member-box">
-		<p>Congregants</p><p id=tot-members></p>
+		<p id=tot-members>Members</p>
 		<div id=members-div class=members-div>
 <?php
 	while( list( $id, $last, $ff, $mf, $ft, $mt ) = mysql_fetch_array( $member_res ) ) {
@@ -1999,10 +1999,17 @@ function MailAssignments() {
 	}
 	
 	$area = $_POST['area'];
+	$query = "select a.honor_id, a.member_id";
+	$query .= " from assignments a";
+	$query .= " join members c on a.member_id=c.id";
 	if( $area == "display" ) {
-		DoQuery( "select honor_id, member_id from assignments order by member_id" );
+		$query .= " order by c.`Last Name` asc, c.`Female 1st Name` asc";
+		DoQuery( $query );
 	} elseif( $area == "unsent" ) {
-		DoQuery( "select honor_id, member_id from assignments where sent = 0 order by member_id" );
+		$query .= " where a.sent = 0";
+		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
+		$query .= " limit 20";
+		DoQuery( $query );
 	}
 	$outer = $GLOBALS['mysql_result'];
 	while( list( $hid, $mid ) = mysql_fetch_array( $outer ) ) {

@@ -202,7 +202,7 @@ function myDisplayHonors()  {
 		}
 	}
 	e = document.getElementById('tot-honors');
-	e.innerHTML = num_assigned.toString() + '/' + num_visible.toString() + " assigned";
+	e.innerHTML = 'Honors (' + num_assigned.toString() + '/' + num_visible.toString() + ' assigned)';
 }
 
 function myDisplayMembers()  {
@@ -278,7 +278,7 @@ function myDisplayMembers()  {
 		}
 	}
 	e = document.getElementById('tot-members');
-	e.innerHTML = num_assigned.toString() + '/' + num_visible.toString() + " assigned";
+	e.innerHTML = 'Members (' + num_assigned.toString() + '/' + num_visible.toString() + ' assigned)';
 }
 
 function myDisplayRefresh() {
