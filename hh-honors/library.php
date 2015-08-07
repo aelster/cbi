@@ -1878,7 +1878,7 @@ function	SendConfirmation() {
 	if( preg_match( "/,/", $str ) ) {
 		$email = preg_split( "/,/", $str );
 	} elseif( preg_match( "/ /", $str ) ) {
-		$email = preg_split( "/ /", $str );
+		$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
 	} else {
 		$email = $str;
 	}

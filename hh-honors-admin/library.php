@@ -163,6 +163,7 @@ function Assign() {
 		$tmp = [];
 		$tmp[] = "setValue('from','Assign')";
 		$tmp[] = "setValue('func','mail')";
+		$tmp[] = "setValue('area','unsent')";
 		$tmp[] = "mySaveChoices()";
 		$tmp[] = "addAction('Update')";
 		$js = join(';',$tmp );
@@ -1968,7 +1969,7 @@ function MailAssignment() {
 		if( preg_match( "/,/", $str ) ) {
 			$email = preg_split( "/,/", $str );
 		} elseif( preg_match( "/ /", $str ) ) {
-			$email = preg_split( "/ /", $str );
+			$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
 		} else {
 			$email = $str;
 		}
@@ -1984,8 +1985,19 @@ function MailAssignment() {
 		->addPart( join('\n',$text), 'text/plain' )
 		;
 	
+		print_r( $email );
+		
 		if( MyMail($message) ) {
 			DoQuery( "update assignments set sent = 1 where hash = '$hash'");
+			$userid = $GLOBALS['gUserId'];
+	
+			$text = [];
+			$text[] = "insert event_log set time=now()";
+			$text[] = "type = 'mail'";
+			$text[] = "userid = '$userid'";
+			$text[] = "item = 'Send honor to $name, hash: $hash'";
+			$query = join( ",", $text );
+			DoQuery( $query );
 		}
 	}	
 	if( $gTrace ) array_pop( $gFunction );
