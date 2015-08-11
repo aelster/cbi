@@ -119,6 +119,13 @@ switch( $gAction ) {
 			$gAction = "Main";
 			$_POST['area'] = "mail";
 		}
+		
+		if( $func == "mailrsvps" ) {
+			MailRsvps();
+			$gAction = "Main";
+			$_POST['area'] = "mail";
+			exit;
+		}
 		break;
 	
 	case( 'Update' ):

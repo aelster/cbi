@@ -1831,12 +1831,15 @@ function	SendConfirmation() {
 		if( $payment == 'credit' ) {
 			$str_html .= sprintf( " We will be charging your credit card on file." );
 			$str_text .= sprintf( " We will be charging your credit card on file." );
+			$qarr[] = "payby = 1";
 		} elseif( $payment == 'check' ) {
 			$str_html .= sprintf( " We will be expecting your check in the next few days." );
 			$str_text .= sprintf( " We will be expecting your check in the next few days." );
+			$qarr[] = "payby = 2";
 		} elseif( $payment == 'call' ) {
 			$str_html .= sprintf( " We will be contacting you to arrange for payment." );
 			$str_text .= sprintf( " We will be contacting you to arrange for payment." );
+			$qarr[] = "payby = 3";
 		}
 	} else {
 		$qarr[] = "donation = $amount";		
@@ -1861,6 +1864,8 @@ function	SendConfirmation() {
 	} else {
 		$qarr[] = "comment = ''";
 	}
+	
+	$qarr[] = "updated = now()";
 	
 	$query = sprintf( "update assignments set %s where hash = '%s'", join(',', $qarr ), $_REQUEST['hash'] );
 	DoQuery( $query, $gDb2 );

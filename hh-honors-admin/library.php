@@ -1243,6 +1243,14 @@ function DisplayMain() {
 			
 			echo "<input type=button onclick=\"setValue('area','gabbai');addAction('Download');\" value=\"Excel Download\">";
 
+			$jsx = array();
+			$jsx[] = "setValue('from','$func')";
+			$jsx[] = "setValue('func','mailrsvps')";
+			$jsx[] = "setValue('area','display')";
+			$jsx[] = "addAction('Main')";
+			$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
+			echo "<input type=button value='Responses' $js>";
+	
 		}
 	}
 	
@@ -2110,6 +2118,14 @@ function MailDisplay() {
 	
 	$jsx = array();
 	$jsx[] = "setValue('from','$func')";
+	$jsx[] = "setValue('func','mailrsvps')";
+	$jsx[] = "setValue('area','display')";
+	$jsx[] = "addAction('Main')";
+	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
+	echo "<input type=button value='Responses' $js>";
+	
+	$jsx = array();
+	$jsx[] = "setValue('from','$func')";
 	$jsx[] = "setValue('func','mailval')";
 	$jsx[] = "setValue('area','display')";
 	$jsx[] = "addAction('Main')";
@@ -2131,6 +2147,125 @@ function MailDisplay() {
 	$jsx[] = "addAction('Main')";
 	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
 	echo "<input type=button value='Send All Unsent' $js>";
+
+	if( $gTrace ) array_pop( $gFunction );
+}
+
+function MailRsvps() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
+	echo "<div class=center>";
+	echo "<div class=CommonV2>";
+	
+	echo "<input type=button value=Refresh onclick=\"setValue('from', '$func');setValue('func','mailrsvps');addAction('Main');\">";
+	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
+
+	echo "<br><br>";
+
+	$query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
+	$query .= " from assignments a";
+	$query .= " join members c on a.member_id=c.id";
+	$query .= " where a.accepted = 1";
+	$query .= " order by a.updated";
+	DoQuery( $query );
+	$outer = $GLOBALS['mysql_result'];
+	printf( "<h2>Acceptances: %d</h2>", $GLOBALS['mysql_numrows'] );
+	echo "<table class=sortable>";
+	echo "<tr>";
+	echo "  <th>Time</th>";
+	echo "  <th>Member</th>";
+	echo "  <th>Honor</th>";
+	echo "  <th>Amount</th>";
+	echo "  <th>PayBy</th>";
+	echo "</tr>";
+	
+	$PayMethods = array( "", "Credit", "Check", "Call" );
+	
+	while( list( $time, $hid, $mid, $donation, $payby, $comment ) = mysql_fetch_array( $outer ) ) {
+		DoQuery( "select * from members where id = $mid" );
+		$member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+		DoQuery( "select * from honors where id = $hid" );
+		$honor = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+		echo "<tr>";
+		if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
+			$name = $member['Female 1st Name'];
+		} elseif( empty( $member['Female 1st Name'] ) && ! empty( $memeber['Male 1st Name'] ) ) {
+			$name = $member['Male 1st Name' ];
+		} else {
+			$name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+		}
+		$name .= sprintf( " %s", $member['Last Name'] );
+		$rows = empty( $comment ) ? 1 : 2;
+		printf( "<td class=c rowspan=$rows>%s</td>", preg_replace("/ /", "<br>", $time ) );
+		echo "<td rowspan=$rows>$name</td>\n";
+		printf( "<td>%s</td>\n", $honor['honor'] );
+		$style = ( $donation > 0 ) ? "text-align:right;background-color:lightgreen;" : "text-align:right";
+		printf( "<td style='%s'>\$ %s</td>", $style, number_format( $donation, 2 ) );
+		printf( "<td class=c>%s</td>", $PayMethods[$payby] );
+		echo "</tr>";
+		if( ! empty( $comment ) ) {
+			echo "<tr>";
+			echo "<td colspan=3><textarea cols=120>$comment</textarea></td>";
+			echo "</tr>";
+		}
+	}
+	echo "</table>";
+
+	echo "<br><br>";
+	
+	$query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
+	$query .= " from assignments a";
+	$query .= " join members c on a.member_id=c.id";
+	$query .= " where a.rejected = 1";
+	$query .= " order by a.updated";
+	DoQuery( $query );
+	$outer = $GLOBALS['mysql_result'];
+	printf( "<h2>Rejections: %d</h2>", $GLOBALS['mysql_numrows'] );
+	echo "<table class=sortable>";
+	echo "<tr>";
+	echo "  <th>Time</th>";
+	echo "  <th>Member</th>";
+	echo "  <th>Honor</th>";
+	echo "  <th>Amount</th>";
+	echo "  <th>Pay By</th>";
+	echo "</tr>";
+	
+	while( list( $time, $hid, $mid, $donation, $payby, $comment ) = mysql_fetch_array( $outer ) ) {
+		DoQuery( "select * from members where id = $mid" );
+		$member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+		DoQuery( "select * from honors where id = $hid" );
+		$honor = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+		echo "<tr>";
+		if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
+			$name = $member['Female 1st Name'];
+		} elseif( empty( $member['Female 1st Name'] ) && ! empty( $memeber['Male 1st Name'] ) ) {
+			$name = $member['Male 1st Name' ];
+		} else {
+			$name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+		}
+		$name .= sprintf( " %s", $member['Last Name'] );
+		$rows = empty( $comment ) ? 1 : 2;
+		printf( "<td class=c rowspan=$rows>%s</td>", preg_replace("/ /", "<br>", $time ) );
+		echo "<td rowspan=$rows>$name</td>\n";
+		printf( "<td>%s</td>\n", $honor['honor'] );
+		$style = ( $donation > 0 ) ? "text-align:right;background-color:lightgreen;" : "text-align:right";
+		printf( "<td style='%s'>\$ %s</td>", $style, number_format( $donation, 2 ) );
+		printf( "<td class=c>%s</td>", $PayMethods[$payby] );
+		echo "</tr>";
+		if( ! empty( $comment ) ) {
+			echo "<tr>";
+			echo "<td colspan=3><textarea cols=120>$comment</textarea></td>";
+			echo "</tr>";
+		}
+	}
+	echo "</table>";
+
+	echo "</div>";
+	echo "</div>";
 
 	if( $gTrace ) array_pop( $gFunction );
 }
