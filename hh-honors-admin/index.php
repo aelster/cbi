@@ -113,6 +113,12 @@ switch( $gAction ) {
 			MailAssignments();
 			$gAction = "Main";
 		}
+		
+		if( $func == "mailval" ) {
+			MailValidate();
+			$gAction = "Main";
+			$_POST['area'] = "mail";
+		}
 		break;
 	
 	case( 'Update' ):
