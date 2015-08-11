@@ -65,9 +65,20 @@ if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) 
 	$name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
 }
 
+$str = $member['E-Mail Address'];
+if( preg_match( "/,/", $str ) ) {
+	$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
+} elseif( preg_match( "/;/", $str ) ) {
+	$email = preg_split( "/;/", $str, NULL, PREG_SPLIT_NO_EMPTY );
+} elseif( preg_match( "/ /", $str ) ) {
+	$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
+} else {
+	$email = $str;
+}
+
 $name .= sprintf( " %s", $member['Last Name'] );
 printf( "<input type=hidden name=hh-name value=\"%s\">", $name );
-printf( "<input type=hidden name=hh-email value=\"%s\">", $member['E-Mail Address'] );
+printf( "<input type=hidden name=hh-email value=\"%s\">", join(",",$email) );
 $hstr = sprintf( "%s during the %s service on %s.", $honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
 ?>
 <div id="FloatPage">

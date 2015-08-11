@@ -1779,7 +1779,7 @@ function	SendConfirmation() {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
-	$subject = "5776 CBI High Holy Day Honor";
+	$subject = "5776 CBI High Holy Day Honor Confirmation";
 	
 	$message = Swift_Message::newInstance($subject);
 	
@@ -1876,21 +1876,17 @@ function	SendConfirmation() {
 
 	$str = $_POST['hh-email'];
 	if( preg_match( "/,/", $str ) ) {
-		$email = preg_split( "/,/", $str );
+		$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
+	} elseif( preg_match( "/;/", $str ) ) {
+		$email = preg_split( "/;/", $str, NULL, PREG_SPLIT_NO_EMPTY );
 	} elseif( preg_match( "/ /", $str ) ) {
 		$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
 	} else {
 		$email = $str;
 	}
+
 	$message->setTo( $email );
-	$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
-	$message->setBcc(array(
-		'andy.elster@gmail.com' => 'Andy Elster',
-		'bethelster1@gmail.com' => 'Beth Elster',
-		'hcoulter@cbi18.org' => 'Helene Coulter',
-		'cbi18@cbi18.org' => 'Ana Cottle'
-	) );
-	
+	$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));	
 	$message
 	->setBody( join('<br>',$html), 'text/html' )
 	->addPart( join('\n',$text), 'text/plain' )

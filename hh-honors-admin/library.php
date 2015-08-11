@@ -1925,9 +1925,10 @@ function MailAssignment() {
 	$html[] = "";
 	$text[] = "";
 
-	$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
-	$html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by August 14th, 2015.";
-	$text[] = "Click on the following link, $url, to confirm or decline this honor by August 14th, 2015.";
+//	$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
+	$url = "http://www.cbi18.org/hh-honors/?hash=$hash";
+	$html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by August 17th, 2015.";
+	$text[] = "Click on the following link, $url, to confirm or decline this honor by August 17th, 2015.";
 
 	$html[] = "";
 	$text[] = "";
@@ -1965,28 +1966,25 @@ function MailAssignment() {
 		echo "<hr>" . join('<br>', $html );
 	
 	} elseif( $area == "unsent" ) {
-		$str = $member['E-mail Address'];
+		$str = $member['E-Mail Address'];
 		if( preg_match( "/,/", $str ) ) {
-			$email = preg_split( "/,/", $str );
+			$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
+		} elseif( preg_match( "/;/", $str ) ) {
+			$email = preg_split( "/;/", $str, NULL, PREG_SPLIT_NO_EMPTY );
 		} elseif( preg_match( "/ /", $str ) ) {
 			$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
 		} else {
 			$email = $str;
 		}
-
+		if( empty( $email ) ) return;
+		
 		$message->setTo( $email );
 		$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
-		$message->setBcc( array(
-			'andy.elster@gmail.com' => 'Andy Elster',
-			'bethelster1@gmail.com' => 'Beth Elster'
-			));
 		$message
 		->setBody( join('<br>',$html), 'text/html' )
 		->addPart( join('\n',$text), 'text/plain' )
 		;
-	
-		print_r( $email );
-		
+			
 		if( MyMail($message) ) {
 			DoQuery( "update assignments set sent = 1 where hash = '$hash'");
 			$userid = $GLOBALS['gUserId'];
@@ -2020,7 +2018,7 @@ function MailAssignments() {
 	} elseif( $area == "unsent" ) {
 		$query .= " where a.sent = 0";
 		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
-		$query .= " limit 20";
+		$query .= " limit 100";
 		DoQuery( $query );
 	}
 	$outer = $GLOBALS['mysql_result'];
@@ -2058,12 +2056,24 @@ function MailDisplay() {
 	
 	echo "<tr>";
 	echo "<th>Mail Admin - Hard Coded in Local_Settings</th>";
-	echo "<td colspan=2>" . array_keys($GLOBALS['mail_admin'])[0] . "</td>";
+	echo "<td>" . array_keys($GLOBALS['mail_admin'])[0] . "</td>";
 	echo "</tr>";
 	
 	echo "<tr>";
 	echo "<th>Mail Server - Hard Coded in Local_Settings</th>";
-	echo "<td colspan=2>" . $GLOBALS['mail_servers'][0]['server'] . "</td>";
+	echo "<td>" . $GLOBALS['mail_servers'][0]['server'] . "</td>";
+	echo "</tr>";
+	
+	DoQuery( "select ival from dates where label = 'num_per_batch'" );
+	if( $GLOBALS['mysql_numrows'] == 0 ) {
+		$npb = -1;
+	} else {
+		list( $npb ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	}
+	echo "<tr>";
+	echo "<th>Send/Batch (-1 => no limit)</th>";
+	$tag = MakeTag('num_per_batch');
+	echo "<td><input $tag type=text value=$npb></td>";
 	echo "</tr>";
 	echo "</table>";
 	
@@ -2100,6 +2110,14 @@ function MailDisplay() {
 	
 	$jsx = array();
 	$jsx[] = "setValue('from','$func')";
+	$jsx[] = "setValue('func','mailval')";
+	$jsx[] = "setValue('area','display')";
+	$jsx[] = "addAction('Main')";
+	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
+	echo "<input type=button value='Validate E-Mails' $js>";
+	
+	$jsx = array();
+	$jsx[] = "setValue('from','$func')";
 	$jsx[] = "setValue('func','mails')";
 	$jsx[] = "setValue('area','display')";
 	$jsx[] = "addAction('Main')";
@@ -2131,6 +2149,68 @@ function MailUpdate() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
+ function MailValidate() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	echo "<div class=CommonV2>";
+
+	$query = "select a.honor_id, a.member_id";
+	$query .= " from assignments a";
+	$query .= " join members c on a.member_id=c.id";
+	$query .= " order by c.`Last Name` asc, c.`Female 1st Name` asc";
+	DoQuery( $query );
+	$outer = $GLOBALS['mysql_result'];
+	echo "<table>";
+	while( list( $hid, $mid ) = mysql_fetch_array( $outer ) ) {
+		DoQuery( "select * from members where id = $mid" );
+		$member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+		
+		if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
+			$name = $member['Female 1st Name'];
+		} elseif( empty( $member['Female 1st Name'] ) && ! empty( $memeber['Male 1st Name'] ) ) {
+			$name = $member['Male 1st Name' ];
+		} else {
+			$name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+		}
+		
+		echo "<tr>";
+		$name .= sprintf( " %s", $member['Last Name'] );
+		echo "<td>$name</td>";
+
+		$str = $member['E-Mail Address'];
+		if( preg_match( "/,/", $str ) ) {
+			$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
+		} elseif( preg_match( "/;/", $str ) ) {
+			$email = preg_split( "/;/", $str, NULL, PREG_SPLIT_NO_EMPTY );
+		} elseif( preg_match( "/ /", $str ) ) {
+			$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
+		} else {
+			$email = $str;
+		}
+		if( is_array($email) ) {
+			foreach( $email as $str ) {
+				if( Swift_Validate::email($str)) {
+					echo "<td class=cok>$str</td>";
+				} else {
+					echo "<td class=cbad>$str</td>";
+				}
+			}
+		} else {
+			if( Swift_Validate::email($str)) {
+				echo "<td class=cok colspan=2>$str</td>";
+			} else {
+				echo "<td class=cbad colspan=2>$str</td>";
+			}
+		}
+		echo "</tr>";
+	}
+	echo "</table>";
+	echo "</div>";
+	if( $gTrace ) array_pop( $gFunction );
+}
 
  function MembersEdit() {
 	include( 'globals.php' );
