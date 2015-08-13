@@ -1887,7 +1887,7 @@ function MailAssignment() {
 			break;
 		
 		case( 'yka' ):
-		case( 'ykb' ):
+		case( 'ykp' ):
 			$date->add( new DateInterval('P10D') );
 			break;
 	}
