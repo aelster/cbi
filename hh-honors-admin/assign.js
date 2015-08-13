@@ -189,6 +189,9 @@ function myDisplayHonors()  {
 					if ( j < 0 ) { j = 0; }
 					e.scrollTop = e.children[i].scrollHeight * j;
 					num_assigned++;
+				} else if( honors_db[id].accepted ) {
+					e.children[i].className = "accepted";
+					num_assigned++;
 				} else if( honors_db[id].assigned ) {
 					e.children[i].className = "visible";
 					num_assigned++;
@@ -202,7 +205,7 @@ function myDisplayHonors()  {
 		}
 	}
 	e = document.getElementById('tot-honors');
-	e.innerHTML = 'Honors (' + num_assigned.toString() + '/' + num_visible.toString() + ' assigned)';
+	e.innerHTML = 'Honors Assigned (' + num_assigned.toString() + '/' + num_visible.toString() + ')';
 }
 
 function myDisplayMembers()  {
@@ -234,8 +237,15 @@ function myDisplayMembers()  {
 				if( members_status[id].selected ) {
 					e.children[i].className = "highlighted";
 					num_assigned++;
-				} else if( members_status[id].rejected > 0 ) {
-					e.children[i].className = "rejected";
+				} else if( members_status[id].accepted ) {
+					e.children[i].className = "accepted";
+					var j = num_assigned - 10;
+					if ( j < 0 ) { j = 0; }
+					e.scrollTop = e.children[i].scrollHeight * j;
+					num_assigned++;
+				} else if( members_status[id].declined > 0 ) {
+					e.children[i].className = "declined";
+					
 				} else {if( members_status[id].assigned ) {
 					e.children[i].className = "assigned";
 					num_assigned++;
@@ -265,8 +275,14 @@ function myDisplayMembers()  {
 					if ( j < 0 ) { j = 0; }
 					e.scrollTop = e.children[i].scrollHeight * j;
 					num_assigned++;
+				} else if( members_status[id].accepted ) {
+					e.children[i].className = "accepted";
+					var j = num_assigned - 10;
+					if ( j < 0 ) { j = 0; }
+					e.scrollTop = e.children[i].scrollHeight * j;
+					num_assigned++;
 				} else if( members_status[id].assigned ) {
-					e.children[i].className = "visible";
+					e.children[i].className = "assigned";
 					num_assigned++;
 				} else {
 					e.children[i].className = "hidden";
@@ -278,7 +294,7 @@ function myDisplayMembers()  {
 		}
 	}
 	e = document.getElementById('tot-members');
-	e.innerHTML = 'Members (' + num_assigned.toString() + '/' + num_visible.toString() + ' assigned)';
+	e.innerHTML = 'Members Assigned (' + num_assigned.toString() + '/' + num_visible.toString() + ')';
 }
 
 function myDisplayRefresh() {
@@ -309,6 +325,11 @@ function myHighlightAction() {
 			e = document.getElementById('action-mail');
 			e.className = "action-mail-active";
 			e.disabled = false;
+			
+			e = document.getElementsByName('action-reply');
+			for( i = 0; i<e.length; i++ ) {
+				e[i].disabled = false;
+			}
 		}
 	} else {
 		e.className = "action-" + display_mode + "-visible";
@@ -350,8 +371,11 @@ function mySetMode(mode) {
 
 	if ( display_mode == 'view' ) {
 		document.getElementById('action-mail').className = "action-mail-visible";
+		document.getElementById('reply-block').className = "action-visible";
 	} else {
 		document.getElementById('action-mail').className = "action-mail-hidden";
+		document.getElementById('reply-block').className = "action-hidden";
+
 	}
 
 	honors_db.forEach( function xx(honor) { honor.selected = 0; } );

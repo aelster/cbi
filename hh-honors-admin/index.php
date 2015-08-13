@@ -142,6 +142,9 @@ switch( $gAction ) {
 			} elseif( $func == "mails" ) {
 				MailAssignments();
 				$gAction = "Assign";
+			} elseif( $func == "manual" ) {
+				AssignRSVP();
+				$gAction = "Assign";
 			}
 		
 		} elseif( $gFrom == "DisplayDates" ) {

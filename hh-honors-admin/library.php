@@ -20,12 +20,18 @@ function Assign() {
 	$assign = UserManager( 'authorized', 'assign' );
 
 	$honor_assigned = [];
+	$honor_accepted = [];
 	$member_assigned = [];
-	$member_rejected = [];
+	$member_accepted = [];
+	$member_declined = [];
 	DoQuery( "select * from assignments" );
 	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result']) ) {
-		if( $row['rejected'] ) {
-			$member_rejected[$row['member_id']] = $row['honor_id'];
+		if( $row['declined'] ) {
+			$member_declined[$row['member_id']] = $row['honor_id'];
+		} else if( $row['accepted'] ) {
+			$honor_accepted[$row['honor_id']] = $row['member_id'];
+			$honor_assigned[$row['honor_id']] = $row['member_id'];
+			$member_accepted[$row['member_id']] = $row['honor_id'];
 		} else {
 			$honor_assigned[$row['honor_id']] = $row['member_id'];
 			$member_assigned[$row['member_id']] = $row['honor_id'];
@@ -35,8 +41,13 @@ function Assign() {
 	DoQuery( "select id, service, honor from honors order by sort" );
 	echo "<script type='text/javascript' id=honors-database>\n";
 	while( list( $id, $service, $honor ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
-		$used = array_key_exists( $id, $honor_assigned ) ? $honor_assigned[$id] : 0;
-		printf( "honors_db[%d] = { service:'day-%s', honor:'%s', selected:0, assigned:$used };\n", $id, $service, mysql_escape_string($honor) );
+		$qx = [];
+		$qx[] = sprintf( "service:'day-%s'", $service );
+		$qx[] = sprintf( "honor:'%s'", mysql_escape_string($honor) );
+		$qx[] = sprintf( "selected:0" );
+		$qx[] = sprintf( "assigned:%d", array_key_exists( $id, $honor_assigned ) ? $honor_assigned[$id] : 0 );
+		$qx[] = sprintf( "accepted:%d", array_key_exists( $id, $honor_accepted ) ? $honor_accepted[$id] : 0 );
+		printf( "honors_db[%d] = { %s };\n", $id, join(',',$qx ) );
 	}
 	echo "</script>";
 	DoQuery( "select * from member_attributes order by id asc" );
@@ -70,8 +81,9 @@ function Assign() {
 		$tmp[] = sprintf( "%s:%d", "other", $other );
 		printf( "members_db[%d] = { %s };\n", $row['id'], join( ', ', $tmp ) );
 		$used = array_key_exists( $row['id'], $member_assigned ) ? $member_assigned[$row['id']] : 0;
-		$rej = array_key_exists( $row['id'], $member_rejected ) ? $member_rejected[$row['id']] : 0;
-		printf( "members_status[%d] = { selected:0, assigned:%d, rejected:%d };\n", $row['id'], $used, $rej);
+		$acc = array_key_exists( $row['id'], $member_accepted ) ? $member_accepted[$row['id']] : 0;
+		$rej = array_key_exists( $row['id'], $member_declined ) ? $member_declined[$row['id']] : 0;
+		printf( "members_status[%d] = { selected:0, assigned:%d, accepted:%d, declined:%d };\n", $row['id'], $used, $acc, $rej);
 	 }
   echo "</script>\n";
   DoQuery( "select id, service, honor from honors order by sort" );
@@ -122,7 +134,7 @@ function Assign() {
 	<hr />
 
 	<div class="honors-box">
-		<p id=tot-honors>Honors</p>
+		<p id=tot-honors>Honors Assigned</p>
 		<div id=honors-div class=honors-div>
 <?php
   while( list( $id, $service, $honor ) = mysql_fetch_array( $honors_res ) ) {
@@ -168,14 +180,65 @@ function Assign() {
 		$tmp[] = "addAction('Update')";
 		$js = join(';',$tmp );
 		echo "<input id=action-mail type=button disabled class=mode-mail-hidden onclick=\"$js\" value=\"Mail\">";
-
 	}
+	
+	if( UserManager( 'authorized', 'office' ) ) {
+		echo "<div id=reply-block class=action-hidden>";
+		echo "<hr>";
+		
+		$tag = MakeTag('action-reply');
+		
+		$tmp = [];
+		$tmp[] = "setValue('from','Assign')";
+		$tmp[] = "setValue('func','manual')";
+		$tmp[] = "setValue('area','accept')";
+		$tmp[] = "mySaveChoices()";
+		$tmp[] = "addAction('Update')";
+		$js = join(';',$tmp);
+		echo "<input $tag type=button disabled onclick=\"$js\" value=\"Accept\"><br>";
+		
+		$tmp = [];
+		$tmp[] = "setValue('from','Assign')";
+		$tmp[] = "setValue('func','manual')";
+		$tmp[] = "setValue('area','decline')";
+		$tmp[] = "mySaveChoices()";
+		$tmp[] = "addAction('Update')";
+		$js = join(';',$tmp);
+		echo "<input $tag type=button disabled onclick=\"$js\" value=\"Decline\">";
+
+		$tag = MakeTag('reply-amount');
+		echo "<select $tag>";
+		echo "<option value=0>- Amount -</option>";
+		$price_points = [ 18, 36, 54, 72, 108, 144, 180, 270, 360, 540, 720, 1080 ];
+		foreach( $price_points as $val ) {
+			printf( "<option value=%d>\$ %s</option>", $val, number_format($val) );
+		}
+		echo "</select>";
+
+		$tag = MakeTag('reply-method');
+		echo "<select $tag>";
+		$pay_by = [ "- method -", "credit", "check", "call" ];
+		foreach( $pay_by as $i => $val ) {
+			printf( "<option value=%d>%s</option>", $i, $val );
+		}
+		echo "</select>";
+		echo "</div>";
+	}
+	
+?>
+<br><br><br><br>
+<p>Key:</p>
+<span class=assigned>&nbsp;Assigned&nbsp;</span><br>
+<span class=accepted>&nbsp;Accepted&nbsp;</span><br>
+<span class=declined>&nbsp;Declined&nbsp;</span><br>
+
+<?php
 
 ?>
 	</div>
 
 	<div class="member-box">
-		<p id=tot-members>Members</p>
+		<p id=tot-members>Members Assigned</p>
 		<div id=members-div class=members-div>
 <?php
 	while( list( $id, $last, $ff, $mf, $ft, $mt ) = mysql_fetch_array( $member_res ) ) {
@@ -310,6 +373,15 @@ function AssignDel() {
 			}
 	}
 	
+	if( $gTrace ) array_pop( $gFunction );
+}
+
+function AssignRSVP() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
 	if( $gTrace ) array_pop( $gFunction );
 }
 
@@ -2112,17 +2184,9 @@ function MailDisplay() {
 
 	echo "<br><br>";
 	
-	DoQuery( "select count(*), sum(sent), sum(accepted), sum(rejected) from assignments" );
-	list( $total, $sent, $accepted, $rejected ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
-	printf( "%d/%d Aliyot mailed, %d accepted, %d rejected<br>", $sent, $total, $accepted, $rejected );
-	
-	$jsx = array();
-	$jsx[] = "setValue('from','$func')";
-	$jsx[] = "setValue('func','mailrsvps')";
-	$jsx[] = "setValue('area','display')";
-	$jsx[] = "addAction('Main')";
-	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
-	echo "<input type=button value='Responses' $js>";
+	DoQuery( "select count(*), sum(sent), sum(accepted), sum(declined) from assignments" );
+	list( $total, $sent, $accepted, $declined ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	printf( "%d/%d Aliyot mailed, %d accepted, %d declined<br>", $sent, $total, $accepted, $declined );
 	
 	$jsx = array();
 	$jsx[] = "setValue('from','$func')";
@@ -2138,7 +2202,7 @@ function MailDisplay() {
 	$jsx[] = "setValue('area','display')";
 	$jsx[] = "addAction('Main')";
 	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
-	echo "<input type=button value='Display All Mail' $js>";
+	echo "<input type=button value='Preview All Mail' $js>";
 	
 	$jsx = array();
 	$jsx[] = "setValue('from','$func')";
@@ -2220,7 +2284,7 @@ function MailRsvps() {
 	$query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
 	$query .= " from assignments a";
 	$query .= " join members c on a.member_id=c.id";
-	$query .= " where a.rejected = 1";
+	$query .= " where a.declined = 1";
 	$query .= " order by a.updated";
 	DoQuery( $query );
 	$outer = $GLOBALS['mysql_result'];

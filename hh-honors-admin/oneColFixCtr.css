@@ -119,6 +119,10 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 	background-color:  #0f0;
 }
 
+.action-hidden {
+	display: none;
+}
+
 /* ~~ This is the layout information. ~~ 
 
 1) Padding is only placed on the top and/or bottom of the div. The elements within this div have padding on their sides. This saves you from any "box model math". Keep in mind, if you add any side padding or border to the div itself, it will be added to the width you define to create the *total* width. You may also choose to remove the padding on the element in the div and place a second div within it with no width and the padding necessary for your design.
@@ -229,42 +233,15 @@ div.assign-top {
 }
 
 .honors-div p.hidden {
-	font-size: 12px;
-	font-weight: normal;
-	text-align: left;
-	padding: 0;
-	line-height:  1.0;
-	margin: 2px;
-	text-indent: -2em;
-	padding-left:  2em;
-	background-color: #fff;
 	display: none;
 }
 
  .honors-div p.visible {
-	font-size: 12px;
-	font-weight: normal;
-	text-align: left;
-	padding: 0;
-	line-height:  1.0;
-	margin: 2px;
-	text-indent: -2em;
-	padding-left:  2em;
-	background-color: #fff;
 	display: block;
 }
 
 .honors-div p.highlighted {
-	font-size: 12px;
-	font-weight: normal;
-	text-align: left;
-	padding: 0;
-	line-height:  1.0;
-	margin: 2px;
-	text-indent: -2em;
-	padding-left:  2em;
 	display: block;
-	background-color: #9f9;
 }
 
 .members-div {
@@ -286,68 +263,15 @@ div.assign-top {
 }
 
 .members-div p.hidden {
-	font-size: 12px;
-	font-weight: normal;
-	text-align: left;
-	padding: 0;
-	line-height:  1.0;
-	margin: 2px;
-	text-indent: -2em;
-	padding-left:  2em;
-	background-color: #fff;
 	display: none;
 }
 
  .members-div p.visible {
-	font-size: 12px;
-	font-weight: normal;
-	text-align: left;
-	padding: 0;
-	line-height:  1.0;
-	margin: 2px;
-	text-indent: -2em;
-	padding-left:  2em;
-	background-color: #fff;
 	display: block;
 }
 
-.members-div p.highlighted {
-	font-size: 12px;
-	font-weight: normal;
-	text-align: left;
-	padding: 0;
-	line-height:  1.0;
-	margin: 2px;
-	text-indent: -2em;
-	padding-left:  2em;
+.members-div p.declined {
 	display: block;
-	background-color: #9f9;
-}
-
-.members-div p.assigned {
-	font-size: 12px;
-	font-weight: normal;
-	text-align: left;
-	padding: 0;
-	line-height:  1.0;
-	margin: 2px;
-	text-indent: -2em;
-	padding-left:  2em;
-	display: block;
-	background-color: #ff0;
-}
-
-.members-div p.rejected {
-	font-size: 12px;
-	font-weight: normal;
-	text-align: left;
-	padding: 0;
-	line-height:  1.0;
-	margin: 2px;
-	text-indent: -2em;
-	padding-left:  2em;
-	display: block;
-	background-color: #f7b;
 }
 
 .CommonV2 table.honors thead { display:block; }
@@ -377,3 +301,9 @@ div.assign-top {
 .CommonV2 table.members td.name { width: 450px; }
 .CommonV2 table.members td.tribe { width: 60px; text-align: center; }
 .CommonV2 table.members td.box { width: 50px; text-align: center; }
+
+.assigned {	background-color: #ff0; }
+.accepted {	background-color: #9FCFE0; }
+.declined {	background-color: #f7b; }
+.highlighted {	background-color: #9f9; }
+
