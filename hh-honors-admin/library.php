@@ -217,7 +217,7 @@ function Assign() {
 
 		$tag = MakeTag('reply-method');
 		echo "<select $tag>";
-		$pay_by = [ "- method -", "credit", "check", "call" ];
+		$pay_by = [ "- Method -", "credit", "check", "call" ];
 		foreach( $pay_by as $i => $val ) {
 			printf( "<option value=%d>%s</option>", $i, $val );
 		}
@@ -382,6 +382,37 @@ function AssignRSVP() {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
+	
+	$vx = [];
+	$area = $_POST['area'];
+	if( $area == 'accept' ) {
+		$vx[] = "accepted=1";
+		$vx[] = "declined=0";
+	} elseif( $area == "decline" ) {
+		$vx[] = "accepted=0";
+		$vx[] = "declined=1";
+	}
+	
+	$donation = $_POST['reply-amount'];
+	$vx[] = "donation = $donation";
+	
+	$method = $_POST['reply-method'];
+	$vx[] = "payby = $method";
+	
+	$tmp = preg_split("/,/", $_POST['fields'] );
+	foreach( $tmp as $field ) {
+		$tmp2 = preg_split( "/_/", $field );
+		if( $tmp2[0] == "honor" ) {
+			$honor_id = $tmp2[1];
+		} elseif( $tmp2[0] == "member" ) {
+			$member_id = $tmp2[1];
+		}
+	}
+	$vx[] = "updated = now()";
+	
+	$query = sprintf( "update assignments set %s where honor_id = %d", join(',', $vx ), $honor_id );
+	DoQuery( $query );
+
 	if( $gTrace ) array_pop( $gFunction );
 }
 
