@@ -2154,8 +2154,45 @@ function MailDisplay() {
 	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
 
 	echo "<br><br>";
-	echo "<table>";
 	
+	echo "<table>";
+	echo "<tr>";
+	echo "<th>Live Mail</th>";
+	if( $mail_live ) {
+		echo "<td class=cok>Enabled - Live to members</td>";
+		$new = "2000-01-01";
+		$val = "Disable";
+	} else {
+		echo "<td class=cbad>Disabled - Test Mode - Send to Mail Admin</td>";
+		$new = "2015-08-01";
+		$val = "Enable";
+	}
+	
+	$tag = MakeTag('toggle');
+	$jsx = array();
+	$jsx[] = "setValue('area','$area')";
+	$jsx[] = "setValue('from','MailDisplay')";
+	$jsx[] = "setValue('func','update')";
+	$jsx[] = "addField('$new')";
+	$jsx[] = "addAction('Update')";
+	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
+	echo "<td class=c><input type=button value=$val $tag $js></td>";
+	echo "</tr>";
+	echo "</table>";
+
+	echo "<br><br>";
+	
+	$tag = MakeTag('update');
+	$jsx = array();
+	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
+	$jsx[] = "setValue('func','update')";
+	$jsx[] = "addAction('Update')";
+	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
+	echo "<input $tag type=button value=Update $tag $js>";
+	
+	echo "<br><br>";
+	
+	echo "<table>";
 	echo "<tr>";
 	echo "<th>Mail Enabled</th>";
 	if( $GLOBALS['mail_enabled']) {
@@ -2184,35 +2221,27 @@ function MailDisplay() {
 	echo "<tr>";
 	echo "<th>Send/Batch (-1 => no limit)</th>";
 	$tag = MakeTag('num_per_batch');
-	echo "<td><input $tag type=text value=$npb></td>";
+	echo "<td><input $tag onchange=\"toggleBgRed('update');\" type=text value=$npb></td>";
 	echo "</tr>";
+
+	DoQuery( "select date from dates where id = 3");
+	if( $GLOBALS['mysql_numrows'] == 0 ) {
+		$val = "";
+	} else {
+		list( $tmp ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$ts = strtotime( $tmp );
+		$val = date( "D M jS", $ts ); 
+	}
+	echo "<tr>";
+	echo "<th>Reply Date</th>";
+	$tag = MakeTag('reply-date');
+	echo "<td><input $tag onchange=\"toggleBgRed('update');\" type=text value=$val></td>";
+	echo "</tr>";
+
 	echo "</table>";
 	
 	echo "<br><br>";
 	
-	echo "<table>";
-	echo "<tr>";
-	echo "<th>Live Mail</th>";
-	if( $mail_live ) {
-		echo "<td class=cok>Enabled - Live to members</td>";
-		$new = "2000-01-01";
-	} else {
-		echo "<td class=cbad>Disabled - Test Mode - Send to Mail Admin</td>";
-		$new = "2015-08-01";
-	}
-	$tag = MakeTag('update');
-	$jsx = array();
-	$jsx[] = "setValue('area','$area')";
-	$jsx[] = "setValue('from','MailDisplay')";
-	$jsx[] = "setValue('func','update')";
-	$jsx[] = "addField('$new')";
-	$jsx[] = "addAction('Update')";
-	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-	echo "<td class=c><input type=button value=Toggle $tag $js></td>";
-	
-	echo "</tr>";
-	echo "</table>";
-
 	echo "<br><br>";
 	
 	DoQuery( "select count(*), sum(sent), sum(accepted), sum(declined) from assignments" );
