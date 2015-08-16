@@ -80,7 +80,7 @@ switch( $gAction ) {
 	      $gAction = 'Welcome';
 	      $func = "";
 		}
-	break;
+		break;
    
    case( 'Continue' ):
       $gAction = "Start";
@@ -94,6 +94,34 @@ switch( $gAction ) {
       UserManager('verify');
       break;
 
+	case( 'Mail'):
+		$func = $_POST['func'];
+		if( $func == "validate" ) {
+			MailValidate();
+			$gAction = "Mail";
+		}
+		
+		if( $func == "all" ) {
+			MailAssignments( $func );
+			$gAction = "Mail";
+		}
+		
+		if( $func == "unsent" ) {
+			MailAssignments( $func );
+			$gAction = "Mail";
+		}
+		
+		if( $func == "noresponse" ) {
+			MailAssignments( $func );
+			$gAction = "Mail";
+		}
+		
+		if( $func == "mailrsvps" ) {
+			MailRsvps();
+			$gAction = "Mail";
+		}
+		break;
+		
    case( 'Main' ):
 		$func = $_POST['func'];
 		if( $func == "backup" ) {
@@ -109,23 +137,6 @@ switch( $gAction ) {
 			$gAction = 'Main';
 		}
 		
-		if( $func == "mails" ) {
-			MailAssignments();
-			$gAction = "Main";
-		}
-		
-		if( $func == "mailval" ) {
-			MailValidate();
-			$gAction = "Main";
-			$_POST['area'] = "mail";
-		}
-		
-		if( $func == "mailrsvps" ) {
-			MailRsvps();
-			$gAction = "Main";
-			$_POST['area'] = "mail";
-			exit;
-		}
 		break;
 	
 	case( 'Update' ):
@@ -237,6 +248,7 @@ $vect['Edit'] = 'EditManager';
 $vect['Inactive'] = 'UserManager';
 $vect['Login']	= 'UserManager';
 $vect['Logout'] = 'UserManager';
+$vect['Mail'] = 'MailDisplay';
 $vect['Main'] = 'DisplayMain';
 $vect['Resend'] = 'UserManager';
 $vect['Start'] = 'UserManager';

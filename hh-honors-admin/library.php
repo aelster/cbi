@@ -384,6 +384,7 @@ function AssignRSVP() {
 	}
 	
 	$vx = [];
+	$vx[] = "sent=1";
 	$area = $_POST['area'];
 	if( $area == 'accept' ) {
 		$vx[] = "accepted=1";
@@ -1890,9 +1891,8 @@ function LocalInit() {
 	$gJewishYear = $arr['year'];
 	
 #============
-	DoQuery( "select date from dates where id = 2" );
-	list( $date ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
-	$mail_live = ( $date == "2000-01-01" ) ? 0 : 1;
+	DoQuery( "select ival from dates where label = 'mail_live'" );
+	list( $mail_live ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	
 #============
 	$date_server = new DateTime( '2000-01-01' );
@@ -1932,13 +1932,15 @@ function LocalInit() {
 	$gDebug = $x;
 }
 
-function MailAssignment() {
+function MailAssignment( $area ) {
 	include( 'globals.php' );
 	if( $gTrace ) {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
 
+	$preview = ( array_key_exists( 'preview', $_POST ) ) ? 1 : 0;
+	
 	$subject = "$gJewishYear CBI High Holy Day Honor";
 	
 	$message = Swift_Message::newInstance($subject);
@@ -1960,6 +1962,13 @@ function MailAssignment() {
 	DoQuery( "select * from assignments where honor_id = $honor_id and member_id = $member_id" );
 	$assignment = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
 	$hash = $assignment['hash'];
+
+	$today = date( 'Y-m-d' );
+	DoQuery( "select * from event_log where item like '%$hash%' and time >= '$today'" );
+	if( $GLOBALS['mysql_numrows'] ) {
+		if( $gTrace ) array_pop( $gFunction );
+		return;
+	}
 
 	if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
 		$name = $member['Female 1st Name'];
@@ -2000,7 +2009,9 @@ function MailAssignment() {
 	$cid = $message->embed(Swift_Image::fromPath('assets/CBI_ner_tamid.png'));
 
 	$html[] = "<html><head></head><body>";
-	$html[] = '<img src="' . $cid . '" alt="Image" />';
+	if( ! $preview ) {
+		$html[] = '<img src="' . $cid . '" alt="Image" />';
+	}
 	
 	$html[] = "Congregation B'nai Israel";
 	$text[] = "Congregation B'nai Israel";
@@ -2035,11 +2046,16 @@ function MailAssignment() {
 	
 	$html[] = "";
 	$text[] = "";
+	
+	DoQuery( "select date from dates where label = 'reply_date'" );
+	list( $str ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	$ts = strtotime( $str );
+	$reply_date = date( 'F dS, Y', $ts );
 
 //	$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
 	$url = "http://www.cbi18.org/hh-honors/?hash=$hash";
-	$html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by August 17th, 2015.";
-	$text[] = "Click on the following link, $url, to confirm or decline this honor by August 17th, 2015.";
+	$html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by $reply_date.";
+	$text[] = "Click on the following link, $url, to confirm or decline this honor by $reply_date.";
 
 	$html[] = "";
 	$text[] = "";
@@ -2071,12 +2087,10 @@ function MailAssignment() {
 	$html[] = "Ritual Vice Presidents";
 	$text[] = "Ritual Vice Presidents";
 	
-	$area = $_POST['area'];
-
-	if( $area == "display" ) {
+	if( $preview ) {
 		echo "<hr>" . join('<br>', $html );
 	
-	} elseif( $area == "unsent" ) {
+	} else {
 		$str = $member['E-Mail Address'];
 		if( preg_match( "/,/", $str ) ) {
 			$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
@@ -2112,30 +2126,50 @@ function MailAssignment() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
-function MailAssignments() {
+function MailAssignments( $area ) {
 	include( 'globals.php' );
 	if( $gTrace ) {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
 	
-	$area = $_POST['area'];
+	DoQuery( "select ival from dates where label = 'num_per_batch'" );
+	list( $val ) = mysql_fetch_array( $GLOBALS['mysql_result']);
+	if( $val > 0 ) {
+		$limited = 1;
+		$num_per_batch = $val;
+	} else {
+		$limited = 0;
+	}
+	
 	$query = "select a.honor_id, a.member_id";
 	$query .= " from assignments a";
 	$query .= " join members c on a.member_id=c.id";
-	if( $area == "display" ) {
+	
+	if( $area == "all" ) {
 		$query .= " order by c.`Last Name` asc, c.`Female 1st Name` asc";
 		DoQuery( $query );
+		
 	} elseif( $area == "unsent" ) {
 		$query .= " where a.sent = 0";
 		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
-		$query .= " limit 100";
+		if( $limited ) {
+			$query .= " limit $num_per_batch";
+		}
+		DoQuery( $query );
+		
+	} elseif( $area == "noresponse" ) {
+		$query .= " where a.accepted = 0 and a.declined = 0";
+		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
+		if( $limited ) {
+			$query .= " limit $num_per_batch";
+		}
 		DoQuery( $query );
 	}
 	$outer = $GLOBALS['mysql_result'];
 	while( list( $hid, $mid ) = mysql_fetch_array( $outer ) ) {
 		$_POST['fields'] = sprintf( "honor_%d,member_%d", $hid, $mid );
-		MailAssignment();
+		MailAssignment( $area );
 	}
 	if( $gTrace ) array_pop( $gFunction );
 }
@@ -2160,23 +2194,25 @@ function MailDisplay() {
 	echo "<th>Live Mail</th>";
 	if( $mail_live ) {
 		echo "<td class=cok>Enabled - Live to members</td>";
-		$new = "2000-01-01";
+		$new = 0;
 		$val = "Disable";
 	} else {
 		echo "<td class=cbad>Disabled - Test Mode - Send to Mail Admin</td>";
-		$new = "2015-08-01";
+		$new = 1;
 		$val = "Enable";
 	}
 	
-	$tag = MakeTag('toggle');
+	$tag = MakeTag('mail_live');
+	echo "<input type=hidden $tag value=$new>";
+	
 	$jsx = array();
-	$jsx[] = "setValue('area','$area')";
-	$jsx[] = "setValue('from','MailDisplay')";
+	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
 	$jsx[] = "setValue('func','update')";
-	$jsx[] = "addField('$new')";
+	$jsx[] = "setValue('area','mail_live')";
+	$jsx[] = "addField('mail_live')";
 	$jsx[] = "addAction('Update')";
 	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-	echo "<td class=c><input type=button value=$val $tag $js></td>";
+	echo "<td class=c><input type=button value=$val $js></td>";
 	echo "</tr>";
 	echo "</table>";
 
@@ -2221,21 +2257,21 @@ function MailDisplay() {
 	echo "<tr>";
 	echo "<th>Send/Batch (-1 => no limit)</th>";
 	$tag = MakeTag('num_per_batch');
-	echo "<td><input $tag onchange=\"toggleBgRed('update');\" type=text value=$npb></td>";
+	echo "<td><input $tag onchange=\"addField('num_per_batch');toggleBgRed('update');\" type=text value=$npb></td>";
 	echo "</tr>";
 
-	DoQuery( "select date from dates where id = 3");
+	DoQuery( "select date from dates where label = 'reply_date'");
 	if( $GLOBALS['mysql_numrows'] == 0 ) {
 		$val = "";
 	} else {
 		list( $tmp ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 		$ts = strtotime( $tmp );
-		$val = date( "D M jS", $ts ); 
+		$val = date( "D M jS, Y", $ts ); 
 	}
 	echo "<tr>";
 	echo "<th>Reply Date</th>";
-	$tag = MakeTag('reply-date');
-	echo "<td><input $tag onchange=\"toggleBgRed('update');\" type=text value=$val></td>";
+	$tag = MakeTag('reply_date');
+	echo "<td><input $tag onchange=\"addField('reply_date');toggleBgRed('update');\" type=text value='$val'></td>";
 	echo "</tr>";
 
 	echo "</table>";
@@ -2248,29 +2284,37 @@ function MailDisplay() {
 	list( $total, $sent, $accepted, $declined ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	printf( "%d/%d Aliyot mailed, %d accepted, %d declined<br>", $sent, $total, $accepted, $declined );
 	
+	echo "<br><br><br>";
+	$tag = MakeTag('preview');
+	echo "<input $tag type=checkbox value=1>&nbsp;Preview (don't send)<br>";
+	
 	$jsx = array();
-	$jsx[] = "setValue('from','$func')";
-	$jsx[] = "setValue('func','mailval')";
-	$jsx[] = "setValue('area','display')";
-	$jsx[] = "addAction('Main')";
+	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
+	$jsx[] = "setValue('func','validate')";
+	$jsx[] = "addAction('Mail')";
 	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
 	echo "<input type=button value='Validate E-Mails' $js>";
 	
 	$jsx = array();
-	$jsx[] = "setValue('from','$func')";
-	$jsx[] = "setValue('func','mails')";
-	$jsx[] = "setValue('area','display')";
-	$jsx[] = "addAction('Main')";
+	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
+	$jsx[] = "setValue('func','all')";
+	$jsx[] = "addAction('Mail')";
 	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
-	echo "<input type=button value='Preview All Mail' $js>";
+	echo "<input type=button value='Send All Mail' $js>";
 	
 	$jsx = array();
-	$jsx[] = "setValue('from','$func')";
-	$jsx[] = "setValue('func','mails')";
-	$jsx[] = "setValue('area','unsent')";
-	$jsx[] = "addAction('Main')";
+	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
+	$jsx[] = "setValue('func','unsent')";
+	$jsx[] = "addAction('Mail')";
 	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
 	echo "<input type=button value='Send All Unsent' $js>";
+
+	$jsx = array();
+	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
+	$jsx[] = "setValue('func','noresponse')";
+	$jsx[] = "addAction('Mail')";
+	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
+	echo "<input type=button value='Re-send If No Response' $js>";
 
 	if( $gTrace ) array_pop( $gFunction );
 }
@@ -2401,10 +2445,32 @@ function MailUpdate() {
 		Logger();
 	}
 	
-	$val = $_POST['fields'];
-	DoQuery( "update dates set date = '$val' where id = 2" );
-	$mail_live = ( $val == "2000-01-01" ) ? 0 : 1;
+	$tmp = preg_split( '/,/', $_POST['fields'] );
+	foreach( $tmp as $area ) {
+		if( $area == "mail_live" ) {
+			$val = $_POST[$area];
+			DoQuery( "update dates set ival = $val where label = '$area'" );
+			if( $GLOBALS['mysql_numrows'] == 0 ) {
+					DoQuery( "insert into dates set ival = $val, label = '$area'" );
+			}
+			$mail_live = $val;
+		} elseif( $area == "num_per_batch" ) {
+			$val = $_POST[$area];
+			DoQuery( "update dates set ival = $val where label = '$area'" );
+			if( $GLOBALS['mysql_numrows'] == 0 ) {
+					DoQuery( "insert into dates set ival = $val, label = '$area'" );
+			}
 
+		} elseif( $area == "reply_date" ) {
+			$ts = strtotime( $_POST[$area] );
+			$val = date('Y-m-d', $ts );
+			DoQuery( "update dates set date = '$val' where label = '$area'" );
+			if( $GLOBALS['mysql_numrows'] == 0 ) {
+					DoQuery( "insert into dates set date = '$val', label = '$area'" );
+			}
+		}
+	}
+	
 	if( $gTrace ) array_pop( $gFunction );
 }
 
