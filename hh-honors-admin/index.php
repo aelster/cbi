@@ -116,10 +116,6 @@ switch( $gAction ) {
 			$gAction = "Mail";
 		}
 		
-		if( $func == "mailrsvps" ) {
-			MailRsvps();
-			$gAction = "Mail";
-		}
 		break;
 		
    case( 'Main' ):
@@ -135,6 +131,11 @@ switch( $gAction ) {
 		if( $func == "build-memb" ) {
 			CreateMembers();
 			$gAction = 'Main';
+		}
+
+		if( $func == "responses" ) {
+			Responses();
+			$gAction = "Mail";
 		}
 		
 		break;

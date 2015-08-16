@@ -1811,12 +1811,12 @@ function	SendConfirmation() {
 		$str_html = sprintf( "Thank you for allowing us to honor you." );
 		$str_text = sprintf( "Thank you for allowing us to honor you." );
 		$qarr[] = "accepted = 1";
-		$qarr[] = "rejected = 0";
+		$qarr[] = "declined = 0";
 		
 	} elseif( $button == 'decline' ) {
 		$str_html = sprintf( "Thank you for letting us know you are declining your honor." );
 		$str_text = sprintf( "Thank you for letting us know you are declining your honor." );
-		$qarr[] = "rejected = 1";
+		$qarr[] = "declined = 1";
 		$qarr[] = "accepted = 0";
 
 	}
@@ -1864,10 +1864,16 @@ function	SendConfirmation() {
 	} else {
 		$qarr[] = "comment = ''";
 	}
+		
+	$query = sprintf( "update assignments set updated=now(), %s where hash = '%s'", join(',', $qarr ), $_REQUEST['hash'] );
+	DoQuery( $query, $gDb2 );
 	
-	$qarr[] = "updated = now()";
+	$query = sprintf( "select member_id from assignments where hash = '%s'", $_REQUEST['hash'] );
+	DoQuery( $query, $gDb2 );
+	list( $mid ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	
-	$query = sprintf( "update assignments set %s where hash = '%s'", join(',', $qarr ), $_REQUEST['hash'] );
+	$str = join(',', $qarr );
+	$query = sprintf( "insert into event_log set type='rsvp', userid=$mid, item='%s'", mysql_escape_string($str) );
 	DoQuery( $query, $gDb2 );
 	
 	$html[] = "";
