@@ -2098,7 +2098,7 @@ function MailAssignment( $area ) {
 		} elseif( preg_match( "/ /", $str ) ) {
 			$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
 		} else {
-			$email = $str;
+			$email = [ $str ];
 		}
 		if( empty( $email ) ) return;
 		
@@ -2393,7 +2393,7 @@ function MailUpdate() {
 		} elseif( preg_match( "/ /", $str ) ) {
 			$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
 		} else {
-			$email = $str;
+			$email = [ $str ];
 		}
 		if( is_array($email) ) {
 			foreach( $email as $str ) {

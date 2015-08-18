@@ -67,13 +67,13 @@ if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) 
 
 $str = $member['E-Mail Address'];
 if( preg_match( "/,/", $str ) ) {
-	$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
+  $email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
 } elseif( preg_match( "/;/", $str ) ) {
 	$email = preg_split( "/;/", $str, NULL, PREG_SPLIT_NO_EMPTY );
 } elseif( preg_match( "/ /", $str ) ) {
 	$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
 } else {
-	$email = $str;
+  $email = [ $str ];
 }
 
 $name .= sprintf( " %s", $member['Last Name'] );
