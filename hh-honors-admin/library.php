@@ -1931,7 +1931,7 @@ function LocalInit() {
 	$gDebug = $x;
 }
 
-function MailAssignment( $area ) {
+function MailAssignment() {
 	include( 'globals.php' );
 	if( $gTrace ) {
 		$gFunction[] = __FUNCTION__;
