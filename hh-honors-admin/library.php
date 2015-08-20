@@ -2783,7 +2783,7 @@ function Responses() {
 	$query .= " from assignments a";
 	$query .= " join members c on a.member_id=c.id";
 	$query .= " where a.accepted = 1";
-	$query .= " order by a.updated";
+	$query .= " order by a.updated desc";
 	DoQuery( $query );
 	$accepts = $GLOBALS['mysql_result'];
 	$banner = sprintf( "<a href=#accepts>Acceptances</a>: %d", $GLOBALS['mysql_numrows'] );
@@ -2792,7 +2792,7 @@ function Responses() {
 	$query .= " from assignments a";
 	$query .= " join members c on a.member_id=c.id";
 	$query .= " where a.declined = 1";
-	$query .= " order by a.updated";
+	$query .= " order by a.updated desc";
 	DoQuery( $query );
 	$declines = $GLOBALS['mysql_result'];
 	$banner .= sprintf( ", <a href=#declines>Declines</a>: %d", $GLOBALS['mysql_numrows'] );
