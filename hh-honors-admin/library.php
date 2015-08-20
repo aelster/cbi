@@ -1510,6 +1510,7 @@ function ExcelGabbai() {
 	$query .= " from assignments a";
 	$query .= " join honors b on a.honor_id=b.id";
 	$query .= " join members c on a.member_id=c.id";
+	$query .= " where a.declined = 0";
 	$query .= " order by b.sort asc";
 	DoQuery( $query );
 	
@@ -2771,12 +2772,11 @@ function Responses() {
 		Logger();
 	}
 	
+	$func = __FUNCTION__;
+	
 	echo "<div class=center>";
 	echo "<div class=CommonV2>";
 	
-	echo "<input type=button value=Refresh onclick=\"setValue('from', '$func');setValue('func','mailrsvps');addAction('Main');\">";
-	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
-
 	echo "<br><br>";
 
 	$query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
@@ -2785,8 +2785,28 @@ function Responses() {
 	$query .= " where a.accepted = 1";
 	$query .= " order by a.updated";
 	DoQuery( $query );
-	$outer = $GLOBALS['mysql_result'];
-	printf( "<h2>Acceptances: %d</h2>", $GLOBALS['mysql_numrows'] );
+	$accepts = $GLOBALS['mysql_result'];
+	$banner = sprintf( "<a href=#accepts>Acceptances</a>: %d", $GLOBALS['mysql_numrows'] );
+	
+	$query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
+	$query .= " from assignments a";
+	$query .= " join members c on a.member_id=c.id";
+	$query .= " where a.declined = 1";
+	$query .= " order by a.updated";
+	DoQuery( $query );
+	$declines = $GLOBALS['mysql_result'];
+	$banner .= sprintf( ", <a href=#declines>Declines</a>: %d", $GLOBALS['mysql_numrows'] );
+
+	DoQuery( "select sum(donation) from assignments" );
+	list( $amount ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	$banner .= sprintf( ", Amount Raised: \$ %s", number_format( $amount ) );
+	$banner .= "&nbsp;&nbsp;&nbsp;";
+	$banner .= "<input type=button value=Refresh onclick=\"setValue('from', '$func');setValue('func','responses');addAction('Main');\">";
+	$banner .= "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
+
+	echo "<h2 id=accepts>$banner</h2>";
+	echo "<h3>Acceptances</h3>";
+	
 	echo "<table class=sortable>";
 	echo "<tr>";
 	echo "  <th>Time</th>";
@@ -2798,7 +2818,7 @@ function Responses() {
 	
 	$PayMethods = array( "", "Credit", "Check", "Call" );
 	
-	while( list( $time, $hid, $mid, $donation, $payby, $comment ) = mysql_fetch_array( $outer ) ) {
+	while( list( $time, $hid, $mid, $donation, $payby, $comment ) = mysql_fetch_array( $accepts ) ) {
 		DoQuery( "select * from members where id = $mid" );
 		$member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
 		DoQuery( "select * from honors where id = $hid" );
@@ -2829,15 +2849,10 @@ function Responses() {
 	echo "</table>";
 
 	echo "<br><br>";
+	echo "<h2 id=declines>$banner</h2>";
+	echo "<h3>Declines</h3>";
 	
-	$query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
-	$query .= " from assignments a";
-	$query .= " join members c on a.member_id=c.id";
-	$query .= " where a.declined = 1";
-	$query .= " order by a.updated";
-	DoQuery( $query );
-	$outer = $GLOBALS['mysql_result'];
-	printf( "<h2>Rejections: %d</h2>", $GLOBALS['mysql_numrows'] );
+	
 	echo "<table class=sortable>";
 	echo "<tr>";
 	echo "  <th>Time</th>";
@@ -2847,7 +2862,7 @@ function Responses() {
 	echo "  <th>Pay By</th>";
 	echo "</tr>";
 	
-	while( list( $time, $hid, $mid, $donation, $payby, $comment ) = mysql_fetch_array( $outer ) ) {
+	while( list( $time, $hid, $mid, $donation, $payby, $comment ) = mysql_fetch_array( $declines ) ) {
 		DoQuery( "select * from members where id = $mid" );
 		$member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
 		DoQuery( "select * from honors where id = $hid" );
@@ -2879,7 +2894,8 @@ function Responses() {
 
 	echo "</div>";
 	echo "</div>";
-
+	exit;
+	
 	if( $gTrace ) array_pop( $gFunction );
 }
 
