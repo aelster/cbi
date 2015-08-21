@@ -13,7 +13,16 @@ var members_db = [];
 
 var display_mode = "view";  // View or Assign
 
+var click_stack = [];
+
+if ( ! debug_disabled ) {
+	createDebugWindow();
+}
+
 function myButtonInit() {
+	if ( ! debug_disabled ) {
+		debug( 'myButtonInit()' );
+	}
 	var e = document.getElementsByTagName("input");
 	for( var i=0; i < e.length; i++ ) {
 		if ( e[i].id.match(/-all$/ ) ) {
@@ -27,6 +36,15 @@ function myButtonInit() {
 }
 
 function myClickCategory(id,forced_state) {
+	if ( ! debug_disabled ) {
+		var str = 'myClickCategory(';
+		str += 'id:' + id;
+		if ( arguments.length > 1 ) {
+			str += ',forced_state:' + forced_state; 
+		}
+		str += ')';
+		debug( str );
+	}
 	var pos;
 	
 	if ( id == 'opt-all' ) {
@@ -55,6 +73,15 @@ function myClickCategory(id,forced_state) {
 }
 
 function myClickDay(id,forced_state) {
+	if ( ! debug_disabled ) {
+		var str = 'myClickDay(';
+		str += 'id:' + id;
+		if ( arguments.length > 1 ) {
+			str += ',forced_state:' + forced_state; 
+		}
+		str += ')';
+		debug( str );
+	}
 	var pos;
 	
 	if ( id == 'day-all' ) {
@@ -83,6 +110,16 @@ function myClickDay(id,forced_state) {
 }
 
 function myClickHonor(id,opt_click_members) {
+	if ( ! debug_disabled ) {
+		var str = 'myClickHonor(';
+		str += 'id:' + id;
+		if ( arguments.length > 1 ) {
+			str += ',opt_click_members:' + opt_click_members; 
+		}
+		str += ')';
+		debug( str );
+	}
+	click_stack.push('honor');
 	if ( display_mode == 'assign' ) {
 		honors_db.forEach( function xx( honor, hid ) {
 			if ( hid == id ) {
@@ -116,6 +153,17 @@ function myClickHonor(id,opt_click_members) {
 }
 
 function myClickMember(id, opt_click_honors) {
+	if ( ! debug_disabled ) {
+		var str = 'myClickMember(';
+		str += 'id:' + id;
+		if ( arguments.length > 1 ) {
+			str += ',opt_click_honors:' + opt_click_honors; 
+		}
+		str += ')';
+		debug( str );
+	}
+	
+	click_stack.push('member');
 	if ( display_mode == 'assign' ) {
 		members_db.forEach(function xx(member, mid) {
 			if (mid == id) {
@@ -144,6 +192,9 @@ function myClickMember(id, opt_click_honors) {
 }
 
 function myDisplayHonors()  {
+	if ( ! debug_disabled ) {
+		debug( 'myDisplayHonors' );
+	}
 	var i, j, e, ok, show;
 	
 	for( day of honor_buttons ) {
@@ -185,9 +236,11 @@ function myDisplayHonors()  {
 				num_visible++;
 				if( honors_db[id].selected ) {
 					e.children[i].className = "highlighted";
-					var j = num_assigned - 10;
-					if ( j < 0 ) { j = 0; }
-					e.scrollTop = e.children[i].scrollHeight * j;
+					if ( click_stack[0] == 'member') {
+						var j = num_assigned - 10;
+						if ( j < 0 ) { j = 0; }
+						e.scrollTop = e.children[i].scrollHeight * j;
+					}
 					num_assigned++;
 				} else if( honors_db[id].accepted ) {
 					e.children[i].className = "accepted";
@@ -209,6 +262,9 @@ function myDisplayHonors()  {
 }
 
 function myDisplayMembers()  {
+	if ( ! debug_disabled ) {
+		debug('myDisplayMembers');
+	}
 	var i, j, e, ok, show;
 	
 	for( cat of member_buttons ) {
@@ -239,9 +295,11 @@ function myDisplayMembers()  {
 					num_assigned++;
 				} else if( members_status[id].accepted ) {
 					e.children[i].className = "accepted";
-					var j = num_assigned - 10;
-					if ( j < 0 ) { j = 0; }
-					e.scrollTop = e.children[i].scrollHeight * j;
+					if ( click_stack[0] == 'honor') {
+						var j = num_assigned - 10;
+						if ( j < 0 ) { j = 0; }
+						e.scrollTop = e.children[i].scrollHeight * j;
+					}
 					num_assigned++;
 				} else if( members_status[id].declined > 0 ) {
 					e.children[i].className = "declined";
@@ -271,15 +329,19 @@ function myDisplayMembers()  {
 				num_visible++;
 				if ( members_status[id].selected ) {
 					e.children[i].className = "highlighted";
-					var j = num_assigned - 10;
-					if ( j < 0 ) { j = 0; }
-					e.scrollTop = e.children[i].scrollHeight * j;
+					if ( click_stack[0] == 'honor') {
+						var j = num_assigned - 10;
+						if ( j < 0 ) { j = 0; }
+						e.scrollTop = e.children[i].scrollHeight * j;
+					}
 					num_assigned++;
 				} else if( members_status[id].accepted ) {
 					e.children[i].className = "accepted";
-					var j = num_assigned - 10;
-					if ( j < 0 ) { j = 0; }
-					e.scrollTop = e.children[i].scrollHeight * j;
+					if ( click_stack[0] == 'honor') {
+						var j = num_assigned - 10;
+						if ( j < 0 ) { j = 0; }
+						e.scrollTop = e.children[i].scrollHeight * j;
+					}
 					num_assigned++;
 				} else if( members_status[id].assigned ) {
 					e.children[i].className = "assigned";
@@ -307,6 +369,7 @@ function myDisplayRefresh() {
 		member_refresh = 0;
 	}
 	myHighlightAction();
+	click_stack = [];
 }
 
 function myHighlightAction() {

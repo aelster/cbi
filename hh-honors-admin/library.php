@@ -32,6 +32,7 @@ function Assign() {
 			$honor_accepted[$row['honor_id']] = $row['member_id'];
 			$honor_assigned[$row['honor_id']] = $row['member_id'];
 			$member_accepted[$row['member_id']] = $row['honor_id'];
+			$member_assigned[$row['member_id']] = $row['honor_id'];
 		} else {
 			$honor_assigned[$row['honor_id']] = $row['member_id'];
 			$member_assigned[$row['member_id']] = $row['honor_id'];
@@ -98,6 +99,7 @@ function Assign() {
 <div class="container">
 	<div class="assign-top">
 		<input type=button onclick="setValue('func','assign');addAction('Main');" value="Back">
+		<input type=button onclick="clearDebugWindow();" value="Clear Debug">
 	</div>
   
 	<div class="button-bar">
