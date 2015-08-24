@@ -1506,29 +1506,38 @@ function ExcelGabbai() {
 	header("Content-type: application/csv");
 	header("Content-Disposition: attachment;Filename=CBI-HH-Honors-$str.csv");
 
-	$query = "select a.honor_id, a.member_id,";
-	$query .= " b.service, b.page, b.honor,";
-	$query .= " c.`female 1st name`, c.`male 1st name`, c.`last name`";
-	$query .= " from assignments a";
-	$query .= " join honors b on a.honor_id=b.id";
-	$query .= " join members c on a.member_id=c.id";
-	$query .= " where a.declined = 0";
-	$query .= " order by b.sort asc";
-	DoQuery( $query );
-	
 	$body = [];
-	$body[] = '"Service","Page","Honor","Member"';
-	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+	$body[] = '"Service","Page","Honor","Last Name","First Name(s)","Status","Date"';
+
+	$query = "select * from honors order by sort asc";
+	DoQuery( $query );
+	$outer = $GLOBALS['mysql_result'];
+	while( $orow = mysql_fetch_assoc( $outer ) ) {
 		$values = [];
-		$values[] = '"' . $row["service"] . '"';
-		$values[] = $row["page"];
-		$values[] = '"' . $row["honor"] . '"';
-		if( empty( $row["female 1st name"] ) ) {
-			$values[] = sprintf( '"%s %s"', $row["male 1st name"], $row["last name" ] );
-		} elseif( empty( $row["male 1st name"] ) ) {
-			$values[] = sprintf( '"%s %s"', $row["female 1st name"], $row["last name" ] );
-		} else {
-			$values[] = sprintf( '"%s %s %s"', $row["female 1st name"], $row["male 1st name"], $row["last name" ] );
+
+		$values[] = '"' . $orow["service"] . '"';
+		$values[] = $orow["page"];
+		$values[] = '"' . $orow["honor"] . '"';
+
+		$query = "select a.accepted, a.updated,";
+		$query .= " b.`female 1st name`, b.`male 1st name`, b.`last name`";
+		$query .= " from assignments a";
+		$query .= " join members b on b.id = a.member_id";
+		$query .= " where a.honor_id = " . $orow['id'];
+		$query .= " and a.declined = 0";
+		DoQuery( $query );
+		
+		while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+			$values[] = sprintf( '"%s"', $row["last name"] );
+			if( empty( $row["female 1st name"] ) ) {
+				$values[] = sprintf( '"%s"', $row["male 1st name"] );
+			} elseif( empty( $row["male 1st name"] ) ) {
+				$values[] = sprintf( '"%s"', $row["female 1st name"] );
+			} else {
+				$values[] = sprintf( '"%s %s"', $row["female 1st name"], $row["male 1st name"] );
+			}
+			$values[] = $row['accepted'] ? "Accepted" : "Pending";
+			$values[] = $row['updated'];
 		}
 		$body[] = join( ",", $values );
 	}
@@ -2101,6 +2110,7 @@ function MailAssignment() {
 		} elseif( preg_match( "/ /", $str ) ) {
 			$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
 		} else {
+			if( empty($str) ) { return; }
 			$email = [ $str ];
 		}
 		if( empty( $email ) ) return;
