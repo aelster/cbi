@@ -91,7 +91,7 @@
   echo "</script>\n";
   ?>
   <div class="content">
-  <h2>5775 High Holy Day Appeal<br /><?php echo $tag ?></h2>
+  <h2>5776 High Holy Day Appeal<br /><?php echo $tag ?></h2>
   <?php
   if( $gFrom == "financial" ) {
 	  $amount = $_POST['amount'];

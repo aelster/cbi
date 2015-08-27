@@ -62,7 +62,7 @@
   <div id="content">
   <!-- InstanceBeginEditable name="Content" -->
   <input type=hidden name=from id=from value=spiritual />
-  <h2>5775 High Holy Day Appeal </h2>
+  <h2>5776 High Holy Day Appeal </h2>
   <?php
 DoQuery( "select pledgeIds, pledgeOther from pledges where pledgeType = $PledgeTypeSpiritual" );
 $num = $GLOBALS['mysql_numrows'];

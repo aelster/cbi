@@ -62,17 +62,16 @@
   <div id="content">
   <!-- InstanceBeginEditable name="Content" -->
   <div class="content">
-<p>Welcome to the CBI annual High Holy Day Appeal web page. Due to the success of the online appeal last year I was able to present the “State of the Congregation”, but did not have to ask for donations during the Kol Nidre service.  If we meet our goal again this year we will not have to interrupt the sanctity of our service to ask for money. Please consider making both financial and spiritual pledges as we renew ourselves in the New Year.</p>
-<p>Please click the arrow below to view the 3-minute video 5775 High Holy Day Appeal.</p>
-<p>My wish is that each of us will contribute financially as generously as we can, and spiritually in a way that is personally meaningful. I am hoping to stand before our congregation during the High Holy Days and be able to say that 100% of our incredible community contributed and participated. Every pledge matters and makes a difference. Please contact the CBI office with any questions. Thank you for your support.  I wish you all a year of health, happiness, prosperity and growth.</p>
+<p>Welcome to the CBI annual High Holy Day Appeal web page. Since its implemention, this web page has provided a simple and 
+streamlined mechanism for congregants to not only contribute financially to our shul, but also to commit to a path of spiritual self-improvement, be it engaging in Torah-learning, tzdekah (charity), or gemilut chasidim (acts of kindness).  In the past, a successful response to the online appeal made it unnecessary to solicit donations during the Kol Nidre service. If we meet our goal again this year we will not have to interrupt the sanctity of our service to ask for money. Please consider making both financial and spiritual pledges as we renew ourselves in the New Year.</p>
+<p>My wish is that each of us will contribute financially as generously as we can, and spiritually in a way that is personally meaningful. I am hoping to stand before our congregation during the High Holy Days and be able to say that 100% of our incredible community contributed and participated. Every pledge matters and makes a difference. Please contact the CBI office with any questions. Thank you for your support. I wish you all a year of health, happiness, prosperity and growth.
+</p>
 	<p>
-      L'Shana Tova,<br />
-      Beth Elster<br />
-      CBI President
+      L'Shana tova u’metuka,<br>
+Terry G.<br>
+CBI President
+
       </p>  
-      <div id="video">
-	<embed src="assets/Pledge-Video-5775.mp4" width="320" class="fltrt" id=video height="216" autostart="false"></embed>
-      </div>
       <br />
     <div id="bottom_buttons">
 <?php

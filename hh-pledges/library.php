@@ -1028,8 +1028,8 @@ function SendConfirmation( $id ) {
 	$html[] = "Congregation B'nai Israel";
 	$text[] = "Congregation B'nai Israel";
 	
-	$html[] = "5775 High Holy Day Appeal";
-	$text[] = "5775 High Holy Day Appeal";
+	$html[] = "5776 High Holy Day Appeal";
+	$text[] = "5776 High Holy Day Appeal";
 
 	$html[] = "";
 	$text[] = "";
@@ -1165,8 +1165,8 @@ function SendReminders() {
 		$html[] = "Congregation B'nai Israel";
 		$text[] = "Congregation B'nai Israel";
 		
-		$html[] = "5775 High Holy Day Appeal";
-		$text[] = "5775 High Holy Day Appeal";
+		$html[] = "5776 High Holy Day Appeal";
+		$text[] = "5776 High Holy Day Appeal";
 	
 		$html[] = "";
 		$text[] = "";
@@ -1262,7 +1262,7 @@ function WriteHeader() {
 	AddOverlib();
 	echo "<div class=center>";
 	echo "<img src=\"assets/CBI_ner_tamid.png\">";
-	echo "<h2>5775 High Holy Day Appeal</h2>";
+	echo "<h2>5776 High Holy Day Appeal</h2>";
 	echo "</div>";
 }
 ?>

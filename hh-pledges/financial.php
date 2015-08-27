@@ -62,7 +62,7 @@
   <div id="content">
   <!-- InstanceBeginEditable name="Content" -->
   <input type=hidden name=from id=from value=financial />
-  <h2>5775 High Holy Day Appeal </h2>
+  <h2>5776 High Holy Day Appeal </h2>
   <?php
 DoQuery( "select sum(amount), count(pledgeType) from pledges where pledgeType = $PledgeTypeFinancial" );
 list( $total,$num ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
