@@ -2821,6 +2821,7 @@ function Responses() {
 	
 	echo "<table class=sortable>";
 	echo "<tr>";
+	echo "  <th>Id</th>";
 	echo "  <th>Time</th>";
 	echo "  <th>Member</th>";
 	echo "  <th>Honor</th>";
@@ -2845,6 +2846,7 @@ function Responses() {
 		}
 		$name .= sprintf( " %s", $member['Last Name'] );
 		$rows = empty( $comment ) ? 1 : 2;
+		printf( "<td class=c rowspan=$rows>%d</td>", $hid );
 		printf( "<td class=c rowspan=$rows>%s</td>", preg_replace("/ /", "<br>", $time ) );
 		echo "<td rowspan=$rows>$name</td>\n";
 		printf( "<td>%s</td>\n", $honor['honor'] );
@@ -2867,6 +2869,7 @@ function Responses() {
 	
 	echo "<table class=sortable>";
 	echo "<tr>";
+	echo "  <th>Id</th>";
 	echo "  <th>Time</th>";
 	echo "  <th>Member</th>";
 	echo "  <th>Honor</th>";
@@ -2889,6 +2892,7 @@ function Responses() {
 		}
 		$name .= sprintf( " %s", $member['Last Name'] );
 		$rows = empty( $comment ) ? 1 : 2;
+		printf( "<td class=c rowspan=$rows>%d</td>", $hid );
 		printf( "<td class=c rowspan=$rows>%s</td>", preg_replace("/ /", "<br>", $time ) );
 		echo "<td rowspan=$rows>$name</td>\n";
 		printf( "<td>%s</td>\n", $honor['honor'] );
