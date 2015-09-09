@@ -1111,17 +1111,6 @@ function SendConfirmation( $id ) {
 
 	$message->setTo( array( $email => "$firstName $lastName" ) );
 	$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
-	if( $financial ) {
-		$message->setBcc(array(
-						'beth@elsternet.com' => 'Beth Elster',
-						'hcoulter@cbi18.org' => 'Helene Coulter'
-						) );
-	} else {
-		$message->setBcc(array(
-						'beth@elsternet.com' => 'Beth Elster'
-						) );
-	}
-
 	$message
 	->setBody( join('<br>',$html), 'text/html' )
 	->addPart( join('\n',$text), 'text/plain' )

@@ -116,12 +116,22 @@ switch( $gAction ) {
 			$gAction = "Mail";
 		}
 		
+		if( $func == "remind-rosh" ) {
+			MailAssignments( $func );
+			$gAction = "Mail";
+		}
+		
+		if( $func == "remind-yom" ) {
+			MailAssignments( $func );
+			$gAction = "Mail";
+		}
+		
 		break;
 		
    case( 'Main' ):
 		$func = $_POST['func'];
 		if( $func == "backup" ) {
-			exec( "perl /home/cbi18/site/my_backup.pl > /home/cbi18/backup_sql/manual.log", $out );
+			exec( "perl /home/cbi18/site/my_backup.pl honors", $out );
 		}
 
 		if( $func == "members" ) {

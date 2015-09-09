@@ -76,6 +76,13 @@ CBI President
     <div id="bottom_buttons">
 <?php
 if( $site_enabled ) {
+  $text = array();
+  $text[] = "insert event_log set time=now()";
+  $text[] = "type = 'view'";
+  $text[] = "userid = '0'";
+  $text[] = sprintf( "item = '%s'", $_SERVER[ 'HTTP_USER_AGENT' ] );
+  $query = join( ',', $text );
+  DoQuery( $query );
 ?>
   <input class=buttonOk type=button onClick="addAction('financial');" value="Make a Financial Pledge" />
   <input class=buttonOk type=button onClick="addAction('spiritual');" value="Make a Spiritual Pledge" />

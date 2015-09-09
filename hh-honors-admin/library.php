@@ -2177,6 +2177,24 @@ function MailAssignments( $area ) {
 			$query .= " limit $num_per_batch";
 		}
 		DoQuery( $query );
+		
+	} elseif( $area == "remind-rosh" ) {
+		$query .= " join honors b on a.honor_id=b.id";
+		$query .= " where a.accepted = 1 and a.declined = 0 and b.service like 'rh%'";
+		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
+		if( $limited ) {
+			$query .= " limit $num_per_batch";
+		}
+		DoQuery( $query );
+
+	} elseif( $area == "remind-yom" ) {
+		$query .= " join honors b on a.honor_id=b.id";
+		$query .= " where a.accepted = 1 and a.declined = 0 and b.service not like 'rh%'";
+		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
+		if( $limited ) {
+			$query .= " limit $num_per_batch";
+		}
+		DoQuery( $query );
 	}
 	$outer = $GLOBALS['mysql_result'];
 	while( list( $hid, $mid ) = mysql_fetch_array( $outer ) ) {
@@ -2327,6 +2345,23 @@ function MailDisplay() {
 	$jsx[] = "addAction('Mail')";
 	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
 	echo "<input type=button value='Re-send If No Response' $js>";
+	
+	echo "<br>";
+	
+	$jsx = array();
+	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
+	$jsx[] = "setValue('func','remind-rosh')";
+	$jsx[] = "addAction('Mail')";
+	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
+	echo "<input type=button value='Send Rosh Reminders' $js>";
+	
+	$jsx = array();
+	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
+	$jsx[] = "setValue('func','remind-yom')";
+	$jsx[] = "addAction('Mail')";
+	$js = sprintf( "onClick=\"%s\"", join(';', $jsx ) );
+	echo "<input type=button value='Send Yom Reminders' $js>";
+	
 
 	if( $gTrace ) array_pop( $gFunction );
 }

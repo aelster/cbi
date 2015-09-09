@@ -79,7 +79,7 @@ switch( $gAction ) {
    case( 'Main' ):
 		$func = $_POST['func'];
 		if( $func == "backup" ) {
-			exec( "perl /home/cbi18/site/my_backup.pl", $out );
+			exec( "perl /home/cbi18/site/my_backup.pl pledges", $out );
 		}
 		break;
 	
