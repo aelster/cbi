@@ -1950,6 +1950,14 @@ function MailAssignment() {
 		Logger();
 	}
 
+	$argc = func_num_args();
+	if( $argc > 0 ) {
+		$area = func_get_arg( 0 );
+	} else {
+		$area = "";
+	}
+	$remind = preg_match( "/remind/", $area );
+	
 	$preview = ( array_key_exists( 'preview', $_POST ) ) ? 1 : 0;
 	
 	$subject = "$gJewishYear CBI High Holy Day Honor";
@@ -2015,7 +2023,6 @@ function MailAssignment() {
 			break;
 	}
 
-
 	$html = $text = array();
 	$cid = $message->embed(Swift_Image::fromPath('assets/CBI_ner_tamid.png'));
 
@@ -2036,10 +2043,15 @@ function MailAssignment() {
 	$html[] = "";
 	$text[] = "";
 	
-	$str = "Thank you for the support you have given to Congregation B'nai Israel during the past year.";
-	$str .= sprintf( " In an effort to show our appreciation, we would like to offer you the honor of %s during the %s service on %s.",
+	if( $remind ) {
+		$str = sprintf( "You have the honor of %s during the %s service on %s.",
 							$honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
-
+	} else {
+		$str = "Thank you for the support you have given to Congregation B'nai Israel during the past year.";
+		$str .= sprintf( " In an effort to show our appreciation, we would like to offer you the honor of %s during the %s service on %s.",
+							$honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
+	}
+	
 	$html[] = $str;
 	$text[] = $str;
 	
@@ -2049,8 +2061,11 @@ function MailAssignment() {
 	$str = "We ask that you be in the sanctuary at least 30 minutes prior to your honor";
 	$str .= " (15 minutes prior if it occurs at the beginning of the service,) and check in with";
 	$str .= " the Shamash, the person in charge of making sure that everyone who has an honor";
-	$str .= " is in the right place at the right time. We will send you additional detailed";
-	$str .= " information about your honor closer to the date.";
+	$str .= " is in the right place at the right time.";
+	
+	if( ! $remind ) {
+		$str .= " We will send you additional detailed information about your honor closer to the date.";
+	}
 	
 	$html[] = $str;
 	$text[] = $str;
@@ -2058,19 +2073,21 @@ function MailAssignment() {
 	$html[] = "";
 	$text[] = "";
 	
-	DoQuery( "select date from dates where label = 'reply_date'" );
-	list( $str ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
-	$ts = strtotime( $str );
-	$reply_date = date( 'F dS, Y', $ts );
-
-//	$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
-	$url = "http://www.cbi18.org/hh-honors/?hash=$hash";
-	$html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by $reply_date.";
-	$text[] = "Click on the following link, $url, to confirm or decline this honor by $reply_date.";
-
-	$html[] = "";
-	$text[] = "";
-
+	if( ! $remind ) {
+		DoQuery( "select date from dates where label = 'reply_date'" );
+		list( $str ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$ts = strtotime( $str );
+		$reply_date = date( 'F dS, Y', $ts );
+	
+	//	$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
+		$url = "http://www.cbi18.org/hh-honors/?hash=$hash";
+		$html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by $reply_date.";
+		$text[] = "Click on the following link, $url, to confirm or decline this honor by $reply_date.";
+	
+		$html[] = "";
+		$text[] = "";
+	}
+	
 	$str = "If you have any questions, please do not hesitate to contact the CBI office at (714) 730-9693, or through e-mail at 
  cbi18@cbi18.org.";
 	$html[] = $str;
@@ -2102,7 +2119,7 @@ function MailAssignment() {
 		echo "<hr>" . join('<br>', $html );
 	
 	} else {
-		$str = $member['E-Mail Address'];
+		$str = preg_replace( "/\s+/", " ", $member['E-Mail Address'] );
 		if( preg_match( "/,/", $str ) ) {
 			$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
 		} elseif( preg_match( "/;/", $str ) ) {
@@ -2433,30 +2450,31 @@ function MailUpdate() {
 		$name .= sprintf( " %s", $member['Last Name'] );
 		echo "<td>$name</td>";
 
-		$str = $member['E-Mail Address'];
+		$str = preg_replace( "/\s+/", " ", $member['E-Mail Address'] );
 		if( preg_match( "/,/", $str ) ) {
 			$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
 		} elseif( preg_match( "/;/", $str ) ) {
 			$email = preg_split( "/;/", $str, NULL, PREG_SPLIT_NO_EMPTY );
 		} elseif( preg_match( "/ /", $str ) ) {
 			$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
+		} elseif( empty( $str ) ) {
+			$email = [];
 		} else {
 			$email = [ $str ];
 		}
-		if( is_array($email) ) {
+		if( count( $email ) == 0 ) {
+			echo "<td class=cbad></td>";
+		} else {
+			$addrlist = [];
 			foreach( $email as $str ) {
 				if( Swift_Validate::email($str)) {
-					echo "<td class=cok>$str</td>";
+					$addrlist[] = $str;
 				} else {
-					echo "<td class=cbad>$str</td>";
+					echo "<!-- bad email: [$str] -->\n";
+					$addrlist[] = "<span style='background-color:red'>$str</span>";
 				}
 			}
-		} else {
-			if( Swift_Validate::email($str)) {
-				echo "<td class=cok colspan=2>$str</td>";
-			} else {
-				echo "<td class=cbad colspan=2>$str</td>";
-			}
+			printf( "<td>%s</td>", join( ', ', $addrlist ) );
 		}
 		echo "</tr>";
 	}
