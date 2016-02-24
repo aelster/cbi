@@ -345,7 +345,7 @@ function DisplayDates() {
 		$id = $row['id'];
 		$label = $row['label'];
 		$date = $row['date'];
-		if( ! ( $label == 'open' || $label == 'close' ) ) continue;
+		if( ! ( $label == 'open' || $label == 'close' || $label == "auction" ) ) continue;
 		
 		echo "<tr>";
 		$jsx = array();
@@ -1661,7 +1661,7 @@ function LocalInit() {
 		$gPackages[$id] = $label;
 	}
 	
-	foreach( array( 'open', 'close', 'mail' ) as $label ) {
+	foreach( array( 'open', 'close', 'mail', 'auction' ) as $label ) {
 		DoQuery( "select date from dates where label = '$label'" );
 		if( $mysql_numrows == 0 ) {
 			$val = ( $label == 'mail' ) ? 0 : time();
