@@ -128,6 +128,7 @@ AddForm();
 		$open = $gGala;
 		$dstr = sprintf( "%s at %s", date( "l, F jS, Y", $myDate['close'] ), date( "g:i A", $myDate['close'] ) );
 	 }
+	 $dstr2 = date( "l, F jS, Y", $myDate['auction'] );
 	 
 	 if( $gPreSelected > 0 ) {
 		DoQuery( "select itemCategory from items where id = $gPreSelected" );
@@ -139,6 +140,10 @@ AddForm();
 	 } else {
 		$cid = isset( $_POST['id'] ) ? $_POST['id'] : -1;
 	 }
+	 
+	$tagline = "We appreciate your support of CBI's programs, of our warm community";
+	$tagline .= " and of our Annual Gala celebrating our congregants that have served in the Israeli Defense Forces!";
+	
 	 if( $cid == -1 ) {
 			$yyyy = date('Y', $gAuctionYear );
 
@@ -149,7 +154,7 @@ AddForm();
 ?>
 <p><strong>THE ONLINE AUCTION IS COMING SOON! </strong></p>
 <p> The online auction will be open <?php echo $dstr ?>.
-<p>We appreciate all of your support of CBI's programs, of our warm community, and of our Annual Gala honoring our immediate past president Beth Elster! </p>
+<p><?php echo $tagline ?></p>
 <?php
 		} elseif( $now < $myDate['close'] ) {
 ?>
@@ -159,20 +164,20 @@ AddForm();
 The online auction will remain open through <?php echo $dstr ?>.<br>
 <br>
 Items that have not reached the "BUY NOW" amount by that time will be put
-on display at CBI on Sunday, March 29, with the highest online bid received as the bidding starting point.
+on display at CBI on <?php echo $dstr2 ?>, with the highest online bid received as the bidding starting point.
 <br>
-<br>We appreciate all of your support of CBI's programs, of our warm community, and of our Annual Gala honoring our immediate past president Beth Elster! </p>
+<p><?php echo $tagline ?></p>
 <?php
 		} else {
 ?>
 <p><strong>THE ONLINE AUCTION IS NOW CLOSED</strong></p>
 <p>Items that have not been sold will be put
-on display at CBI on Sunday, March 29, with the highest online bid received as the bidding starting point.
+on display at CBI on <?php echo $dstr2 ?>, with the highest online bid received as the bidding starting point.
 Bids will continue to be accepted from 11:30 AM - 1:00 PM, and at the gala that evening from 5:00 - 5:45 PM.
 Auction items range from vacation getaways to donated items guaranteed to delight and surprise.
 Many are exclusive offers from our members, sharing their special talents.  </p>
 <p><strong>A VERY SPECIAL THANK YOU TO OUR DONORS AND BIDDERS! </strong></p>
-<p>We appreciate all of your support of CBI's programs, of our warm community, and of our Annual Gala honoring our immediate past president Beth Elster! </p>
+<p><?php echo $tagline ?></p>
 <?php
 		}
 	 } elseif( $cid == -4 ) {
