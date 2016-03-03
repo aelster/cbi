@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en-US"><!-- InstanceBegin template="/Templates/index2.dwt" codeOutsideHTMLIsLocked="false" -->
+<html class="no-js" lang="en-US">
   <head>
     <meta charset="UTF-8" />
     <link rel="pingback" href="http://www.cbi18.org/xmlrpc.php" />
-    <!-- InstanceBeginEditable name="doctitle" -->
-    <title>CBI Auction Home</title>
-    <!-- InstanceEndEditable -->
+    <title>Congregation B&#039;nai Israel &#8211; An egalitarian Conservative congregation serving the diverse Orange County Jewish Community</title>
     <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Feed" href="http://www.cbi18.org/feed/" />
     <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Comments Feed" href="http://www.cbi18.org/comments/feed/" />
     <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Home Comments Feed" href="http://www.cbi18.org/home/feed/" />
@@ -27,8 +25,6 @@
       padding: 0 !important;
       }
     </style>
-    <link href="styles.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="hhPledges.js"></script>
     <link rel='stylesheet' id='exodus-google-fonts-css'  href='//fonts.googleapis.com/css?family=Roboto:400,700,400italic,700italic' type='text/css' media='all' />
     <link rel='stylesheet' id='elusive-webfont-css'  href='http://www.cbi18.org/wp-content/themes/exodus/css/elusive-webfont.css?ver=1.5.2' type='text/css' media='all' />
     <link rel='stylesheet' id='exodus-style-css'  href='http://www.cbi18.org/wp-content/themes/cbi/style.css?ver=1.5.2' type='text/css' media='all' />
@@ -140,10 +136,6 @@ var asmhObject = {"sticky_scroll_position":"240","middle_hide_header_width":"768
   </head>
   <body class="home page page-id-8587 page-template page-template-page-templates page-template-homepage page-template-page-templateshomepage-php exodus-logo-font-roboto exodus-tagline-font-roboto exodus-heading-font-roboto exodus-menu-font-roboto exodus-body-font-roboto exodus-has-logo-image exodus-has-logo-text-lowercase exodus-no-tagline-under-logo exodus-has-tagline-right exodus-rounded">
 
-<?php
-LocalInit();
-AddForm();
-?>
     <div id="exodus-container">
 
       <header id="exodus-header">
@@ -335,9 +327,13 @@ AddForm();
 
 	</nav>
 
-<div class="content">
-<!-- InstanceBeginEditable name="EditRegion3" -->
-<div class="fltlft" id="leftDirectory">
+
+
+      </header>
+
+      <div class="content">
+	 
+  <div class="fltlft" id="leftDirectory">
 	 <?php
 	 DoQuery( "select label, date from dates" );
 	 while( list( $label, $ts ) = mysql_fetch_array( $mysql_result ) ) {
@@ -663,17 +659,10 @@ if( $site_enabled ) {
   echo "The pledge site is currently disabled.  Please check back in a few minutes";  
 }
 ?>
-
-    <!-- InstanceEndEditable -->
-
-</div>
-
-
-      </header>
-</div>
-
-
-  
+    </div>
+  <!-- end .content -->
+  </div>
+  <!-- InstanceEndEditable -->
   <!-- end .content --></div>
 
     <script type='text/javascript' src='http://www.cbi18.org/wp-includes/js/hoverIntent.min.js?ver=1.8.1'></script>
@@ -785,4 +774,4 @@ var simcal_default_calendar = {"ajax_url":"\/wp-admin\/admin-ajax.php","nonce":"
 	</div>
     </div></script>
   </body>
-<!-- InstanceEnd --></html>
+</html>

@@ -1,11 +1,9 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en-US"><!-- InstanceBegin template="/Templates/index2.dwt" codeOutsideHTMLIsLocked="false" -->
+<html class="no-js" lang="en-US">
   <head>
     <meta charset="UTF-8" />
     <link rel="pingback" href="http://www.cbi18.org/xmlrpc.php" />
-    <!-- InstanceBeginEditable name="doctitle" -->
-    <title>CBI Auction Home</title>
-    <!-- InstanceEndEditable -->
+    <title>Congregation B&#039;nai Israel &#8211; An egalitarian Conservative congregation serving the diverse Orange County Jewish Community</title>
     <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Feed" href="http://www.cbi18.org/feed/" />
     <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Comments Feed" href="http://www.cbi18.org/comments/feed/" />
     <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Home Comments Feed" href="http://www.cbi18.org/home/feed/" />
@@ -27,12 +25,9 @@
       padding: 0 !important;
       }
     </style>
-    <link href="styles.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="hhPledges.js"></script>
     <link rel='stylesheet' id='exodus-google-fonts-css'  href='//fonts.googleapis.com/css?family=Roboto:400,700,400italic,700italic' type='text/css' media='all' />
     <link rel='stylesheet' id='elusive-webfont-css'  href='http://www.cbi18.org/wp-content/themes/exodus/css/elusive-webfont.css?ver=1.5.2' type='text/css' media='all' />
     <link rel='stylesheet' id='exodus-style-css'  href='http://www.cbi18.org/wp-content/themes/cbi/style.css?ver=1.5.2' type='text/css' media='all' />
-    <link href="styles.css" rel="stylesheet" type="text/css" />
     <link rel='stylesheet' id='exodus-responsive-css'  href='http://www.cbi18.org/wp-content/themes/exodus/css/responsive.css?ver=1.5.2' type='text/css' media='all' />
     <link rel='stylesheet' id='exodus-color-css'  href='http://www.cbi18.org/wp-content/themes/exodus/colors/light/style.css?ver=1.5.2' type='text/css' media='all' />
     <link rel='stylesheet' id='simcal-qtip-css'  href='http://www.cbi18.org/wp-content/plugins/google-calendar-events/assets/css/vendor/jquery.qtip.min.css?ver=2.2.1' type='text/css' media='all' />
@@ -140,10 +135,6 @@ var asmhObject = {"sticky_scroll_position":"240","middle_hide_header_width":"768
   </head>
   <body class="home page page-id-8587 page-template page-template-page-templates page-template-homepage page-template-page-templateshomepage-php exodus-logo-font-roboto exodus-tagline-font-roboto exodus-heading-font-roboto exodus-menu-font-roboto exodus-body-font-roboto exodus-has-logo-image exodus-has-logo-text-lowercase exodus-no-tagline-under-logo exodus-has-tagline-right exodus-rounded">
 
-<?php
-LocalInit();
-AddForm();
-?>
     <div id="exodus-container">
 
       <header id="exodus-header">
@@ -335,346 +326,668 @@ AddForm();
 
 	</nav>
 
-<div class="content">
-<!-- InstanceBeginEditable name="EditRegion3" -->
-<div class="fltlft" id="leftDirectory">
-	 <?php
-	 DoQuery( "select label, date from dates" );
-	 while( list( $label, $ts ) = mysql_fetch_array( $mysql_result ) ) {
-		$myDate[$label] = $ts;
-	 }
-	 $now = time();
-	 
-	 if( $now >= $myDate['open'] || $gGala ) {
-		DoQuery( "select * from items where status != $gStatusHidden and itemIsLive = 0 and itemPackage = 0" );
-		$avail = $GLOBALS['mysql_numrows'];
-		$jsx = array();
-		$jsx[] = "setValue('area','bid')";
-		$jsx[] = sprintf( "setValue('id','%d')", -2);
-		$jsx[] = "addAction('')";
-		$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-		echo "<a $js>Silent Auction ($avail)</a><br>";
-		
-		DoQuery( "select * from items where itemIsLive = 1 and status = 0 and itemPackage = 0" );
-		if( $mysql_numrows ) {
-		  $jsx = array();
-		  $jsx[] = "setValue('area','bid')";
-		  $jsx[] = sprintf( "setValue('id','%d')", -3);
-		  $jsx[] = "addAction('')";
-		  $js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-		  echo "<a $js>Live Auction ($mysql_numrows)</a><br>";
-		}
-		
-		DoQuery( "select * from packages" );
-		if( $mysql_numrows ) {
-		  $jsx = array();
-		  $jsx[] = "setValue('area','bid')";
-		  $jsx[] = sprintf( "setValue('id','%d')", -8);
-		  $jsx[] = "addAction('')";
-		  $js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-		  echo "<a $js>Packages ($mysql_numrows)</a><br>";
-		}
-		
-		echo "<br>";
-		
-		foreach( $gCategories as $id => $label ) {
-		  DoQuery( "select * from items where itemPackage = 0 and status != $gStatusHidden and itemCategory = $id" );
-		  if( $mysql_numrows > 0) {
-			  $jsx = array();
-			  $jsx[] = "setValue('area','bid')";
-			  $jsx[] = sprintf( "setValue('id','%d')", $id);
-			  $jsx[] = "addAction('')";
-			  $js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-  #		  echo "<li>$label (<a href=\"$gSourceCode\" $js>$avail</a>)</li>";
-			 echo "<a $js>$label ($mysql_numrows)</a><br>";
-		  }
-		}
-	 }
-#	 echo "</li>";
-	 $cid = isset( $_POST['id'] ) ? $_POST['id'] : 0;
-	 ?>
-  </div>
-  
-  <div class="fltrt" id="rightContents">
-<?php
-  if( $gDebug ) { DumpPostVars(); }
-	 if( $now < $myDate['open'] ) {
-		$open = $gGala;
-		$dstr = sprintf( "%s at %s", date( "l, F jS, Y", $myDate['open'] ), date( "g:i A", $myDate['open'] ) );
-	 } elseif( $now < $myDate['close'] ) {
-		$open = 1;
-	   $dstr = sprintf( "%s at %s", date( "l, F jS, Y", $myDate['close'] ), date( "g:i A", $myDate['close'] ) );
-	 } else {
-		$open = $gGala;
-		$dstr = sprintf( "%s at %s", date( "l, F jS, Y", $myDate['close'] ), date( "g:i A", $myDate['close'] ) );
-	 }
-	 $dstr2 = date( "l, F jS, Y", $myDate['auction'] );
-	 
-	 if( $gPreSelected > 0 ) {
-		DoQuery( "select itemCategory from items where id = $gPreSelected" );
-		if( $mysql_numrows == 0 ) {
-		  $cid = -1;
-		} else {
-		  list( $cid ) = mysql_fetch_array( $mysql_result );
-		}
-	 } else {
-		$cid = isset( $_POST['id'] ) ? $_POST['id'] : -1;
-	 }
-	 
-	$tagline = "We appreciate your support of CBI's programs, of our warm community";
-	$tagline .= " and of our Annual Gala celebrating our congregants that have served in the Israeli Defense Forces!";
-	
-	 if( $cid == -1 ) {
-			$yyyy = date('Y', $gAuctionYear );
 
-?>
-    <p>Welcome to the <?php echo $yyyy ?> Congregation B'nai Israel Annual Gala Auction Site</p>
-	 <?php
-		if( $now < $myDate['open'] ) {
-?>
-<p><strong>THE ONLINE AUCTION IS COMING SOON! </strong></p>
-<p> The online auction will be open <?php echo $dstr ?>.
-<p><?php echo $tagline ?></p>
-<?php
-		} elseif( $now < $myDate['close'] ) {
-?>
-<p>
-<strong>THE ONLINE AUCTION IS NOW OPEN!</strong><br>
-<br>
-The online auction will remain open through <?php echo $dstr ?>.<br>
-<br>
-Items that have not reached the "BUY NOW" amount by that time will be put
-on display at CBI on <?php echo $dstr2 ?>, with the highest online bid received as the bidding starting point.
-<br>
-<p><?php echo $tagline ?></p>
-<?php
-		} else {
-?>
-<p><strong>THE ONLINE AUCTION IS NOW CLOSED</strong></p>
-<p>Items that have not been sold will be put
-on display at CBI on <?php echo $dstr2 ?>, with the highest online bid received as the bidding starting point.
-Bids will continue to be accepted from 11:30 AM - 1:00 PM, and at the gala that evening from 5:00 - 5:45 PM.
-Auction items range from vacation getaways to donated items guaranteed to delight and surprise.
-Many are exclusive offers from our members, sharing their special talents.  </p>
-<p><strong>A VERY SPECIAL THANK YOU TO OUR DONORS AND BIDDERS! </strong></p>
-<p><?php echo $tagline ?></p>
-<?php
-		}
-	 } elseif( $cid == -4 ) {
-?>
-	 <p>Thank you for supporting Congregation B'nai Israel.</p>
-	 <p>You should be receiving an email confirming your latest bid.</p>
-	 <p>We also encourage you to bid on additional items.</p>
-<?php
-	 } elseif( $cid == -5 ) {
-?>
-	 <p>We're terribly sorry but somebody just completed a BuyNow for this item and it is no longer available.</p>
-	 <p>We also encourage you to bid on additional items.</p>
-<?php
-	 } elseif( $cid == -6 ) {
-?>
-	 <p>We're terribly sorry but somebody beat you to that price.  Please try again.</p>
-	 <p>We also encourage you to bid on additional items.</p>
-<?php
-	 } elseif( $cid == -7 ) {
-?>
-	 <p>We're terribly sorry but somebody already bid a higher price.  Please try again.</p>
-	 <p>We also encourage you to bid on additional items.</p>
-<?php
-	 } else {
-		if( $cid == -2 ) {
-		  DoQuery( "select * from items where status != $gStatusHidden and itemIsLive = 0 and itemPackage = 0 order by itemTitle asc" );
-		  $title = "Silent Auction Items";
-		} elseif( $cid == -3 ) {
-		  DoQuery( "select * from items where status != $gStatusHidden and itemIsLive = 1 and itemPackage = 0 order by itemTitle asc" );
-		  $title = "Live Auction Items";
-		} elseif( $cid == -8 ) {
-		  $title = "All Packages";
-		} else {
-		  DoQuery( "select * from items where status != $gStatusHidden and itemCategory = $cid order by itemTitle asc" );
-		  $title = $gCategories[$cid];
-		}
-		
-		if( $cid == -8 ) {
-		  echo "<h3>$title</h3>";
-		  echo "<hr>";
-		  
-		  $pids = array_keys( $gPackages );
-		  foreach( $pids as $pid ) {
-			 if( $pid == 0 ) continue;
-			 
-			 echo "<table class=items>";
-		  
-			 DoQuery( "select sum(itemValue) from items where itemPackage = $pid" );
-			 $row = mysql_fetch_array( $mysql_result );
-			 echo "<tr>";
-			 echo "<td colspan=2><b>$pid: " . $gPackages[$pid] . sprintf( ", Total Value: \$ %s", number_format( $row[0], 2 ) ). "</td>";
-			 echo "</tr>";
-			 
-			 DoQuery( "select itemTitle, itemDesc from items where itemPackage = $pid" );
-			 while( list( $it, $id ) = mysql_fetch_array( $mysql_result ) ) {
-				echo "<tr>";
-				echo "<td>&nbsp;&nbsp;&bull;&nbsp;$it - $id</td>";
-				echo "</tr>";
-			 }
-		  echo "</table>";
-		  echo "<hr>";
-		  }
-		  
-		} else {
-		  $cols = ( $open ) ? 4 : 2;
-		
-		echo "<table class=items>";
-		echo "<thead>";
-		echo "<tr>";
-		echo "<th colspan=$cols class=top><h3>$title</h3></th>";
-		echo "</tr>";
-		
 
-		echo "<tr>";
-		echo "<th class=bottom>&nbsp;</th>";
-		if( $open ) {
-		  echo "<th class=bottom>Current Bid</th>";
-		  echo "<th class=bottom>New Bid</th>";
-		  echo "<th class=bottomr>Value</th>";
-		} else {
-		  echo "<th class=bottom>Status</th>";
-		}
-		echo "</tr>";
-		echo "</thead>";
+	<div id="exodus-slider-container" class="exodus-clearfix">
 
-		$outer = $mysql_result;
-		while( $row = mysql_fetch_assoc( $outer ) ) {
-		  $iid = $row['id'];
-		  $sold = ( $row['status'] == $gStatusClosed );
+	  <div id="exodus-slider">
 
-		  echo "<tr id=\"itm_$iid\">";
-		  
-		  // Col #1, Title/Description
-		  echo "<td>";
-		  printf( "<b>%s</b><br>%s", $row['itemTitle'], $row['itemDesc']);
-		  echo "</td>";
-		  
-		  // Col #2, Sold or Current Bid/Buy Now
-		  echo "<td class=c>";
-		  if( $row['itemIsLive'] == 1 ) {
-			 echo "Live";
-		  } elseif( $open ) {
-			 if( $sold ) {
-				echo "<img src=\"assets/icon_sold.png\" alt=Sold />";
-			 } else {
-				DoQuery( "select max(bid) from bids where itemId = $iid");
-				list( $bid) = mysql_fetch_array( $mysql_result);
-				printf( "\$ %s", number_format( $bid, 2 ) );
-				
-				if( $row['buyNowPrice'] > 0 ) {
-				  echo "<br>";
-				  $jsx = array();
-				  $jsx[] = "setValue('area','buynow')";
-				  $jsx[] = sprintf( "setValue('id','%d')", $iid);
-				  $jsx[] = "addAction('bid')";
-				  $js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-				  printf( "<input type=button $js value=\"Buy Now:\$ %s\">", number_format( $row['buyNowPrice'],2) );
-				}
-			 }
-		  } else {
-			 if( $sold ) {
-				echo "<img src=\"assets/icon_sold.png\" alt=Sold />";
-			 } else {
-				echo "&nbsp;";
-			 }
-		  }
-		  echo "</td>";
-		  
-		  // Col #3, New bid/Submit
-		  
-		  if( $open ) {
-			 echo "<td class=c>";
-			 if( $sold || ( $row['itemIsLive'] == 1 ) ) {
-				echo "&nbsp;";
-			 } else {
-				$ll = max( $row['bidOpen'], $bid + $row['bidIncrement'] );
-				$ul = $ll + 9*$row['bidIncrement'];
-				if( $row['buyNowPrice'] > $row['bidOpen'] ) {
-					$ul = min( $ul, $row['buyNowPrice'] );
-				}  
-				$tag = MakeTag('bid_'.$iid);
-				echo "<select $tag>";
-				if( $row['bidIncrement'] > 0 ) {
-				  $sel = "selected";
-				  for( $val=$ll; $val<$ul; $val+= $row['bidIncrement'] ) {
-					 echo "<option value=$val $sel>\$ " . number_format($val,2) . "</option>";
-					 $sel = "";
-				  }
-				}
-				echo "</select>";
-				echo "<br>";
-				$jsx = array();
-				$jsx[] = "setValue('area','bid')";
-				$jsx[] = sprintf( "setValue('id','%d')", $iid);
-				$jsx[] = "addAction('bid')";
-				$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-				echo "<input type=button $js value=\"Submit\">";
-			 }
-			 echo "</td>";
-		  }
+	    <div id="exodus-slider-inner">
 
-		  // Col #4, Value
-		  if( $open ) {
-			 echo "<td class=price>";
-			 if( $sold ) {
-				echo "&nbsp;";
-			 } else {
-				if( $row['itemValue'] < 0 ) {
-				  printf( "%s", "Priceless" );
-				} else {
-				  printf( "\$ %s", number_format( $row['itemValue'], 2 ) );
-				}
-			 }
-			 echo "</td>";
-		  }
-		  echo "</tr>\n";
-		  
-		  echo "<tr>";
-		  echo "<td class=bar></td>";
-		  echo "<td class=bar2></td>";
-		  if( $open ) {
-			 echo "<td class=bar2></td>";
-			 echo "<td class=bar2></td>";
-		  }
-		  echo "</tr>\n";
-		}
-		echo "</table>";
-		}
-	 }
-	 if( $gPreSelected > 0 ) {
-		echo "<script type=\"text/javascript\">myScroll('$gPreSelected');</script>";
-	 }
-	 ?>
-  </div>
- 
-      <br />
-    <div id="bottom_buttons">
-<?php
-if( $site_enabled ) {
-?>
-<?php
-} else {
-  echo "The pledge site is currently disabled.  Please check back in a few minutes";  
-}
-?>
+	      <div class="flexslider">
 
-    <!-- InstanceEndEditable -->
+		<ul class="slides">
 
-</div>
+
+		  <li class="exodus-slide exodus-slide-not-video exodus-slide-linked exodus-slide-has-title exodus-slide-has-description exodus-slide-has-caption">
+
+		    <div class="exodus-slide-image-container">
+
+		      <a href="http://www.cbi18.org/clergy-and-staff/">
+
+			<img src="http://www.cbi18.org/wp-content/uploads/2016/02/Staff-Lineup-2-1-1700x500.jpg" width="1700" height="500" class="exodus-image" alt="" title="">
+
+			<div class="exodus-slide-overlay">
+			  <span class="exodus-slide-play-icon el-icon-play-circle"></span>
+			</div>
+
+		      </a>
+
+		    </div>
+
+
+		    <div class="exodus-slide-caption">
+
+		      <div class="exodus-slide-caption-inner exodus-centered-content">
+
+			<div class="exodus-slide-caption-content">
+
+
+
+			  <a href="http://www.cbi18.org/clergy-and-staff/" class="exodus-slide-title">
+			    Meet Our Staff</a>
+
+
+
+
+
+			  <a href="http://www.cbi18.org/clergy-and-staff/" class="exodus-slide-description">
+			    Under the Leadership of Rabbi Elie Spitz</a>
+
+
+
+			</div>
+
+		      </div>
+
+		    </div>
+
+
+		  </li>
+
+
+		  <li class="exodus-slide exodus-slide-not-video exodus-slide-linked exodus-slide-has-title exodus-slide-has-description exodus-slide-has-caption">
+
+		    <div class="exodus-slide-image-container">
+
+		      <a href="http://www.cbi18.org/events/purim-at-cbi/">
+
+			<img src="http://www.cbi18.org/wp-content/uploads/2016/02/Purm-Costumes-1700x500.jpg" width="1700" height="500" class="exodus-image" alt="" title="">
+
+			<div class="exodus-slide-overlay">
+			  <span class="exodus-slide-play-icon el-icon-play-circle"></span>
+			</div>
+
+		      </a>
+
+		    </div>
+
+
+		    <div class="exodus-slide-caption">
+
+		      <div class="exodus-slide-caption-inner exodus-centered-content">
+
+			<div class="exodus-slide-caption-content">
+
+
+
+			  <a href="http://www.cbi18.org/events/purim-at-cbi/" class="exodus-slide-title">
+			    Come Rock Purim at CBI</a>
+
+
+
+
+
+			  <a href="http://www.cbi18.org/events/purim-at-cbi/" class="exodus-slide-description">
+			    Carnival, Megilla, Spiel, Hamantashen and more</a>
+
+
+
+			</div>
+
+		      </div>
+
+		    </div>
+
+
+		  </li>
+
+
+		  <li class="exodus-slide exodus-slide-not-video exodus-slide-linked exodus-slide-has-title exodus-slide-has-description exodus-slide-has-caption">
+
+		    <div class="exodus-slide-image-container">
+
+		      <a href="http://www.cbi18.org/community/youth-teens/">
+
+			<img src="http://www.cbi18.org/wp-content/uploads/2016/01/Kids-Davening-Slice-1700x500.jpg" width="1700" height="500" class="exodus-image" alt="" title="">
+
+			<div class="exodus-slide-overlay">
+			  <span class="exodus-slide-play-icon el-icon-play-circle"></span>
+			</div>
+
+		      </a>
+
+		    </div>
+
+
+		    <div class="exodus-slide-caption">
+
+		      <div class="exodus-slide-caption-inner exodus-centered-content">
+
+			<div class="exodus-slide-caption-content">
+
+
+
+			  <a href="http://www.cbi18.org/community/youth-teens/" class="exodus-slide-title">
+			    CBI Youth</a>
+
+
+
+
+
+			  <a href="http://www.cbi18.org/community/youth-teens/" class="exodus-slide-description">
+			    Building the Future</a>
+
+
+
+			</div>
+
+		      </div>
+
+		    </div>
+
+
+		  </li>
+
+
+		  <li class="exodus-slide exodus-slide-not-video exodus-slide-linked exodus-slide-has-title exodus-slide-has-description exodus-slide-has-caption">
+
+		    <div class="exodus-slide-image-container">
+
+		      <a href="http://www.cbi18.org/preschool/">
+
+			<img src="http://www.cbi18.org/wp-content/uploads/2016/02/CBI-CDC-with-Logo-1700x500.jpg" width="1700" height="500" class="exodus-image" alt="" title="">
+
+			<div class="exodus-slide-overlay">
+			  <span class="exodus-slide-play-icon el-icon-play-circle"></span>
+			</div>
+
+		      </a>
+
+		    </div>
+
+
+		    <div class="exodus-slide-caption">
+
+		      <div class="exodus-slide-caption-inner exodus-centered-content">
+
+			<div class="exodus-slide-caption-content">
+
+
+
+			  <a href="http://www.cbi18.org/preschool/" class="exodus-slide-title">
+			    CBI Preschool</a>
+
+
+
+
+
+			  <a href="http://www.cbi18.org/preschool/" class="exodus-slide-description">
+			    Learn about our Program</a>
+
+
+
+			</div>
+
+		      </div>
+
+		    </div>
+
+
+		  </li>
+
+
+		</ul>
+
+	      </div>
+
+	    </div>
+
+	  </div>
+
+	</div>
+
+
+
 
 
       </header>
-</div>
+
+      <div id="exodus-middle">
+
+	<div id="exodus-middle-content" class="exodus-centered-content exodus-clearfix">
+
+	  <div id="exodus-home-content" class="exodus-home-bottom-widgets-both">
 
 
-  
-  <!-- end .content --></div>
+	    <section id="exodus-intro" class="exodus-intro-has-heading">
+
+	      <h1 id="exodus-intro-heading">Home</h1>
+
+	      <div id="exodus-intro-content">
+		<h2 style="text-align: center;">Welcome to Congregation B&#8217;nai Israel</h2>
+		<p>We are a spiritual, multi-generational, participatory congregation in Orange County, California, with members at all levels of religious observance, and are inclusive of everyone including those born Jewish, Jews by choice, and non Jews. Together as an extended family we celebrate the richness of our Jewish heritage by creatively engaging in prayer, study, entertainment, and caring for each other and the greater community. We strive to further wholeness within ourselves and our relationships, and to bring about a more just and compassionate world.</p>
+	      </div>
+
+	    </section>
+
+
+
+
+	    <div id="ctcom-home-highlights" class="exodus-clearfix">
+
+	      <div id="ctcom-home-highlights-inner">
+
+		<div class="exodus-caption-image exodus-highlight exodus-caption-image-has-image exodus-highlight-linked exodus-highlight-has-title exodus-highlight-has-description exodus-highlight-has-caption">
+
+		  <div class="exodus-caption-image-inner">
+
+		    <a href="/im-new/">
+
+		      <img width="750" height="500" src="http://www.cbi18.org/wp-content/uploads/2015/09/Concert-750x500.jpg" class="exodus-image" alt="Concert" srcset="http://www.cbi18.org/wp-content/uploads/2015/09/Concert-750x500.jpg 750w, http://www.cbi18.org/wp-content/uploads/2015/09/Concert-400x267.jpg 400w, http://www.cbi18.org/wp-content/uploads/2015/09/Concert-240x160.jpg 240w" sizes="(max-width: 750px) 100vw, 750px" />
+		      <div class="exodus-caption-image-caption">
+
+			<div class="exodus-caption-image-title">
+			  I&#8217;m New</div>
+
+			<div class="exodus-caption-image-description">
+			  Information about CBI</div>
+
+		      </div>
+
+		    </a>
+
+		  </div>
+
+		</div><div class="exodus-caption-image exodus-highlight exodus-caption-image-has-image exodus-highlight-linked exodus-highlight-has-title exodus-highlight-has-description exodus-highlight-has-caption">
+
+		  <div class="exodus-caption-image-inner">
+
+		    <a href="/thisweek/">
+
+		      <img width="750" height="500" src="http://www.cbi18.org/wp-content/uploads/2015/12/calendar_widget-750x500.jpg" class="exodus-image" alt="calendar_widget" srcset="http://www.cbi18.org/wp-content/uploads/2015/12/calendar_widget-750x500.jpg 750w, http://www.cbi18.org/wp-content/uploads/2015/12/calendar_widget-400x267.jpg 400w, http://www.cbi18.org/wp-content/uploads/2015/12/calendar_widget-240x160.jpg 240w" sizes="(max-width: 750px) 100vw, 750px" />
+		      <div class="exodus-caption-image-caption">
+
+			<div class="exodus-caption-image-title">
+			  This Week At CBI</div>
+
+			<div class="exodus-caption-image-description">
+			  Please Join Us</div>
+
+		      </div>
+
+		    </a>
+
+		  </div>
+
+		</div><div class="exodus-caption-image exodus-highlight exodus-caption-image-has-image exodus-highlight-linked exodus-highlight-has-title exodus-highlight-has-description exodus-highlight-has-caption">
+
+		  <div class="exodus-caption-image-inner">
+
+		    <a href="/sermons-and-teachings/">
+
+		      <img width="750" height="500" src="http://www.cbi18.org/wp-content/uploads/2016/01/Rabbi-Inspiration-750x500.jpg" class="exodus-image" alt="Rabbi Inspiration" srcset="http://www.cbi18.org/wp-content/uploads/2016/01/Rabbi-Inspiration-750x500.jpg 750w, http://www.cbi18.org/wp-content/uploads/2016/01/Rabbi-Inspiration-400x267.jpg 400w, http://www.cbi18.org/wp-content/uploads/2016/01/Rabbi-Inspiration-240x160.jpg 240w" sizes="(max-width: 750px) 100vw, 750px" />
+		      <div class="exodus-caption-image-caption">
+
+			<div class="exodus-caption-image-title">
+			  Inspiration</div>
+
+			<div class="exodus-caption-image-description">
+			  Sermons and Teachings</div>
+
+		      </div>
+
+		    </a>
+
+		  </div>
+
+		</div>
+	      </div>
+
+	    </div>
+
+
+
+	    <div id="exodus-home-bottom-widgets" class="exodus-clearfix">
+
+
+
+	      <div id="exodus-home-bottom-widgets-left" class="exodus-home-bottom-widgets-column">
+
+		<section id="ctfw-events-9" class="exodus-widget exodus-home-widget widget_ctfw-events"><h1 class="exodus-home-bottom-widgets-title exodus-widget-title">Highlights</h1>
+		  <article class="exodus-widget-entry exodus-events-widget-entry exodus-clearfix exodus-widget-entry-first exodus-widget-entry-has-image post-9226 ctc_event type-ctc_event status-publish has-post-thumbnail hentry ctc_event_category-highlight ctfw-has-image">
+
+		    <header class="exodus-clearfix">
+
+		      <div class="exodus-widget-entry-thumb">
+			<a href="http://www.cbi18.org/events/lunch-and-learn-with-rabbi-spitz-the-theology-of-abraham-joshua-heschel/" title="Lunch and Learn with Rabbi Spitz &#8211; The Theology of Abraham Joshua Heschel (3 Sessions)"><img width="220" height="220" src="http://www.cbi18.org/wp-content/uploads/2016/01/Heschel-220x220.jpg" class="exodus-image wp-post-image" alt="Heschel" srcset="http://www.cbi18.org/wp-content/uploads/2016/01/Heschel-150x150.jpg 150w, http://www.cbi18.org/wp-content/uploads/2016/01/Heschel-450x450.jpg 450w, http://www.cbi18.org/wp-content/uploads/2016/01/Heschel-220x220.jpg 220w" sizes="(max-width: 220px) 100vw, 220px" /></a>
+		      </div>
+
+		      <h1 class="exodus-widget-entry-title"><a href="http://www.cbi18.org/events/lunch-and-learn-with-rabbi-spitz-the-theology-of-abraham-joshua-heschel/" title="Lunch and Learn with Rabbi Spitz &#8211; The Theology of Abraham Joshua Heschel (3 Sessions)">Lunch and Learn with Rabbi Spitz &#8211; The Theology of Abraham Joshua Heschel (3 Sessions)</a></h1>
+
+		      <ul class="exodus-widget-entry-meta exodus-clearfix">
+
+			<li class="exodus-widget-entry-date exodus-locations-widget-entry-date">
+			  February 24 &ndash; March 9, 2016</li>
+
+			<li class="exodus-events-widget-entry-time">
+			  12:00 pm &ndash; 1:15 pm</li>
+
+
+		      </ul>
+
+		    </header>
+
+
+		  </article>
+
+
+		  <article class="exodus-widget-entry exodus-events-widget-entry exodus-clearfix exodus-widget-entry-has-image post-9727 ctc_event type-ctc_event status-publish has-post-thumbnail hentry ctc_event_category-highlight ctfw-has-image">
+
+		    <header class="exodus-clearfix">
+
+		      <div class="exodus-widget-entry-thumb">
+			<a href="http://www.cbi18.org/events/a-celebration-of-jewish-women-from-the-middle-east-and-belly-dancing/" title="A Celebration Of Jewish Women From The Middle East, and Belly Dancing"><img width="220" height="220" src="http://www.cbi18.org/wp-content/uploads/2016/02/bellydance-220x220.jpg" class="exodus-image wp-post-image" alt="bellydance" srcset="http://www.cbi18.org/wp-content/uploads/2016/02/bellydance-150x150.jpg 150w, http://www.cbi18.org/wp-content/uploads/2016/02/bellydance-300x300.jpg 300w, http://www.cbi18.org/wp-content/uploads/2016/02/bellydance-768x768.jpg 768w, http://www.cbi18.org/wp-content/uploads/2016/02/bellydance-1024x1024.jpg 1024w, http://www.cbi18.org/wp-content/uploads/2016/02/bellydance-450x450.jpg 450w, http://www.cbi18.org/wp-content/uploads/2016/02/bellydance-220x220.jpg 220w, http://www.cbi18.org/wp-content/uploads/2016/02/bellydance.jpg 1568w" sizes="(max-width: 220px) 100vw, 220px" /></a>
+		      </div>
+
+		      <h1 class="exodus-widget-entry-title"><a href="http://www.cbi18.org/events/a-celebration-of-jewish-women-from-the-middle-east-and-belly-dancing/" title="A Celebration Of Jewish Women From The Middle East, and Belly Dancing">A Celebration Of Jewish Women From The Middle East, and Belly Dancing</a></h1>
+
+		      <ul class="exodus-widget-entry-meta exodus-clearfix">
+
+			<li class="exodus-widget-entry-date exodus-locations-widget-entry-date">
+			  February 29, 2016</li>
+
+			<li class="exodus-events-widget-entry-time">
+			  7:00 pm &ndash; 9:00 pm</li>
+
+
+		      </ul>
+
+		    </header>
+
+
+		  </article>
+
+
+		  <article class="exodus-widget-entry exodus-events-widget-entry exodus-clearfix exodus-widget-entry-has-image post-1113 ctc_event type-ctc_event status-publish has-post-thumbnail hentry ctc_event_category-highlight ctfw-has-image">
+
+		    <header class="exodus-clearfix">
+
+		      <div class="exodus-widget-entry-thumb">
+			<a href="http://www.cbi18.org/events/teaching-series/" title="Semitic Cousins Film Series"><img width="220" height="220" src="http://www.cbi18.org/wp-content/uploads/2015/02/arranged-220x220.jpg" class="exodus-image wp-post-image" alt="arranged" srcset="http://www.cbi18.org/wp-content/uploads/2015/02/arranged-150x150.jpg 150w, http://www.cbi18.org/wp-content/uploads/2015/02/arranged-300x300.jpg 300w, http://www.cbi18.org/wp-content/uploads/2015/02/arranged-450x450.jpg 450w, http://www.cbi18.org/wp-content/uploads/2015/02/arranged-220x220.jpg 220w" sizes="(max-width: 220px) 100vw, 220px" /></a>
+		      </div>
+
+		      <h1 class="exodus-widget-entry-title"><a href="http://www.cbi18.org/events/teaching-series/" title="Semitic Cousins Film Series">Semitic Cousins Film Series</a></h1>
+
+		      <ul class="exodus-widget-entry-meta exodus-clearfix">
+
+			<li class="exodus-widget-entry-date exodus-locations-widget-entry-date">
+			  March 3, 2016</li>
+
+			<li class="exodus-events-widget-entry-time">
+			  7:00 pm</li>
+
+
+		      </ul>
+
+		    </header>
+
+
+		  </article>
+
+
+		  <article class="exodus-widget-entry exodus-events-widget-entry exodus-clearfix exodus-widget-entry-has-image post-9524 ctc_event type-ctc_event status-publish has-post-thumbnail hentry ctc_event_category-highlight ctfw-has-image">
+
+		    <header class="exodus-clearfix">
+
+		      <div class="exodus-widget-entry-thumb">
+			<a href="http://www.cbi18.org/events/rabbi-elliot-dorff-shabbaton/" title="Shabbaton with Rabbi Elliot Dorff"><img width="220" height="220" src="http://www.cbi18.org/wp-content/uploads/2016/02/Rabbi-Elliot-Dorff-220x220.jpg" class="exodus-image wp-post-image" alt="Rabbi Elliot Dorff" srcset="http://www.cbi18.org/wp-content/uploads/2016/02/Rabbi-Elliot-Dorff-150x150.jpg 150w, http://www.cbi18.org/wp-content/uploads/2016/02/Rabbi-Elliot-Dorff-450x450.jpg 450w, http://www.cbi18.org/wp-content/uploads/2016/02/Rabbi-Elliot-Dorff-220x220.jpg 220w" sizes="(max-width: 220px) 100vw, 220px" /></a>
+		      </div>
+
+		      <h1 class="exodus-widget-entry-title"><a href="http://www.cbi18.org/events/rabbi-elliot-dorff-shabbaton/" title="Shabbaton with Rabbi Elliot Dorff">Shabbaton with Rabbi Elliot Dorff</a></h1>
+
+		      <ul class="exodus-widget-entry-meta exodus-clearfix">
+
+			<li class="exodus-widget-entry-date exodus-locations-widget-entry-date">
+			  March 4 &ndash; 6, 2016</li>
+
+
+
+		      </ul>
+
+		    </header>
+
+
+		  </article>
+
+
+		  <article class="exodus-widget-entry exodus-events-widget-entry exodus-clearfix exodus-widget-entry-has-image post-290 ctc_event type-ctc_event status-publish has-post-thumbnail hentry ctc_event_category-highlight ctfw-has-image">
+
+		    <header class="exodus-clearfix">
+
+		      <div class="exodus-widget-entry-thumb">
+			<a href="http://www.cbi18.org/events/event-without-image-or-comments/" title="Gala &#8211; Honoring CBI Members Who Served in the IDF"><img width="220" height="220" src="http://www.cbi18.org/wp-content/uploads/2014/03/Gala-Thumb-220x220.jpg" class="exodus-image wp-post-image" alt="Gala Thumb" srcset="http://www.cbi18.org/wp-content/uploads/2014/03/Gala-Thumb-150x150.jpg 150w, http://www.cbi18.org/wp-content/uploads/2014/03/Gala-Thumb-450x450.jpg 450w, http://www.cbi18.org/wp-content/uploads/2014/03/Gala-Thumb-220x220.jpg 220w" sizes="(max-width: 220px) 100vw, 220px" /></a>
+		      </div>
+
+		      <h1 class="exodus-widget-entry-title"><a href="http://www.cbi18.org/events/event-without-image-or-comments/" title="Gala &#8211; Honoring CBI Members Who Served in the IDF">Gala &#8211; Honoring CBI Members Who Served in the IDF</a></h1>
+
+		      <ul class="exodus-widget-entry-meta exodus-clearfix">
+
+			<li class="exodus-widget-entry-date exodus-locations-widget-entry-date">
+			  April 10, 2016</li>
+
+			<li class="exodus-events-widget-entry-time">
+			  5:00 pm</li>
+
+
+		      </ul>
+
+		    </header>
+
+
+		  </article>
+
+		</section>
+	      </div>
+
+
+
+
+	      <div id="exodus-home-bottom-widgets-right" class="exodus-home-bottom-widgets-column">
+
+		<section id="ctfw-posts-6" class="exodus-widget exodus-home-widget widget_ctfw-posts"><h1 class="exodus-home-bottom-widgets-title exodus-widget-title">Latest News</h1>
+
+		  <article class="exodus-widget-entry exodus-blog-widget-entry exodus-clearfix exodus-widget-entry-first exodus-widget-entry-has-image post-9530 post type-post status-publish format-standard has-post-thumbnail hentry category-uncategorized ctfw-has-image">
+
+		    <header class="exodus-clearfix">
+
+		      <div class="exodus-widget-entry-thumb">
+			<a href="http://www.cbi18.org/2016/02/08/photos-from-the-religious-school-yad-project/" title="Photos from the Religious School Yad Project"><img width="220" height="220" src="http://www.cbi18.org/wp-content/uploads/2016/02/Relig-School-Yad-6-e1454966801394-220x220.jpg" class="exodus-image wp-post-image" alt="Relig School Yad 6" srcset="http://www.cbi18.org/wp-content/uploads/2016/02/Relig-School-Yad-6-e1454966801394-150x150.jpg 150w, http://www.cbi18.org/wp-content/uploads/2016/02/Relig-School-Yad-6-e1454966801394-450x450.jpg 450w, http://www.cbi18.org/wp-content/uploads/2016/02/Relig-School-Yad-6-e1454966801394-220x220.jpg 220w" sizes="(max-width: 220px) 100vw, 220px" /></a>
+		      </div>
+
+		      <h1 class="exodus-widget-entry-title">
+			<a href="http://www.cbi18.org/2016/02/08/photos-from-the-religious-school-yad-project/" title="Photos from the Religious School Yad Project">
+			  Photos from the Religious School Yad Project</a>
+		      </h1>
+
+		      <ul class="exodus-widget-entry-meta exodus-clearfix">
+
+
+
+		      </ul>
+
+		    </header>
+
+
+		  </article>
+
+
+
+		  <article class="exodus-widget-entry exodus-blog-widget-entry exodus-clearfix exodus-widget-entry-has-image post-8912 post type-post status-publish format-standard has-post-thumbnail hentry category-community ctfw-has-image">
+
+		    <header class="exodus-clearfix">
+
+		      <div class="exodus-widget-entry-thumb">
+			<a href="http://www.cbi18.org/2016/01/13/congrats-robin/" title="Congratulations to Rabbi Robin Hoffman"><img width="220" height="220" src="http://www.cbi18.org/wp-content/uploads/2016/01/Robin-Hoffman-Square-Photo-220x220.jpg" class="exodus-image wp-post-image" alt="Robin Hoffman Square Photo" srcset="http://www.cbi18.org/wp-content/uploads/2016/01/Robin-Hoffman-Square-Photo-150x150.jpg 150w, http://www.cbi18.org/wp-content/uploads/2016/01/Robin-Hoffman-Square-Photo-300x300.jpg 300w, http://www.cbi18.org/wp-content/uploads/2016/01/Robin-Hoffman-Square-Photo-450x450.jpg 450w, http://www.cbi18.org/wp-content/uploads/2016/01/Robin-Hoffman-Square-Photo-220x220.jpg 220w" sizes="(max-width: 220px) 100vw, 220px" /></a>
+		      </div>
+
+		      <h1 class="exodus-widget-entry-title">
+			<a href="http://www.cbi18.org/2016/01/13/congrats-robin/" title="Congratulations to Rabbi Robin Hoffman">
+			  Congratulations to Rabbi Robin Hoffman</a>
+		      </h1>
+
+		      <ul class="exodus-widget-entry-meta exodus-clearfix">
+
+
+
+		      </ul>
+
+		    </header>
+
+
+		  </article>
+
+
+
+		  <article class="exodus-widget-entry exodus-blog-widget-entry exodus-clearfix exodus-widget-entry-has-image post-8836 post type-post status-publish format-standard has-post-thumbnail hentry category-community ctfw-has-image">
+
+		    <header class="exodus-clearfix">
+
+		      <div class="exodus-widget-entry-thumb">
+			<a href="http://www.cbi18.org/2016/01/05/usy-award/" title="USY Wins Award!"><img width="220" height="220" src="http://www.cbi18.org/wp-content/uploads/2016/01/USY-Award-220x220.jpg" class="exodus-image wp-post-image" alt="USY Award" srcset="http://www.cbi18.org/wp-content/uploads/2016/01/USY-Award-150x150.jpg 150w, http://www.cbi18.org/wp-content/uploads/2016/01/USY-Award-450x450.jpg 450w, http://www.cbi18.org/wp-content/uploads/2016/01/USY-Award-220x220.jpg 220w" sizes="(max-width: 220px) 100vw, 220px" /></a>
+		      </div>
+
+		      <h1 class="exodus-widget-entry-title">
+			<a href="http://www.cbi18.org/2016/01/05/usy-award/" title="USY Wins Award!">
+			  USY Wins Award!</a>
+		      </h1>
+
+		      <ul class="exodus-widget-entry-meta exodus-clearfix">
+
+
+
+		      </ul>
+
+		    </header>
+
+
+		  </article>
+
+		</section>
+	      </div>
+
+
+	    </div>
+
+
+	  </div>
+
+
+	</div>
+
+      </div>
+
+      <footer id="exodus-footer" class="exodus-footer-has-location exodus-footer-has-map exodus-footer-has-phone exodus-footer-has-social-icons exodus-footer-has-menu exodus-footer-has-notice">
+
+	<div id="exodus-footer-inner">
+
+
+	  <div id="exodus-footer-top">
+
+	    <div id="exodus-footer-top-inner" class="exodus-centered-content exodus-clearfix">
+
+	      <div id="exodus-footer-top-content">
+
+
+
+		<div id="exodus-footer-top-map">
+
+
+		  <a href="http://www.cbi18.org/locations/cbi-tustin/" title="CBI Tustin"><img src="//maps.googleapis.com/maps/api/staticmap?size=440x270&#038;center=33.733990,-117.801354&#038;scale=2&#038;markers=color:0xf2f2f2%7C33.733990,-117.801354&#038;zoom=13&#038;maptype=roadmap&#038;sensor=false" class="ctfw-google-map-image" alt="CBI Tustin" width="440" height="270"></a>
+
+		</div>
+
+
+		<div id="exodus-footer-top-info">
+
+		  <h2 id="exodus-footer-top-address">2111 Bryan Avenue, Tustin, CA 92782</h2>
+
+		  <div id="exodus-footer-top-times">
+		    <span class="el-icon-time"></span>
+		    Shabbat Services: Friday at 6:00 pm, Saturday at 9:30 am</div>
+
+
+		  <div id="exodus-footer-top-phone-icons">
+
+		    <div id="exodus-footer-top-phone">
+		      <span class="el-icon-phone-alt"></span>
+		      (714) 730-9693</div>
+
+		    <div id="exodus-footer-top-email">
+		      <span class="el-icon-envelope"></span>
+		      <a href="mailto:&#99;bi18&#64;%63&#98;%69&#49;&#56;%2e&#111;%72g">
+			c&#98;&#105;1&#56;&#64;&#99;b&#105;&#49;&#56;.&#111;rg</a>
+		    </div>
+
+		    <div id="exodus-footer-top-social-icons"><ul class="exodus-list-icons">
+			<li><a href="https://www.facebook.com/cbi18" class="el-icon-facebook" title="Facebook" target="_blank"></a></li>
+			<li><a href="https://www.youtube.com/channel/UCq_R-qitoAC7fpfw6e1FgnA" class="el-icon-youtube" title="YouTube" target="_blank"></a></li>
+		    </ul></div>
+
+		  </div>
+
+
+		  <ul id="exodus-footer-top-buttons">
+
+		    <li><a href="https://www.google.com/maps/dir//2111+Bryan+Avenue%2C+Tustin%2C+CA+92782/" id="exodus-footer-button-directions" class="exodus-button" target="_blank">Directions</a></li>
+
+
+		    <li><a href="http://cbi18.us1.list-manage.com/subscribe?u=d2e90f9f64f98c2fbe662a0de&id=a3d29b9892" id="exodus-footer-button-locations" class="exodus-button">Join our Email List</a></li>
+
+		    <li><a href="/contact-us/" id="exodus-footer-button-locations" class="exodus-button">Contact Us</a></li>
+
+		  </ul>
+
+		</div>
+
+
+
+	      </div>
+
+	    </div>
+
+	  </div>
+
+
+	  <div id="exodus-footer-bottom" class="exodus-centered-content exodus-clearfix">
+
+	    <div id="exodus-footer-responsive-toggle">
+
+	      <a id="exodus-footer-full-site" href="#" class="exodus-button">
+		View Full Site</a>
+
+	      <a id="exodus-footer-mobile-site" href="#" class="exodus-button">
+		View Mobile Site</a>
+
+	    </div>
+
+
+	    <div id="exodus-footer-bottom-left" class="exodus-clearfix">
+
+	      <ul id="exodus-footer-menu-links" class="menu"><li id="menu-item-8738" class="menu-item menu-item-type-custom menu-item-object-custom current-menu-item current_page_item menu-item-home menu-item-8738"><a href="http://www.cbi18.org/">Home</a></li>
+		<li id="menu-item-9322" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9322"><a href="http://www.cbi18.org/donate/">Donate</a></li>
+	      </ul>
+	    </div>
+
+
+
+	    <div id="exodus-footer-bottom-right">
+
+	      <div id="exodus-notice">
+
+		© 2016 Congregation B&#039;nai Israel.
+	      </div>
+
+	    </div>
+
+
+	  </div>
+
+	</div>
+
+      </footer>
+
+    </div>
 
     <script type='text/javascript' src='http://www.cbi18.org/wp-includes/js/hoverIntent.min.js?ver=1.8.1'></script>
     <script type='text/javascript' src='http://www.cbi18.org/wp-includes/js/comment-reply.min.js?ver=4.4.2'></script>
@@ -785,4 +1098,4 @@ var simcal_default_calendar = {"ajax_url":"\/wp-admin\/admin-ajax.php","nonce":"
 	</div>
     </div></script>
   </body>
-<!-- InstanceEnd --></html>
+  </html>
