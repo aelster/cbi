@@ -1,16 +1,14 @@
 <!DOCTYPE html>
-<html class="no-js" lang="en-US"><!-- InstanceBegin template="/Templates/index2.dwt" codeOutsideHTMLIsLocked="false" -->
+<html class="no-js" lang="en-US">
   <head>
     <meta charset="UTF-8" />
-    <link rel="pingback" href="https://www.cbi18.org/xmlrpc.php" />
-    <!-- InstanceBeginEditable name="doctitle" -->
-    <title>CBI Auction Home</title>
-    <!-- InstanceEndEditable -->
-    <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Feed" href="https://www.cbi18.org/feed/" />
-    <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Comments Feed" href="https://www.cbi18.org/comments/feed/" />
-    <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Home Comments Feed" href="https://www.cbi18.org/home/feed/" />
+    <link rel="pingback" href="http://www.cbi18.org/xmlrpc.php" />
+    <title>Congregation B&#039;nai Israel &#8211; An egalitarian Conservative congregation serving the diverse Orange County Jewish Community</title>
+    <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Feed" href="http://www.cbi18.org/feed/" />
+    <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Comments Feed" href="http://www.cbi18.org/comments/feed/" />
+    <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Home Comments Feed" href="http://www.cbi18.org/home/feed/" />
     <script type="text/javascript">
-      window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"https:\/\/www.cbi18.org\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.4.2"}};
+      window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/72x72\/","ext":".png","source":{"concatemoji":"http:\/\/www.cbi18.org\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.4.2"}};
       !function(a,b,c){function d(a){var c,d=b.createElement("canvas"),e=d.getContext&&d.getContext("2d"),f=String.fromCharCode;return e&&e.fillText?(e.textBaseline="top",e.font="600 32px Arial","flag"===a?(e.fillText(f(55356,56806,55356,56826),0,0),d.toDataURL().length>3e3):"diversity"===a?(e.fillText(f(55356,57221),0,0),c=e.getImageData(16,16,1,1).data.toString(),e.fillText(f(55356,57221,55356,57343),0,0),c!==e.getImageData(16,16,1,1).data.toString()):("simple"===a?e.fillText(f(55357,56835),0,0):e.fillText(f(55356,57135),0,0),0!==e.getImageData(16,16,1,1).data[0])):!1}function e(a){var c=b.createElement("script");c.src=a,c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g;c.supports={simple:d("simple"),flag:d("flag"),unicode8:d("unicode8"),diversity:d("diversity")},c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.simple&&c.supports.flag&&c.supports.unicode8&&c.supports.diversity||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
     </script>
     <style type="text/css">
@@ -27,56 +25,53 @@
       padding: 0 !important;
       }
     </style>
-    <link href="styles.css" rel="stylesheet" type="text/css" />
-    <link href="oneColFixCtrHdr.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="hhPledges.js"></script>
     <link rel='stylesheet' id='exodus-google-fonts-css'  href='//fonts.googleapis.com/css?family=Roboto:400,700,400italic,700italic' type='text/css' media='all' />
-    <link rel='stylesheet' id='elusive-webfont-css'  href='https://www.cbi18.org/wp-content/themes/exodus/css/elusive-webfont.css?ver=1.5.2' type='text/css' media='all' />
-    <link rel='stylesheet' id='exodus-style-css'  href='https://www.cbi18.org/wp-content/themes/cbi/style.css?ver=1.5.2' type='text/css' media='all' />
+    <link rel='stylesheet' id='elusive-webfont-css'  href='http://www.cbi18.org/wp-content/themes/exodus/css/elusive-webfont.css?ver=1.5.2' type='text/css' media='all' />
+    <link rel='stylesheet' id='exodus-style-css'  href='http://www.cbi18.org/wp-content/themes/cbi/style.css?ver=1.5.2' type='text/css' media='all' />
     <link href="styles.css" rel="stylesheet" type="text/css" />
-    <link rel='stylesheet' id='exodus-responsive-css'  href='https://www.cbi18.org/wp-content/themes/exodus/css/responsive.css?ver=1.5.2' type='text/css' media='all' />
-    <link rel='stylesheet' id='exodus-color-css'  href='https://www.cbi18.org/wp-content/themes/exodus/colors/light/style.css?ver=1.5.2' type='text/css' media='all' />
-    <link rel='stylesheet' id='simcal-qtip-css'  href='https://www.cbi18.org/wp-content/plugins/google-calendar-events/assets/css/vendor/jquery.qtip.min.css?ver=2.2.1' type='text/css' media='all' />
-    <link rel='stylesheet' id='simcal-default-calendar-grid-css'  href='https://www.cbi18.org/wp-content/plugins/google-calendar-events/assets/css/default-calendar-grid.min.css?ver=3.0.14' type='text/css' media='all' />
-    <link rel='stylesheet' id='simcal-default-calendar-list-css'  href='https://www.cbi18.org/wp-content/plugins/google-calendar-events/assets/css/default-calendar-list.min.css?ver=3.0.14' type='text/css' media='all' />
-    <link rel='stylesheet' id='asmh-styles-css'  href='https://www.cbi18.org/asmh/styles?ver=4.4.2' type='text/css' media='all' />
-    <link rel='stylesheet' id='asmh-custom-fonts-css'  href='https://www.cbi18.org/wp-content/plugins/awesome-sticky-header/assets/fonts/asmh.css?ver=4.4.2' type='text/css' media='all' />
-    <script type='text/javascript' src='https://www.cbi18.org/wp-includes/js/jquery/jquery.js?ver=1.11.3'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
+    <link rel='stylesheet' id='exodus-responsive-css'  href='http://www.cbi18.org/wp-content/themes/exodus/css/responsive.css?ver=1.5.2' type='text/css' media='all' />
+    <link rel='stylesheet' id='exodus-color-css'  href='http://www.cbi18.org/wp-content/themes/exodus/colors/light/style.css?ver=1.5.2' type='text/css' media='all' />
+    <link rel='stylesheet' id='simcal-qtip-css'  href='http://www.cbi18.org/wp-content/plugins/google-calendar-events/assets/css/vendor/jquery.qtip.min.css?ver=2.2.1' type='text/css' media='all' />
+    <link rel='stylesheet' id='simcal-default-calendar-grid-css'  href='http://www.cbi18.org/wp-content/plugins/google-calendar-events/assets/css/default-calendar-grid.min.css?ver=3.0.14' type='text/css' media='all' />
+    <link rel='stylesheet' id='simcal-default-calendar-list-css'  href='http://www.cbi18.org/wp-content/plugins/google-calendar-events/assets/css/default-calendar-list.min.css?ver=3.0.14' type='text/css' media='all' />
+    <link rel='stylesheet' id='asmh-styles-css'  href='http://www.cbi18.org/asmh/styles?ver=4.4.2' type='text/css' media='all' />
+    <link rel='stylesheet' id='asmh-custom-fonts-css'  href='http://www.cbi18.org/wp-content/plugins/awesome-sticky-header/assets/fonts/asmh.css?ver=4.4.2' type='text/css' media='all' />
+    <script type='text/javascript' src='http://www.cbi18.org/wp-includes/js/jquery/jquery.js?ver=1.11.3'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-includes/js/jquery/jquery-migrate.min.js?ver=1.2.1'></script>
     <script type='text/javascript'>
       /* <![CDATA[ */
-var ctfw_ie_unsupported = {"default_version":"7","min_version":"5","max_version":"9","version":"8","message":"You are using an outdated version of Internet Explorer. Please upgrade your browser to use this site.","redirect_url":"https:\/\/browsehappy.com\/"};
+var ctfw_ie_unsupported = {"default_version":"7","min_version":"5","max_version":"9","version":"8","message":"You are using an outdated version of Internet Explorer. Please upgrade your browser to use this site.","redirect_url":"http:\/\/browsehappy.com\/"};
 /* ]]> */
     </script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/framework/js/ie-unsupported.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/framework/js/jquery.fitvids.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/framework/js/responsive-embeds.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/js/superfish.min.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/js/supersubs.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/js/jquery.meanmenu.min.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/js/jquery.flexslider-min.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/js/jquery.debouncedresize.min.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/js/jquery.validate.min.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/js/jquery.smooth-scroll.min.js?ver=1.5.2'></script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/js/jquery_cookie.min.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/framework/js/ie-unsupported.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/framework/js/jquery.fitvids.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/framework/js/responsive-embeds.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/js/superfish.min.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/js/supersubs.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/js/jquery.meanmenu.min.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/js/jquery.flexslider-min.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/js/jquery.debouncedresize.min.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/js/jquery.validate.min.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/js/jquery.smooth-scroll.min.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/js/jquery_cookie.min.js?ver=1.5.2'></script>
     <script type='text/javascript'>
       /* <![CDATA[ */
-var exodus_main = {"site_path":"\/","home_url":"https:\/\/www.cbi18.org","color_url":"https:\/\/www.cbi18.org\/wp-content\/themes\/exodus\/colors\/light","is_ssl":"","mobile_menu_label":"Menu","slider_slideshow":"1","slider_speed":"4000","comment_name_required":"","comment_email_required":"","comment_name_error_required":"Required","comment_email_error_required":"Required","comment_email_error_invalid":"Invalid Email","comment_url_error_invalid":"Invalid URL","comment_message_error_required":"Comment Required"};
+var exodus_main = {"site_path":"\/","home_url":"http:\/\/www.cbi18.org","color_url":"http:\/\/www.cbi18.org\/wp-content\/themes\/exodus\/colors\/light","is_ssl":"","mobile_menu_label":"Menu","slider_slideshow":"1","slider_speed":"4000","comment_name_required":"","comment_email_required":"","comment_name_error_required":"Required","comment_email_error_required":"Required","comment_email_error_invalid":"Invalid Email","comment_url_error_invalid":"Invalid URL","comment_message_error_required":"Comment Required"};
 /* ]]> */
     </script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/themes/exodus/js/main.js?ver=1.5.2'></script>
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/themes/exodus/js/main.js?ver=1.5.2'></script>
     <script type='text/javascript'>
       /* <![CDATA[ */
 var asmhObject = {"sticky_scroll_position":"240","middle_hide_header_width":"768","header_paddings":"15","menu_padding":"13"};
 /* ]]> */
     </script>
-    <script type='text/javascript' src='https://www.cbi18.org/wp-content/plugins/awesome-sticky-header/assets/js/asmh.js?ver=4.4.2'></script>
-    <link rel='https://api.w.org/' href='https://www.cbi18.org/wp-json/' />
-    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.cbi18.org/xmlrpc.php?rsd" />
-    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://www.cbi18.org/wp-includes/wlwmanifest.xml" />
+    <script type='text/javascript' src='http://www.cbi18.org/wp-content/plugins/awesome-sticky-header/assets/js/asmh.js?ver=4.4.2'></script>
+    <link rel='https://api.w.org/' href='http://www.cbi18.org/wp-json/' />
+    <link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.cbi18.org/xmlrpc.php?rsd" />
+    <link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.cbi18.org/wp-includes/wlwmanifest.xml" />
     <meta name="generator" content="WordPress 4.4.2" />
-    <link rel="canonical" href="https://www.cbi18.org/" />
-    <link rel='shortlink' href='https://www.cbi18.org/' />
+    <link rel="canonical" href="http://www.cbi18.org/" />
+    <link rel='shortlink' href='http://www.cbi18.org/' />
     <style type="text/css">
       #exodus-logo-text {
       font-family: 'Roboto', Arial, Helvetica, sans-serif;
@@ -139,13 +134,8 @@ var asmhObject = {"sticky_scroll_position":"240","middle_hide_header_width":"768
       }
     </script>
   </head>
-  <body class="home page page-id-8587 page-template page-template-page-templates page-template-homepage page-template-page-templateshomepage-php exodus-logo-font-roboto exodus-tagline-font-roboto exodus-heading-font-roboto exodus-menu-font-roboto exodus-body-font-roboto exodus-has-logo-image exodus-has-logo-text-lowercase exodus-no-tagline-under-logo exodus-has-tagline-right exodus-rounded"
-  onload="firstName();">
+  <body class="home page page-id-8587 page-template page-template-page-templates page-template-homepage page-template-page-templateshomepage-php exodus-logo-font-roboto exodus-tagline-font-roboto exodus-heading-font-roboto exodus-menu-font-roboto exodus-body-font-roboto exodus-has-logo-image exodus-has-logo-text-lowercase exodus-no-tagline-under-logo exodus-has-tagline-right exodus-rounded">
 
-<?php
-LocalInit();
-AddForm();
-?>
     <div id="exodus-container">
 
       <header id="exodus-header">
@@ -163,7 +153,7 @@ AddForm();
 	      <div id="exodus-top-bar-search-form">
 
 		<div class="exodus-search-form">
-		  <form method="get" action="https://www.cbi18.org/">
+		  <form method="get" action="http://www.cbi18.org/">
 		    <label class="screen-reader-text">Search</label>
 		    <div class="exodus-search-field">
 		      <input type="text" name="s" />
@@ -176,7 +166,7 @@ AddForm();
 
 	      <div id="exodus-top-bar-menu">
 
-		<ul id="exodus-top-bar-menu-links" class="menu"><li id="menu-item-9356" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9356"><a href="https://www.cbi18.org/donate/">Donate</a></li>
+		<ul id="exodus-top-bar-menu-links" class="menu"><li id="menu-item-9356" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9356"><a href="http://www.cbi18.org/donate/">Donate</a></li>
 		</ul>
 	      </div>
 
@@ -208,9 +198,9 @@ AddForm();
 
 		<div id="exodus-logo-image">
 
-		  <a href="https://www.cbi18.org/">
+		  <a href="http://www.cbi18.org/">
 
-		    <img src="https://www.cbi18.org/wp-content/uploads/2015/09/CBI_logo_sm3.png" alt="Congregation B&#039;nai Israel" id="exodus-logo-regular">
+		    <img src="http://www.cbi18.org/wp-content/uploads/2015/09/CBI_logo_sm3.png" alt="Congregation B&#039;nai Israel" id="exodus-logo-regular">
 
 
 		  </a>
@@ -252,80 +242,80 @@ AddForm();
 
 	  <div id="exodus-header-menu-inner" class="exodus-centered-content exodus-clearfix">
 
-	    <ul id="exodus-header-menu-content" class="sf-menu"><li id="menu-item-8835" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-8587 current_page_item menu-item-8835"><a href="https://www.cbi18.org/">Home</a></li>
+	    <ul id="exodus-header-menu-content" class="sf-menu"><li id="menu-item-8835" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-8587 current_page_item menu-item-8835"><a href="http://www.cbi18.org/">Home</a></li>
 	      <li id="menu-item-9317" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-9317"><a href="#">About Us</a>
 		<ul class="sub-menu">
-		  <li id="menu-item-8677" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8677"><a href="https://www.cbi18.org/contact-us/">Contact Us</a></li>
-		  <li id="menu-item-8606" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8606"><a href="https://www.cbi18.org/who-we-are/">Who We Are</a></li>
-		  <li id="menu-item-9010" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9010"><a href="https://www.cbi18.org/clergy-and-staff/">Our Clergy, Staff and Board of Directors</a></li>
-		  <li id="menu-item-8594" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8594"><a href="https://www.cbi18.org/history/">Our History</a></li>
+		  <li id="menu-item-8677" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8677"><a href="http://www.cbi18.org/contact-us/">Contact Us</a></li>
+		  <li id="menu-item-8606" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8606"><a href="http://www.cbi18.org/who-we-are/">Who We Are</a></li>
+		  <li id="menu-item-9010" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9010"><a href="http://www.cbi18.org/clergy-and-staff/">Our Clergy, Staff and Board of Directors</a></li>
+		  <li id="menu-item-8594" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8594"><a href="http://www.cbi18.org/history/">Our History</a></li>
 		  <li id="menu-item-8627" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8627"><a href="#">Our Facility</a>
 		    <ul class="sub-menu">
-		      <li id="menu-item-8592" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8592"><a href="https://www.cbi18.org/facility-rental/">Facility Rental</a></li>
-		      <li id="menu-item-8593" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8593"><a href="https://www.cbi18.org/gift-shop/">Gift Shop</a></li>
+		      <li id="menu-item-8592" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8592"><a href="http://www.cbi18.org/facility-rental/">Facility Rental</a></li>
+		      <li id="menu-item-8593" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8593"><a href="http://www.cbi18.org/gift-shop/">Gift Shop</a></li>
 		    </ul>
 		  </li>
-		  <li id="menu-item-8628" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8628"><a href="https://www.cbi18.org/shofar/">Shofar Newsletter</a></li>
-		  <li id="menu-item-8590" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8590"><a href="https://www.cbi18.org/in-the-news/">In the News</a></li>
-		  <li id="menu-item-8927" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8927"><a href="https://www.cbi18.org/videos/">Videos</a></li>
-		  <li id="menu-item-8629" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8629"><a href="https://www.cbi18.org/partnerships/">Partnerships</a></li>
+		  <li id="menu-item-8628" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8628"><a href="http://www.cbi18.org/shofar/">Shofar Newsletter</a></li>
+		  <li id="menu-item-8590" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8590"><a href="http://www.cbi18.org/in-the-news/">In the News</a></li>
+		  <li id="menu-item-8927" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8927"><a href="http://www.cbi18.org/videos/">Videos</a></li>
+		  <li id="menu-item-8629" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8629"><a href="http://www.cbi18.org/partnerships/">Partnerships</a></li>
 		</ul>
 	      </li>
 	      <li id="menu-item-8630" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8630"><a href="#">Calendar</a>
 		<ul class="sub-menu">
-		  <li id="menu-item-9320" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9320"><a href="https://www.cbi18.org/thisweek/">This Week at CBI</a></li>
-		  <li id="menu-item-8556" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8556"><a href="https://www.cbi18.org/calendar/">Monthly Calendar</a></li>
-		  <li id="menu-item-9370" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9370"><a href="https://www.cbi18.org/religious-school-calendar/">Religious School Calendar</a></li>
+		  <li id="menu-item-9320" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9320"><a href="http://www.cbi18.org/thisweek/">This Week at CBI</a></li>
+		  <li id="menu-item-8556" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8556"><a href="http://www.cbi18.org/calendar/">Monthly Calendar</a></li>
+		  <li id="menu-item-9370" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9370"><a href="http://www.cbi18.org/religious-school-calendar/">Religious School Calendar</a></li>
 		</ul>
 	      </li>
 	      <li id="menu-item-8633" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8633"><a href="#">Community</a>
 		<ul class="sub-menu">
-		  <li id="menu-item-8595" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8595"><a href="https://www.cbi18.org/membership/">Membership</a></li>
-		  <li id="menu-item-8634" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-8634"><a href="https://www.cbi18.org/youth-teens/">Youth and Teens</a>
+		  <li id="menu-item-8595" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8595"><a href="http://www.cbi18.org/membership/">Membership</a></li>
+		  <li id="menu-item-8634" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-8634"><a href="http://www.cbi18.org/youth-teens/">Youth and Teens</a>
 		    <ul class="sub-menu">
-		      <li id="menu-item-8983" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8983"><a href="https://www.cbi18.org/machar-k-3/">Machar (K-3)</a></li>
-		      <li id="menu-item-8982" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8982"><a href="https://www.cbi18.org/kadima-4-6/">Kadima (4-6)</a></li>
-		      <li id="menu-item-8981" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8981"><a href="https://www.cbi18.org/usy-7-12/">USY (7-12)</a></li>
-		      <li id="menu-item-8984" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8984"><a href="https://www.cbi18.org/camp-bnai-ruach/">Camp B&#8217;nai Ruach</a></li>
+		      <li id="menu-item-8983" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8983"><a href="http://www.cbi18.org/machar-k-3/">Machar (K-3)</a></li>
+		      <li id="menu-item-8982" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8982"><a href="http://www.cbi18.org/kadima-4-6/">Kadima (4-6)</a></li>
+		      <li id="menu-item-8981" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8981"><a href="http://www.cbi18.org/usy-7-12/">USY (7-12)</a></li>
+		      <li id="menu-item-8984" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8984"><a href="http://www.cbi18.org/camp-bnai-ruach/">Camp B&#8217;nai Ruach</a></li>
 		    </ul>
 		  </li>
 		  <li id="menu-item-8640" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8640"><a href="#">Adults</a>
 		    <ul class="sub-menu">
-		      <li id="menu-item-8635" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8635"><a href="https://www.cbi18.org/mens-club/">Men&#8217;s Club</a></li>
-		      <li id="menu-item-8636" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8636"><a href="https://www.cbi18.org/sisterhood/">Sisterhood</a></li>
-		      <li id="menu-item-8637" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8637"><a href="https://www.cbi18.org/groups/">Group Activities</a></li>
+		      <li id="menu-item-8635" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8635"><a href="http://www.cbi18.org/mens-club/">Men&#8217;s Club</a></li>
+		      <li id="menu-item-8636" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8636"><a href="http://www.cbi18.org/sisterhood/">Sisterhood</a></li>
+		      <li id="menu-item-8637" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8637"><a href="http://www.cbi18.org/groups/">Group Activities</a></li>
 		    </ul>
 		  </li>
-		  <li id="menu-item-8639" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8639"><a href="https://www.cbi18.org/families/">Families</a></li>
-		  <li id="menu-item-8643" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8643"><a href="https://www.cbi18.org/social-action/">Social Action</a></li>
-		  <li id="menu-item-8644" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8644"><a href="https://www.cbi18.org/pastoral-care/">Pastoral Care</a></li>
+		  <li id="menu-item-8639" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8639"><a href="http://www.cbi18.org/families/">Families</a></li>
+		  <li id="menu-item-8643" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8643"><a href="http://www.cbi18.org/social-action/">Social Action</a></li>
+		  <li id="menu-item-8644" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8644"><a href="http://www.cbi18.org/pastoral-care/">Pastoral Care</a></li>
 		</ul>
 	      </li>
 	      <li id="menu-item-8650" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8650"><a href="#">Learning</a>
 		<ul class="sub-menu">
-		  <li id="menu-item-8647" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8647"><a href="https://www.cbi18.org/preschool/">Preschool</a></li>
-		  <li id="menu-item-8896" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8896"><a href="https://www.cbi18.org/education/religious-school/">Religious School</a></li>
-		  <li id="menu-item-8649" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8649"><a href="https://www.cbi18.org/education/adult-education/">Adult Education</a></li>
-		  <li id="menu-item-9354" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9354"><a href="https://www.cbi18.org/sermons-and-teachings/">Sermons and Teachings</a></li>
+		  <li id="menu-item-8647" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8647"><a href="http://www.cbi18.org/preschool/">Preschool</a></li>
+		  <li id="menu-item-8896" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8896"><a href="http://www.cbi18.org/education/religious-school/">Religious School</a></li>
+		  <li id="menu-item-8649" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8649"><a href="http://www.cbi18.org/education/adult-education/">Adult Education</a></li>
+		  <li id="menu-item-9354" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9354"><a href="http://www.cbi18.org/sermons-and-teachings/">Sermons and Teachings</a></li>
 		</ul>
 	      </li>
 	      <li id="menu-item-8651" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8651"><a href="#">Worship &#038; Life Cycle</a>
 		<ul class="sub-menu">
-		  <li id="menu-item-8653" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8653"><a href="https://www.cbi18.org/erev-shabbat-friday-night/">Erev Shabbat (Friday Night)</a></li>
-		  <li id="menu-item-8652" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8652"><a href="https://www.cbi18.org/shabbat-mornings/">Shabbat Mornings</a></li>
-		  <li id="menu-item-8654" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8654"><a href="https://www.cbi18.org/holidays/">Holidays</a></li>
-		  <li id="menu-item-8655" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8655"><a href="https://www.cbi18.org/weekday/">Weekday</a></li>
-		  <li id="menu-item-8656" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8656"><a href="https://www.cbi18.org/cbi-coastal/">CBI Coastal</a></li>
-		  <li id="menu-item-8657" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8657"><a href="https://www.cbi18.org/life-cycle-events/">Life Cycle Events</a></li>
-		  <li id="menu-item-8662" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8662"><a href="https://www.cbi18.org/pastoral-care/">Pastoral Care</a></li>
+		  <li id="menu-item-8653" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8653"><a href="http://www.cbi18.org/erev-shabbat-friday-night/">Erev Shabbat (Friday Night)</a></li>
+		  <li id="menu-item-8652" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8652"><a href="http://www.cbi18.org/shabbat-mornings/">Shabbat Mornings</a></li>
+		  <li id="menu-item-8654" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8654"><a href="http://www.cbi18.org/holidays/">Holidays</a></li>
+		  <li id="menu-item-8655" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8655"><a href="http://www.cbi18.org/weekday/">Weekday</a></li>
+		  <li id="menu-item-8656" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8656"><a href="http://www.cbi18.org/cbi-coastal/">CBI Coastal</a></li>
+		  <li id="menu-item-8657" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8657"><a href="http://www.cbi18.org/life-cycle-events/">Life Cycle Events</a></li>
+		  <li id="menu-item-8662" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8662"><a href="http://www.cbi18.org/pastoral-care/">Pastoral Care</a></li>
 		</ul>
 	      </li>
 	      <li id="menu-item-8673" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8673"><a href="#">Giving</a>
 		<ul class="sub-menu">
-		  <li id="menu-item-8557" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8557"><a href="https://www.cbi18.org/donate/">Donate</a></li>
-		  <li id="menu-item-8674" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8674"><a href="https://www.cbi18.org/volunteer-opportunities/">Volunteer Opportunities</a></li>
-		  <li id="menu-item-8952" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8952"><a href="https://www.cbi18.org/about-our-funds/">About our Funds</a></li>
-		  <li id="menu-item-8675" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8675"><a href="https://www.cbi18.org/legacy-giving/">Endowment and Legacy Giving</a></li>
+		  <li id="menu-item-8557" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8557"><a href="http://www.cbi18.org/donate/">Donate</a></li>
+		  <li id="menu-item-8674" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8674"><a href="http://www.cbi18.org/volunteer-opportunities/">Volunteer Opportunities</a></li>
+		  <li id="menu-item-8952" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8952"><a href="http://www.cbi18.org/about-our-funds/">About our Funds</a></li>
+		  <li id="menu-item-8675" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8675"><a href="http://www.cbi18.org/legacy-giving/">Endowment and Legacy Giving</a></li>
 		</ul>
 	      </li>
 	    </ul>
@@ -337,9 +327,13 @@ AddForm();
 
 	</nav>
 
-<div class="content">
-<!-- InstanceBeginEditable name="EditRegion3" -->
-<div class="fltlft" id="leftDirectory">
+
+
+      </header>
+
+      <div class="content">
+	 
+  <div class="fltlft" id="leftDirectory">
 	 <?php
 	 DoQuery( "select label, date from dates" );
 	 while( list( $label, $ts ) = mysql_fetch_array( $mysql_result ) ) {
@@ -665,17 +659,10 @@ if( $site_enabled ) {
   echo "The pledge site is currently disabled.  Please check back in a few minutes";  
 }
 ?>
-
-    <!-- InstanceEndEditable -->
-
-</div>
-
-
-      </header>
-</div>
-
-
-  
+    </div>
+  <!-- end .content -->
+  </div>
+  <!-- InstanceEndEditable -->
   <!-- end .content --></div>
 
     <script type='text/javascript' src='http://www.cbi18.org/wp-includes/js/hoverIntent.min.js?ver=1.8.1'></script>
@@ -787,4 +774,4 @@ var simcal_default_calendar = {"ajax_url":"\/wp-admin\/admin-ajax.php","nonce":"
 	</div>
     </div></script>
   </body>
-<!-- InstanceEnd --></html>
+</html>
