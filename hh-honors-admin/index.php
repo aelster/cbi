@@ -143,6 +143,11 @@ switch( $gAction ) {
 			$gAction = 'Main';
 		}
 
+		if( $func == "comp-memb" ) {
+			CompareMembers();
+			$gAction = 'Done';
+		}
+
 		if( $func == "responses" ) {
 			Responses();
 			$gAction = "Mail";
