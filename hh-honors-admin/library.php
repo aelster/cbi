@@ -24,7 +24,7 @@ function Assign() {
 	$member_assigned = [];
 	$member_accepted = [];
 	$member_declined = [];
-	DoQuery( "select * from assignments" );
+	DoQuery( "select * from assignments where jyear = $gJewishYear" );
 	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result']) ) {
 		if( $row['declined'] ) {
 			$member_declined[$row['member_id']] = $row['honor_id'];
@@ -317,7 +317,7 @@ function AssignAdd() {
 	$bypass = $_POST['bypass'];
 	DoQuery( "start transaction" );
 
-	DoQuery( "select honor_id from assignments where member_id = $member_id" );
+	DoQuery( "select honor_id from assignments where member_id = $member_id and jyear = $gJewishYear" );
 	if( $GLOBALS['mysql_numrows'] > 0 && ! $bypass ) {
 		list( $hid ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 		DoQuery( "select honor from honors where id = $hid" );
@@ -348,10 +348,10 @@ function AssignAdd() {
 		$unique = 0;
 		while( ! $unique ) {
 			$random_hash = substr(md5(uniqid(rand(), true)), 8, 6); // 6 characters long
-			DoQuery( "select * from assignments where hash = '$random_hash'" );
+			DoQuery( "select * from assignments where hash = '$random_hash' and jyear = $gJewishYear" );
 			$unique = $GLOBALS['mysql_numrows'] == 0 ? 1 : 0;
 		}					  
-		DoQuery( "insert into assignments set honor_id = $honor_id, member_id = $member_id, hash = '$random_hash'" );
+		DoQuery( "insert into assignments set jyear = $gJewishYear, honor_id = $honor_id, member_id = $member_id, hash = '$random_hash'" );
 		DoQuery( "commit" );
 	}
 	
@@ -369,9 +369,9 @@ function AssignDel() {
 	foreach( $tmp as $field ) {
 			$tmp2 = preg_split( "/_/", $field );
 			if( $tmp2[0] == "honor" ) {
-				DoQuery( "delete from assignments where honor_id = $tmp2[1]" );
+				DoQuery( "delete from assignments where honor_id = $tmp2[1] and jyear = $gJewishYear" );
 			} elseif( $tmp2[0] == "member" ) {
-				DoQuery( "delete from assignments where member_id = $tmp2[1]" );
+				DoQuery( "delete from assignments where member_id = $tmp2[1] and jyear = $gJewishYear" );
 			}
 	}
 	
@@ -537,6 +537,81 @@ function CleanString ($data) {
 	return $data;
 }
 
+function CompareMembers() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
+	echo "<div class=center>";
+
+	DoQuery( "select * from members_master_5777 order by `Last Name`, `Female 1st Name`" );
+	$outer = $mysql_result;
+	$i = 0;
+	while( $row = mysql_fetch_assoc( $outer ) ) {
+		$id = $row['ID'];
+		DoQuery( "select * from members_master where ID = $id" );
+		if( $mysql_numrows == 0 ) {
+			$i++;
+			if( $i == 1 ) {
+				echo "<input type=button value=Back onclick=\"setValue('from', 'CompareMembers');addAction('Back');\">";
+
+				echo "<div class=CommonV2>";
+				echo "<table>";
+				echo "<tr>";
+				echo "  <th>#</th>";
+				echo "  <th>ID #</th>";
+				echo "  <th>New Member Name(s)</th>";
+				echo "</tr>\n";
+			}
+			echo "<tr>";
+			echo "<td>$i</td>";
+			printf( "<td>%d</td>", $row['ID'] );
+			printf( "<td>%s, %s %s</td>", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] );
+			echo "</tr>\n";
+		}
+	}
+	if( $i > 0 ) {
+		echo "</table>";
+		echo "</div>";
+		echo "<br>";
+	}
+	
+	DoQuery( "select * from members_master order by `Last Name`, `Female 1st Name`" );
+	$outer = $mysql_result;
+	$i = 0;
+	while( $row = mysql_fetch_assoc( $outer ) ) {
+		$id = $row['ID'];
+		DoQuery( "select * from members_master_5777 where ID = $id" );
+		if( $mysql_numrows == 0 ) {
+			$i++;
+			if( $i == 1 ) {
+				echo "<input type=button value=Back onclick=\"setValue('from', 'CompareMembers');addAction('Back');\">";
+
+				echo "<div class=CommonV2>";
+				echo "<table>";
+				echo "<tr>";
+				echo "  <th>#</th>";
+				echo "  <th>ID #</th>";
+				echo "  <th>Member Dropout Name(s)</th>";
+				echo "</tr>\n";
+			}
+			echo "<tr>";
+			echo "<td>$i</td>";
+			printf( "<td>%d</td>", $row['ID'] );
+			printf( "<td>%s, %s %s</td>", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] );
+			echo "</tr>\n";
+		}
+	}
+	if( $i > 0 ) {
+		echo "</table>";
+		echo "</div>";
+	}
+	
+	echo "</div>";
+}
+	
 function CreateHonors() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -1300,6 +1375,7 @@ function DisplayMain() {
 			echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
 			echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
 			echo "<input type=button onclick=\"setValue('func','build-memb');addAction('Main');\" value=\"Build Members\">";
+			echo "<input type=button onclick=\"setValue('func','comp-memb');addAction('Main');\" value=\"Compare Members\">";
 
 			echo "</div>";
 		}
@@ -1524,7 +1600,7 @@ function ExcelGabbai() {
 		$query .= " from assignments a";
 		$query .= " join members b on b.id = a.member_id";
 		$query .= " where a.honor_id = " . $orow['id'];
-		$query .= " and a.declined = 0";
+		$query .= " and a.declined = 0 and a.jyear = $gJewishYear";
 		DoQuery( $query );
 		
 		while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
@@ -1978,7 +2054,7 @@ function MailAssignment() {
 	DoQuery( "select * from honors where id = $honor_id" );
 	$honor = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
 	
-	DoQuery( "select * from assignments where honor_id = $honor_id and member_id = $member_id" );
+	DoQuery( "select * from assignments where honor_id = $honor_id and member_id = $member_id and jyear = $gJewishYear" );
 	$assignment = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
 	$hash = $assignment['hash'];
 
@@ -2176,11 +2252,12 @@ function MailAssignments( $area ) {
 	$query .= " join members c on a.member_id=c.id";
 	
 	if( $area == "all" ) {
+		$query .= " where a.jyear = $gJewishYear";
 		$query .= " order by c.`Last Name` asc, c.`Female 1st Name` asc";
 		DoQuery( $query );
 		
 	} elseif( $area == "unsent" ) {
-		$query .= " where a.sent = 0";
+		$query .= " where a.sent = 0 and a.jyear = $gJewishYear";
 		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
 		if( $limited ) {
 			$query .= " limit $num_per_batch";
@@ -2188,7 +2265,7 @@ function MailAssignments( $area ) {
 		DoQuery( $query );
 		
 	} elseif( $area == "noresponse" ) {
-		$query .= " where a.accepted = 0 and a.declined = 0";
+		$query .= " where a.accepted = 0 and a.declined = 0 and a.jyear = $gJewishYear";
 		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
 		if( $limited ) {
 			$query .= " limit $num_per_batch";
@@ -2197,7 +2274,7 @@ function MailAssignments( $area ) {
 		
 	} elseif( $area == "remind-rosh" ) {
 		$query .= " join honors b on a.honor_id=b.id";
-		$query .= " where a.accepted = 1 and a.declined = 0 and b.service like 'rh%'";
+		$query .= " where a.accepted = 1 and a.declined = 0 and b.service like 'rh%' and a.jyear = $gJewishYear";
 		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
 		if( $limited ) {
 			$query .= " limit $num_per_batch";
@@ -2206,7 +2283,7 @@ function MailAssignments( $area ) {
 
 	} elseif( $area == "remind-yom" ) {
 		$query .= " join honors b on a.honor_id=b.id";
-		$query .= " where a.accepted = 1 and a.declined = 0 and b.service not like 'rh%'";
+		$query .= " where a.accepted = 1 and a.declined = 0 and b.service not like 'rh%' and a.jyear = $gJewishYear";
 		$query .= " order by c.`last name` asc, c.`female 1st name` asc";
 		if( $limited ) {
 			$query .= " limit $num_per_batch";
@@ -2327,7 +2404,7 @@ function MailDisplay() {
 	
 	echo "<br><br>";
 	
-	DoQuery( "select count(*), sum(sent), sum(accepted), sum(declined) from assignments" );
+	DoQuery( "select count(*), sum(sent), sum(accepted), sum(declined) from assignments where jyear = $gJewishYear" );
 	list( $total, $sent, $accepted, $declined ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	printf( "%d/%d Aliyot mailed, %d accepted, %d declined<br>", $sent, $total, $accepted, $declined );
 	
@@ -2430,6 +2507,7 @@ function MailUpdate() {
 	$query = "select a.honor_id, a.member_id";
 	$query .= " from assignments a";
 	$query .= " join members c on a.member_id=c.id";
+	$query .= " where a.jyear = $gJewishYear";
 	$query .= " order by c.`Last Name` asc, c.`Female 1st Name` asc";
 	DoQuery( $query );
 	$outer = $GLOBALS['mysql_result'];
@@ -2847,7 +2925,7 @@ function Responses() {
 	$query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
 	$query .= " from assignments a";
 	$query .= " join members c on a.member_id=c.id";
-	$query .= " where a.accepted = 1";
+	$query .= " where a.accepted = 1 and a.jyear = $gJewishYear";
 	$query .= " order by a.updated desc";
 	DoQuery( $query );
 	$accepts = $GLOBALS['mysql_result'];
@@ -2856,13 +2934,13 @@ function Responses() {
 	$query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
 	$query .= " from assignments a";
 	$query .= " join members c on a.member_id=c.id";
-	$query .= " where a.declined = 1";
+	$query .= " where a.declined = 1 and a.jyear = $gJewishYear";
 	$query .= " order by a.updated desc";
 	DoQuery( $query );
 	$declines = $GLOBALS['mysql_result'];
 	$banner .= sprintf( ", <a href=#declines>Declines</a>: %d", $GLOBALS['mysql_numrows'] );
 
-	DoQuery( "select sum(donation) from assignments" );
+	DoQuery( "select sum(donation) from assignments where jyear = $gJewishYear" );
 	list( $amount ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	$banner .= sprintf( ", Amount Raised: \$ %s", number_format( $amount ) );
 	$banner .= "&nbsp;&nbsp;&nbsp;";
