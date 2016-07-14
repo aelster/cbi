@@ -5,4 +5,4 @@ dst=/Users/andy/Sites/cbi/htdocs
 
 home=`pwd`
 
-rsync -avn --exclude .git . $dst
+rsync -av --exclude .git . $dst
