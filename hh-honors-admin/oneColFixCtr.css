@@ -300,6 +300,7 @@ div.assign-top {
 .CommonV2 table.members tbody { height:600px; overflow-y:scroll; display:block; }
 .CommonV2 table.members td.name { width: 450px; }
 .CommonV2 table.members td.tribe { width: 60px; text-align: center; }
+.CommonV2 table.members td.tribew { width: 60px; text-align: center; background-color: #ff0; }
 .CommonV2 table.members td.box { width: 50px; text-align: center; }
 
 .assigned {	background-color: #ff0; }

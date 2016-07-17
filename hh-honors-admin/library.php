@@ -546,6 +546,17 @@ function CompareMembers() {
 	
 	echo "<div class=center>";
 
+	$hdr = "<a href=#NewMembers><input type=button value='New Members'></a>";
+	$hdr .= "&nbsp;&nbsp;";
+	$hdr .= "<a href=#OldMembers><input type=button value='Old Members'></a>";
+	$hdr .= "&nbsp;&nbsp;";
+	$hdr .= "<a href=#Changes><input type=button value='Changes'></a>";
+	$hdr .= "&nbsp;&nbsp;";
+	$hdr .= "<input type=button value=Back onclick=\"setValue('from', 'CompareMembers');addAction('Back');\">";
+	$hdr .= "</br>";
+	
+	echo	"<span id=NewMembers>$hdr</span>";
+	
 	DoQuery( "select * from members_master_5777 order by `Last Name`, `Female 1st Name`" );
 	$outer = $mysql_result;
 	$i = 0;
@@ -555,8 +566,6 @@ function CompareMembers() {
 		if( $mysql_numrows == 0 ) {
 			$i++;
 			if( $i == 1 ) {
-				echo "<input type=button value=Back onclick=\"setValue('from', 'CompareMembers');addAction('Back');\">";
-
 				echo "<div class=CommonV2>";
 				echo "<table>";
 				echo "<tr>";
@@ -578,6 +587,8 @@ function CompareMembers() {
 		echo "<br>";
 	}
 	
+	echo	"<span id=OldMembers>$hdr</span>";
+
 	DoQuery( "select * from members_master order by `Last Name`, `Female 1st Name`" );
 	$outer = $mysql_result;
 	$i = 0;
@@ -587,8 +598,6 @@ function CompareMembers() {
 		if( $mysql_numrows == 0 ) {
 			$i++;
 			if( $i == 1 ) {
-				echo "<input type=button value=Back onclick=\"setValue('from', 'CompareMembers');addAction('Back');\">";
-
 				echo "<div class=CommonV2>";
 				echo "<table>";
 				echo "<tr>";
@@ -609,6 +618,66 @@ function CompareMembers() {
 		echo "</div>";
 	}
 	
+	echo	"<span id=Changes>$hdr</span>";
+
+	$i = 0;
+	
+	DoQuery( "select * from members_master_5777 order by `Last Name`, `Female 1st Name`" );
+	$outer = $mysql_result;
+	while( $row1= mysql_fetch_assoc( $outer ) ) {
+		DoQuery( "select * from members_master where `ID` = " . $row1['ID'] );
+		if( $mysql_numrows == 0 ) continue;
+		
+		$row2 = mysql_fetch_assoc( $mysql_result );
+		foreach( $row1 as $key => $value ) {
+			if( empty( $value ) && empty( $row2["$key"] ) ) {
+				$match = 1;
+				
+			} elseif( in_array( $key, array( "Anniversary", "Female DOB", "Male DOB" ) ) ) {
+				if( empty( $row2["$key"] ) ) {
+					$match = 0;
+				} else {
+					$d1 = new DateTime( $value );
+					$arr = explode( "/", $row2["$key"] );
+					if( $arr[2] < 16 ) {
+						$arr[2] += 2000;
+					} elseif( $arr[2] < 100 ) {
+						$arr[2] += 1900;
+					}
+					$dstr = sprintf( "%4d-%02d-%02d", $arr[2], $arr[0], $arr[1] );
+#					printf( "val1: [%s], dstr: [%s]<br>", $value, $dstr );
+					$d2 = new DateTime($dstr);
+					$match = ($d1 == $d2);
+				}
+			} else {
+				$match = ( trim($value) == trim($row2["$key"]) );
+			}
+			if( $match ) continue;
+			
+			$i++;
+			if( $i == 1 ) {
+				echo "<div class=CommonV2>";
+				echo "<table>";
+				echo "<tr>";
+				echo "  <th>#</th>";
+				echo "  <th>ID #</th>";
+				echo "  <th>Name</th>";
+				echo "  <th>Field</th>";
+				echo "  <th>New</th>";
+				echo "  <th>Old</th>";
+				echo "</tr>\n";
+			}
+			echo "<tr>";
+			echo "<td>$i</td>";
+			printf( "<td>%d</td>", $row1['ID'] );
+			printf( "<td>%s, %s %s</td>", $row1['Last Name'], $row1['Female 1st Name'], $row1['Male 1st Name'] );
+			printf( "<td>%s</td>", $key );
+			printf( "<td>" . $row1["$key"] . "</td>" );
+			printf( "<td>" . $row2["$key"] . "</td>" );
+			echo "</tr>";
+		}
+		
+	}
 	echo "</div>";
 }
 	
@@ -1375,7 +1444,7 @@ function DisplayMain() {
 			echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
 			echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
 			echo "<input type=button onclick=\"setValue('func','build-memb');addAction('Main');\" value=\"Build Members\">";
-			echo "<input type=button onclick=\"setValue('func','comp-memb');addAction('Main');\" value=\"Compare Members\">";
+			echo "<input type=button disabled onclick=\"setValue('func','comp-memb');addAction('Main');\" value=\"Compare Members\">";
 
 			echo "</div>";
 		}
@@ -2597,6 +2666,7 @@ function MailUpdate() {
 	echo "<table class=members>";
 	echo "<thead>";
 	echo "<tr>";
+	echo "  <td class=box>ID</td>";
 	echo "  <td class=name>Name</td>";
 	echo "  <td class=tribe>Male<br>Tribe</td>";
 	echo "  <td class=tribe>Female<br>Tribe</td>";
@@ -2614,10 +2684,13 @@ function MailUpdate() {
 	
 	foreach( $members as $id => $row ) {
 		echo "<tr>";
+		echo "<td class=box>$id</td>";
 		echo "<td class=name>" . sprintf( "%s, %s %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>\n";
 
-		printf( "<td class=tribe>%s</td>", $attributes[$id]['mtribe'] );
-		printf( "<td class=tribe>%s</td>", $attributes[$id]['ftribe'] );
+		$class = ( ( ! empty( $row['Male 1st Name'] ) ) && empty( $attributes[$id]['mtribe'] ) ) ? "tribew" : "tribe";
+		printf( "<td class=$class>%s</td>", $attributes[$id]['mtribe'] );
+		$class = ( ( ! empty( $row['Female 1st Name'] ) ) && empty( $attributes[$id]['ftribe'] ) ) ? "tribew" : "tribe";
+		printf( "<td class=$class>%s</td>", $attributes[$id]['ftribe'] );
 		$checked = ( $attributes[$id]['new'] ) ? "checked" : "";
 		$sort_key =( $attributes[$id]['new'] ) ? 1 : 0;
 		printf( "<td class=box sorttable_customkey=$sort_key><input type=checkbox $checked disabled></td>\n" );
