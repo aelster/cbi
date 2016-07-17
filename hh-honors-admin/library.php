@@ -557,12 +557,15 @@ function CompareMembers() {
 	
 	echo	"<span id=NewMembers>$hdr</span>";
 	
-	DoQuery( "select * from members_master_5777 order by `Last Name`, `Female 1st Name`" );
+	$year = $gJewishYear - 1;
+	$old_db = "members_master_$year";
+	
+	DoQuery( "select * from members_master order by `Last Name`, `Female 1st Name`" );
 	$outer = $mysql_result;
 	$i = 0;
 	while( $row = mysql_fetch_assoc( $outer ) ) {
 		$id = $row['ID'];
-		DoQuery( "select * from members_master where ID = $id" );
+		DoQuery( "select * from $old_db where ID = $id" );
 		if( $mysql_numrows == 0 ) {
 			$i++;
 			if( $i == 1 ) {
@@ -579,22 +582,25 @@ function CompareMembers() {
 			printf( "<td>%d</td>", $row['ID'] );
 			printf( "<td>%s, %s %s</td>", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] );
 			echo "</tr>\n";
+			DoQuery( "update members_master set status = 'New' where `ID` = $id" );
+			DoQuery( "update members set status = 'New' where `ID` = $id" );
 		}
 	}
 	if( $i > 0 ) {
 		echo "</table>";
 		echo "</div>";
 		echo "<br>";
+		LocalInit();
 	}
 	
 	echo	"<span id=OldMembers>$hdr</span>";
 
-	DoQuery( "select * from members_master order by `Last Name`, `Female 1st Name`" );
+	DoQuery( "select * from $old_db order by `Last Name`, `Female 1st Name`" );
 	$outer = $mysql_result;
 	$i = 0;
 	while( $row = mysql_fetch_assoc( $outer ) ) {
 		$id = $row['ID'];
-		DoQuery( "select * from members_master_5777 where ID = $id" );
+		DoQuery( "select * from members_master where ID = $id" );
 		if( $mysql_numrows == 0 ) {
 			$i++;
 			if( $i == 1 ) {
@@ -622,10 +628,10 @@ function CompareMembers() {
 
 	$i = 0;
 	
-	DoQuery( "select * from members_master_5777 order by `Last Name`, `Female 1st Name`" );
+	DoQuery( "select * from members_master order by `Last Name`, `Female 1st Name`" );
 	$outer = $mysql_result;
 	while( $row1= mysql_fetch_assoc( $outer ) ) {
-		DoQuery( "select * from members_master where `ID` = " . $row1['ID'] );
+		DoQuery( "select * from $old_db where `ID` = " . $row1['ID'] );
 		if( $mysql_numrows == 0 ) continue;
 		
 		$row2 = mysql_fetch_assoc( $mysql_result );
@@ -1444,7 +1450,7 @@ function DisplayMain() {
 			echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
 			echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
 			echo "<input type=button onclick=\"setValue('func','build-memb');addAction('Main');\" value=\"Build Members\">";
-			echo "<input type=button disabled onclick=\"setValue('func','comp-memb');addAction('Main');\" value=\"Compare Members\">";
+			echo "<input type=button onclick=\"setValue('func','comp-memb');addAction('Main');\" value=\"Compare Members\">";
 
 			echo "</div>";
 		}
