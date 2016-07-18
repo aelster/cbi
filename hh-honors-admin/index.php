@@ -138,6 +138,16 @@ switch( $gAction ) {
 			MembersEdit();
 			exit;
 		}
+		
+		if( $func == "bozo-mode" ) {
+			DoQuery( "select `ival` from dates where `label` = 'bozo'" );
+			list( $val ) = mysql_fetch_array( $mysql_result );
+			$val = 1 - $val;
+			DoQuery( "update dates set ival = $val where label = 'bozo'" );
+			$gTrace = $val;
+			$gDebug = $val;
+		}
+		
 		if( $func == "build-memb" ) {
 			CreateMembers();
 			$gAction = 'Main';

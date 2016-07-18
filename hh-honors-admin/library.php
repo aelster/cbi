@@ -1148,7 +1148,25 @@ function DisplayDates() {
 		echo "<td>" . $gService['yka'] . "</td>";
 		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
 		echo "</tr>";
-				
+			
+		echo "<tr>";
+		echo "  <td colspan=2 style='background-color:grey;'>&nbsp;</td>";
+		echo "</tr>";
+		
+		DoQuery( "select date from dates where label = 'reply_date'");
+		if( $GLOBALS['mysql_numrows'] == 0 ) {
+			$val = "";
+		} else {
+			list( $tmp ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+			$ts = strtotime( $tmp );
+			$val = date( "D M jS, Y", $ts ); 
+		}
+
+		echo "<tr>";
+		echo "  <td>E-mail Reply Deadline</td>";
+		echo "  <td><input type=text id=reply-date size=15 value=\"$val\" onchange=\"addField('reply');toggleBgRed('update');\"></td>";
+		echo "</tr>";
+		
 	} else {
 		echo "<tr>";
 		echo "  <td><input type=text id=label name=label value=\"Erev Rosh Hashanah\"></td>";
@@ -1451,6 +1469,7 @@ function DisplayMain() {
 			echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
 			echo "<input type=button onclick=\"setValue('func','build-memb');addAction('Main');\" value=\"Build Members\">";
 			echo "<input type=button onclick=\"setValue('func','comp-memb');addAction('Main');\" value=\"Compare Members\">";
+			echo "<input type=button onclick=\"setValue('func','bozo-mode');addAction('Main');\" value=\"Toggle Bozo Mode\">";
 
 			echo "</div>";
 		}
@@ -2024,6 +2043,15 @@ function LocalInit() {
 		$gTrace = $x;
 	}
 
+	$mysql_result = mysql_query( "select `ival` from dates where `label` = 'bozo'", $GLOBALS['mysql_db'] );
+	if( mysql_num_rows( $mysql_result ) == 1 ) {
+		list( $x ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$gDebug = $x;
+		$gTrace = $x;
+	} else {
+		$mysql_result = mysql_query( "insert into dates set `label` = 'bozo', `ival` = 0", $GLOBALS['mysql_db'] );
+	}
+	
 	if( $gTrace ) {
 		$gFunction[] = __FUNCTION__;
 		Logger();
