@@ -906,22 +906,28 @@ function DateUpdate() {
 	$func = $_POST['func'];
 	$id = $_POST['id'];
 	$from = $_POST['from'];
-
-	$label = $_POST['label'];
-	$ts = strtotime( $_POST['rosh'] );
-	$val = date('Y-m-d', $ts);
 	
 	if( $func == "update" ) {
-		$qx = array();
-		$qx[] = "date = '$val'";
-		if( empty($id) ) {
-			$qx[] = "label = '$label'";
-			$query = sprintf( "insert into dates set %s where id = 1", join( ',', $qx ) );
-		} else {
-			$query = sprintf( "update dates set %s where id = %d", join( ',', $qx ), $id );
-		}
-		DoQuery( $query );
+		$tmp2 = preg_split( "/,/", $_POST['fields'] );
+		$tmp = array_unique( $tmp2 );
 
+		foreach( $tmp as $field ) {
+			echo "Field: [$field]";
+			$str = $_POST[$field];
+			echo ", Value: [$str]";
+			$ts = strtotime( $str );
+			echo ", Timestamp: $ts";
+			$date = date( 'Y-m-d', $ts );
+			echo ", Date: [$date]<br>";
+
+			DoQuery( "select `date` from dates where `label` = \"$field\"" );
+			if( $mysql_numrows == 0 ) {
+				$query = sprintf( "insert into dates set `label` = '%s', `date` = '%s'", $field, $date );
+			} else {
+				$query = sprintf( "update dates set `date` = '%s' where `label` = '%s'", $date, $field );
+			}
+			DoQuery( $query );
+		}
 	} elseif( $func == "delete" ) {
 		$query = sprintf( "delete from dates where id = %d", $keys[0] );
 			DoQuery( $query );
@@ -1107,72 +1113,71 @@ function DisplayDates() {
 	echo "<th>Date</th>";
 	echo "</tr>\n";
 
-	DoQuery( "select * from dates where id = 1" );
-	$num_dates = $GLOBALS['mysql_numrows'];
-	if( $num_dates ) {
-		$row = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
-		$id = $row['id'];
-		echo "<tr>";
-		$jsx = array();
-		$jsx[] = "setValue('from','DisplayDates')";
-		$jsx[] = "setValue('id','$id')";
-		$jsx[] = "toggleBgRed('update')";
-		$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
-	
-		printf( "<td>%s</td>", $row['label'] );
-		$date = new DateTime( $row['date'] );
-		$tag = MakeTag('rosh');
-		printf( "<td><input $tag $js size=30 value=\"%s\"></td>", $date->format( "l, M jS, Y") );
-		echo "</tr>\n";
-		
-		$date->add(new DateInterval('P1D'));
-		echo "<tr>";
-		echo "<td>" . $gService['rh1'] . "</td>";
-		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
-		echo "</tr>";
-		
-		$date->add(new DateInterval('P1D'));
-		echo "<tr>";
-		echo "<td>" . $gService['rh2'] . "</td>";
-		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
-		echo "</tr>";
-				
-		$date->add(new DateInterval('P7D'));
-		echo "<tr>";
-		echo "<td>" . $gService['kn'] . "</td>";
-		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
-		echo "</tr>";
-				
-		$date->add(new DateInterval('P1D'));
-		echo "<tr>";
-		echo "<td>" . $gService['yka'] . "</td>";
-		printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
-		echo "</tr>";
-			
-		echo "<tr>";
-		echo "  <td colspan=2 style='background-color:grey;'>&nbsp;</td>";
-		echo "</tr>";
-		
-		DoQuery( "select date from dates where label = 'reply_date'");
-		if( $GLOBALS['mysql_numrows'] == 0 ) {
-			$val = "";
-		} else {
-			list( $tmp ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
-			$ts = strtotime( $tmp );
-			$val = date( "D M jS, Y", $ts ); 
-		}
-
-		echo "<tr>";
-		echo "  <td>E-mail Reply Deadline</td>";
-		echo "  <td><input type=text id=reply-date size=15 value=\"$val\" onchange=\"addField('reply');toggleBgRed('update');\"></td>";
-		echo "</tr>";
-		
+	DoQuery( "select date from dates where `label` = 'erev'" );
+	if( $mysql_numrows > 0 ) {
+		list( $val ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$date = new DateTime( $val );
 	} else {
-		echo "<tr>";
-		echo "  <td><input type=text id=label name=label value=\"Erev Rosh Hashanah\"></td>";
-		echo "  <td><input type=text id=rosh name=rosh size=15 onchange=\"addField('rosh');toggleBgRed('update');\">";
-		echo "</tr>";
+		$date = new DateTime();
 	}
+	
+	$jsx = array();
+	$jsx[] = "addField('erev')";
+	$jsx[] = "toggleBgRed('update')";
+	$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
+
+	echo "<tr>";
+	printf( "<td>%s</td>", "Erev Rosh Hashanah" );
+	$tag = MakeTag('erev');
+	printf( "<td><input $tag $js size=30 value=\"%s\"></td>", $date->format( "l, M jS, Y") );
+	echo "</tr>\n";
+
+	$date->add(new DateInterval('P1D'));
+	echo "<tr>";
+	echo "<td>" . $gService['rh1'] . "</td>";
+	printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
+	echo "</tr>";
+	
+	$date->add(new DateInterval('P1D'));
+	echo "<tr>";
+	echo "<td>" . $gService['rh2'] . "</td>";
+	printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
+	echo "</tr>";
+			
+	$date->add(new DateInterval('P7D'));
+	echo "<tr>";
+	echo "<td>" . $gService['kn'] . "</td>";
+	printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
+	echo "</tr>";
+			
+	$date->add(new DateInterval('P1D'));
+	echo "<tr>";
+	echo "<td>" . $gService['yka'] . "</td>";
+	printf( "<td>%s</td>", $date->format( "l, M jS, Y") );
+	echo "</tr>";
+		
+	echo "<tr>";
+	echo "  <td colspan=2 style='background-color:grey;'>&nbsp;</td>";
+	echo "</tr>";
+		
+	DoQuery( "select date from dates where `label` = 'reply'" );
+	if( $mysql_numrows > 0 ) {
+		list( $val ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$date = new DateTime( $val );
+	} else {
+		$date = new DateTime();
+	}
+	$jsx = array();
+	$jsx[] = "addField('reply')";
+	$jsx[] = "toggleBgRed('update')";
+	$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
+
+	echo "<tr>";
+	printf( "<td>%s</td>", "Email Reply Deadline" );
+	$tag = MakeTag('reply');
+	printf( "<td><input $tag $js size=30 value=\"%s\"></td>", $date->format( "l, M jS, Y") );
+	echo "</tr>\n";
+
 	echo "</table>\n";
 	echo "</div>\n";
 
