@@ -1,5 +1,6 @@
 <?php
 
+global $mail_enabled;
 global $mail_live;
 
 global $mysql_last_id;

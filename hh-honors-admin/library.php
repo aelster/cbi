@@ -912,13 +912,9 @@ function DateUpdate() {
 		$tmp = array_unique( $tmp2 );
 
 		foreach( $tmp as $field ) {
-			echo "Field: [$field]";
 			$str = $_POST[$field];
-			echo ", Value: [$str]";
 			$ts = strtotime( $str );
-			echo ", Timestamp: $ts";
 			$date = date( 'Y-m-d', $ts );
-			echo ", Date: [$date]<br>";
 
 			DoQuery( "select `date` from dates where `label` = \"$field\"" );
 			if( $mysql_numrows == 0 ) {
@@ -2077,7 +2073,7 @@ function LocalInit() {
 	$gCategories[0] = '__Unassigned';
 
 #============
-	DoQuery( "select date from dates where id = 1" );
+	DoQuery( "select date from dates where label = 'erev'" );
 	list( $td ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	$date = new DateTime($td);
 	$date->add(new DateInterval('P1D'));
@@ -2085,10 +2081,12 @@ function LocalInit() {
 	$arr = cal_from_jd( $jd, CAL_JEWISH );
 	$gJewishYear = $arr['year'];
 	
-#============
+#============	
+	DoQuery( "select ival from dates where label = 'mail_enabled'" );
+	list( $mail_enabled ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	DoQuery( "select ival from dates where label = 'mail_live'" );
 	list( $mail_live ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
-	
+
 #============
 	$date_server = new DateTime( '2000-01-01' );
 	$date_calif = new DateTime( '2000-01-01', new DateTimeZone('America/Los_Angeles'));
@@ -2166,11 +2164,14 @@ function MailAssignment() {
 	$assignment = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
 	$hash = $assignment['hash'];
 
-	$today = date( 'Y-m-d' );
-	DoQuery( "select * from event_log where item like '%$hash%' and time >= '$today'" );
-	if( $GLOBALS['mysql_numrows'] ) {
-		if( $gTrace ) array_pop( $gFunction );
-		return;
+	if( $mail_live == 1 ) {
+		$today = date( 'Y-m-d' );
+		DoQuery( "select * from event_log where item like '%$hash%' and time >= '$today'" );
+		if( $GLOBALS['mysql_numrows'] ) {
+			if( $gTrace ) array_pop( $gFunction );
+			echo "Email already sent today<br>";
+			return;
+		}
 	}
 
 	if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
@@ -2258,13 +2259,13 @@ function MailAssignment() {
 	$text[] = "";
 	
 	if( ! $remind ) {
-		DoQuery( "select date from dates where label = 'reply_date'" );
+		DoQuery( "select date from dates where label = 'reply'" );
 		list( $str ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 		$ts = strtotime( $str );
 		$reply_date = date( 'F dS, Y', $ts );
 	
-	//	$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
-		$url = "http://www.cbi18.org/hh-honors/?hash=$hash";
+		$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
+	//	$url = "http://www.cbi18.org/hh-honors/?hash=$hash";
 		$html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by $reply_date.";
 		$text[] = "Click on the following link, $url, to confirm or decline this honor by $reply_date.";
 	
@@ -2419,37 +2420,6 @@ function MailDisplay() {
 	echo "<input type=button value=Refresh onclick=\"setValue('from', '$func');setValue('area','mail');addAction('Main');\">";
 	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
 
-	echo "<br><br>";
-	
-	echo "<table>";
-	echo "<tr>";
-	echo "<th>Live Mail</th>";
-	if( $mail_live ) {
-		echo "<td class=cok>Enabled - Live to members</td>";
-		$new = 0;
-		$val = "Disable";
-	} else {
-		echo "<td class=cbad>Disabled - Test Mode - Send to Mail Admin</td>";
-		$new = 1;
-		$val = "Enable";
-	}
-	
-	$tag = MakeTag('mail_live');
-	echo "<input type=hidden $tag value=$new>";
-	
-	$jsx = array();
-	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-	$jsx[] = "setValue('func','update')";
-	$jsx[] = "setValue('area','mail_live')";
-	$jsx[] = "addField('mail_live')";
-	$jsx[] = "addAction('Update')";
-	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
-	echo "<td class=c><input type=button value=$val $js></td>";
-	echo "</tr>";
-	echo "</table>";
-
-	echo "<br><br>";
-	
 	$tag = MakeTag('update');
 	$jsx = array();
 	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
@@ -2457,29 +2427,74 @@ function MailDisplay() {
 	$jsx[] = "addAction('Update')";
 	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 	echo "<input $tag type=button value=Update $tag $js>";
-	
+
 	echo "<br><br>";
+
+	if( UserManager( 'authorized', 'control' ) ) {
+		echo "<p>";
+		echo "These settings are part of the local include file. This is the master on/off switch for all mail. If off, no mail will be sent.";
+		echo "</p>";
+		
+		echo "<table>";
+		echo "<tr>";
+		echo "<th>Mail Enabled</th>";
+		if( $GLOBALS['mail_enabled']) {
+			echo "<td class=cok>OK to send mail</td>";
+			$val = "Disable";
+			$ival = 0;
+		} else {
+			echo "<td class=cbad>Mail System DISABLED</td>";
+			$val = "Enable";
+			$ival = 1;
+		}
+		$jsx = array();
+		$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
+		$jsx[] = "setValue('func','update')";
+		$jsx[] = "setValue('area','mail')";
+		$jsx[] = "addField('mail_enabled=$ival')";
+		$jsx[] = "addAction('Update')";
+		$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
+		echo "<td class=c><input type=button value=$val $js></td>";
+		echo "</tr>";
+		
+		echo "<tr>";
+		echo "<th>Mail Admin</th>";
+		echo "<td colspan=2>" . array_keys($GLOBALS['mail_admin'])[0] . "</td>";
+		echo "</tr>";
+		
+		echo "<tr>";
+		echo "<th>Mail Server</th>";
+		echo "<td colspan=2>" . $GLOBALS['mail_servers'][0]['server'] . "</td>";
+		echo "</tr>";
+		echo "</table>";
+
+		echo "<br><br>";
+
+	}
 	
 	echo "<table>";
 	echo "<tr>";
-	echo "<th>Mail Enabled</th>";
-	if( $GLOBALS['mail_enabled']) {
-		echo "<td class=cok colspan=2>Master Enabled - Hard Coded in Local_Settings</td>";
+	echo "<th>Live Mail</th>";
+	if( $mail_live ) {
+		echo "<td class=cok>Send email to members</td>";
+		$val = "Disable";
+		$ival = 0;
 	} else {
-		echo "<td class=cbad colspan=2>Master Disabled - Hard Coded in Local_Settings</td>";
+		echo "<td class=cbad>Test Mode - Send email to admin</td>";
+		$val = "Enable";
+		$ival = 1;
 	}
+		
+	$jsx = array();
+	$jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
+	$jsx[] = "setValue('func','update')";
+	$jsx[] = "setValue('area','mail_live')";
+	$jsx[] = "addField('mail_live=$ival')";
+	$jsx[] = "addAction('Update')";
+	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
+	echo "<td class=c><input type=button value=$val $js></td>";
 	echo "</tr>";
-	
-	echo "<tr>";
-	echo "<th>Mail Admin - Hard Coded in Local_Settings</th>";
-	echo "<td>" . array_keys($GLOBALS['mail_admin'])[0] . "</td>";
-	echo "</tr>";
-	
-	echo "<tr>";
-	echo "<th>Mail Server - Hard Coded in Local_Settings</th>";
-	echo "<td>" . $GLOBALS['mail_servers'][0]['server'] . "</td>";
-	echo "</tr>";
-	
+		
 	DoQuery( "select ival from dates where label = 'num_per_batch'" );
 	if( $GLOBALS['mysql_numrows'] == 0 ) {
 		$npb = -1;
@@ -2487,29 +2502,13 @@ function MailDisplay() {
 		list( $npb ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	}
 	echo "<tr>";
-	echo "<th>Send/Batch (-1 => no limit)</th>";
+	echo "<th colspan=2>Send/Batch (-1 => no limit)</th>";
 	$tag = MakeTag('num_per_batch');
 	echo "<td><input $tag onchange=\"addField('num_per_batch');toggleBgRed('update');\" type=text value=$npb></td>";
 	echo "</tr>";
 
-	DoQuery( "select date from dates where label = 'reply_date'");
-	if( $GLOBALS['mysql_numrows'] == 0 ) {
-		$val = "";
-	} else {
-		list( $tmp ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
-		$ts = strtotime( $tmp );
-		$val = date( "D M jS, Y", $ts ); 
-	}
-	echo "<tr>";
-	echo "<th>Reply Date</th>";
-	$tag = MakeTag('reply_date');
-	echo "<td><input $tag onchange=\"addField('reply_date');toggleBgRed('update');\" type=text value='$val'></td>";
-	echo "</tr>";
-
 	echo "</table>";
-	
-	echo "<br><br>";
-	
+
 	echo "<br><br>";
 	
 	DoQuery( "select count(*), sum(sent), sum(accepted), sum(declined) from assignments where jyear = $gJewishYear" );
@@ -2575,32 +2574,31 @@ function MailUpdate() {
 		Logger();
 	}
 	
-	$tmp = preg_split( '/,/', $_POST['fields'] );
-	foreach( $tmp as $area ) {
-		if( $area == "mail_live" ) {
-			$val = $_POST[$area];
-			DoQuery( "update dates set ival = $val where label = '$area'" );
-			if( $GLOBALS['mysql_numrows'] == 0 ) {
-					DoQuery( "insert into dates set ival = $val, label = '$area'" );
+	$tmp2 = preg_split( '/,/', $_POST['fields'] );
+	$tmp = array_unique( $tmp2 );
+	
+	foreach( $tmp as $field ) {
+		$tmp3 = preg_split( "/=/", $field );
+		if( count( $tmp3 ) > 1 ) {  #This is a mail_[enabled|live]=[0|1]
+			$fld = $tmp3[0];
+			$new = $tmp3[1];
+			DoQuery( "select ival from dates where label = \"$fld\"" );
+			if( $mysql_numrows == 0 ) {
+				DoQuery( "insert into dates set label = \"$fld\", ival = 0" );
+			} else {
+				DoQuery( "update dates set ival = $new where label = \"$fld\"" );
 			}
-			$mail_live = $val;
-		} elseif( $area == "num_per_batch" ) {
-			$val = $_POST[$area];
-			DoQuery( "update dates set ival = $val where label = '$area'" );
-			if( $GLOBALS['mysql_numrows'] == 0 ) {
-					DoQuery( "insert into dates set ival = $val, label = '$area'" );
-			}
-
-		} elseif( $area == "reply_date" ) {
-			$ts = strtotime( $_POST[$area] );
-			$val = date('Y-m-d', $ts );
-			DoQuery( "update dates set date = '$val' where label = '$area'" );
-			if( $GLOBALS['mysql_numrows'] == 0 ) {
-					DoQuery( "insert into dates set date = '$val', label = '$area'" );
+			$$fld = $new;
+		} else {
+			DoQuery( "select ival from dates where label = \"$field\"" );
+			if( $mysql_numrows == 0 ) {
+				DoQuery( "insert into dates set label = \"$field\", ival = -1" );
+			} else {
+				$val = $_POST[$field];
+				DoQuery( "update dates set ival = $val where label = '$field'" );
 			}
 		}
-	}
-	
+	}	
 	if( $gTrace ) array_pop( $gFunction );
 }
 
