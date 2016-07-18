@@ -2294,8 +2294,8 @@ function MailAssignment() {
 	$html[] = "";
 	$text[] = "";
 	
-	$html[] = "Phyllis Abrams and Marshall Margolis";
-	$text[] = "Phyllis Abrams and Marshall Margolis";
+	$html[] = "Phyllis Abrams and Francine Wenhardt";
+	$text[] = "Phyllis Abrams and Francine Wenhardt";
 	
 	$html[] = "Ritual Vice Presidents";
 	$text[] = "Ritual Vice Presidents";
