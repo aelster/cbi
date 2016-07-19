@@ -2309,10 +2309,13 @@ function MailAssignment() {
 	
 	if( $preview ) {
 		echo "<hr>" . join('<br>', $html );
-		echo "<br><br>";
-		echo "<input type=button onclick=\"setValue('area','assign');addAction('Assign');\" value=Continue>";
-		exit;
-	
+		echo "<br>";
+		if( $_POST['from'] == "Assign" ) {
+			echo "<br>";
+			echo "<input type=button onclick=\"setValue('area','assign');addAction('Assign');\" value=Continue>";
+			exit;
+		}
+		
 	} else {
 		$str = preg_replace( "/\s+/", " ", $member['E-Mail Address'] );
 		if( preg_match( "/,/", $str ) ) {
