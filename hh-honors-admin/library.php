@@ -168,20 +168,10 @@ function Assign() {
 		$tmp[] = "setValue('from','Assign')";
 		$tmp[] = "setValue('func','del')";
 		$tmp[] = "mySaveChoices()";
-		$tmp[] = "addAction('Update')";
+		$txt = sprintf( "Are you sure you want to delete this assignment?" );
+		$tmp[] = sprintf( "myConfirm('%s')", CVT_Str_to_Overlib($txt) );
 		$js = join(';',$tmp );
 		echo "<input id=action-view type=button class=mode-view-hidden onclick=\"$js\" value=\"Delete\">";
-	}
-	
-	if( UserManager( 'authorized', 'admin' ) ) {
-		$tmp = [];
-		$tmp[] = "setValue('from','Assign')";
-		$tmp[] = "setValue('func','mail')";
-		$tmp[] = "setValue('area','unsent')";
-		$tmp[] = "mySaveChoices()";
-		$tmp[] = "addAction('Update')";
-		$js = join(';',$tmp );
-		echo "<input id=action-mail type=button disabled class=mode-mail-hidden onclick=\"$js\" value=\"Mail\">";
 	}
 	
 	if( UserManager( 'authorized', 'office' ) ) {
@@ -226,6 +216,23 @@ function Assign() {
 		echo "</select>";
 		echo "</div>";
 	}
+	if( UserManager( 'authorized', 'admin' ) ) {
+		echo "<hr>";
+		$tmp = [];
+		$tmp[] = "setValue('from','Assign')";
+		$tmp[] = "setValue('func','mail')";
+		$tmp[] = "setValue('area','unsent')";
+		$tmp[] = "mySaveChoices()";
+		$tmp[] = "addAction('Update')";
+		$js = join(';',$tmp );
+		echo "<div id=preview class=preview-hidden>";
+		echo "<input id=action-mail type=button disabled class=mode-mail-hidden onclick=\"$js\" value=\"Mail\">";
+		$tag = MakeTag('preview');
+		echo "<input $tag type=checkbox value=1 class=mode-mail-hidden>Preview<br>";
+		echo "</div>";
+	}
+	
+
 	
 ?>
 <br><br><br><br>
@@ -1470,7 +1477,7 @@ function DisplayMain() {
 			echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
 			echo "<input type=button onclick=\"setValue('func','build-memb');addAction('Main');\" value=\"Build Members\">";
 			echo "<input type=button onclick=\"setValue('func','comp-memb');addAction('Main');\" value=\"Compare Members\">";
-			echo "<input type=button onclick=\"setValue('func','bozo-mode');addAction('Main');\" value=\"Toggle Bozo Mode\">";
+			echo "<input type=button onclick=\"setValue('func','bozo-mode');addAction('Main');\" value=\"Toggle Debug Mode\">";
 
 			echo "</div>";
 		}
@@ -2302,6 +2309,9 @@ function MailAssignment() {
 	
 	if( $preview ) {
 		echo "<hr>" . join('<br>', $html );
+		echo "<br><br>";
+		echo "<input type=button onclick=\"setValue('area','assign');addAction('Assign');\" value=Continue>";
+		exit;
 	
 	} else {
 		$str = preg_replace( "/\s+/", " ", $member['E-Mail Address'] );
@@ -2517,6 +2527,8 @@ function MailAssignmentByID() {
 	
 	if( $preview ) {
 		echo "<hr>" . join('<br>', $html );
+		echo "<input type=button value=Continue>";
+		exit;
 	
 	} else {
 		$str = preg_replace( "/\s+/", " ", $member['E-Mail Address'] );
@@ -2938,7 +2950,16 @@ function MailUpdate() {
 	foreach( $members as $id => $row ) {
 		echo "<tr>";
 		echo "<td class=box>$id</td>";
-		echo "<td class=name>" . sprintf( "%s, %s %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>\n";
+		$class = 'name';
+		if( ( ! empty( $row['Female 1st Name'] ) ) &&
+		    ( ! empty( $row['Male 1st Name'] ) ) &&
+		    ( ! preg_match( '/ and/', $row['Female 1st Name'] ) ) ) {
+			$class = 'namew';
+			printf( "<!-- male: %s, test: %d, female: %s, test: %d -->\n",
+				$row['Male 1st Name'], empty( $row['Male 1st Name'] ),
+				$row['Female 1st Name'], preg_match( '/ and/', $row['Female 1st Name'] ) );
+		}
+		echo "<td class=$class>" . sprintf( "%s, %s %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name'] ) . "</td>\n";
 
 		$class = ( ( ! empty( $row['Male 1st Name'] ) ) && empty( $attributes[$id]['mtribe'] ) ) ? "tribew" : "tribe";
 		printf( "<td class=$class>%s</td>", $attributes[$id]['mtribe'] );

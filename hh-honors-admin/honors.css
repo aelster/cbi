@@ -57,3 +57,7 @@ td.mitzvah {
 input.topDays {
    width: 200px;
 }
+
+.container input#preview {
+   width: 10px;
+}

@@ -435,9 +435,11 @@ function mySetMode(mode) {
 	if ( display_mode == 'view' ) {
 		document.getElementById('action-mail').className = "action-mail-visible";
 		document.getElementById('reply-block').className = "action-visible";
+		document.getElementById('preview').className = "preview-visible";
 	} else {
 		document.getElementById('action-mail').className = "action-mail-hidden";
 		document.getElementById('reply-block').className = "action-hidden";
+		document.getElementById('preview').className = "preview-hidden";
 
 	}
 

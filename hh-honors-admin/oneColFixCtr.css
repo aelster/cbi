@@ -196,7 +196,7 @@ div.assign-top {
 .container .mode-box {
 	float: left;
 	width: 8%;
-	height: 500px;
+	height: 550px;
 
 }
 
@@ -299,9 +299,18 @@ div.assign-top {
 
 .CommonV2 table.members tbody { height:600px; overflow-y:scroll; display:block; }
 .CommonV2 table.members td.name { width: 450px; }
+.CommonV2 table.members td.namew { width: 450px; background-color: #ff0; }
 .CommonV2 table.members td.tribe { width: 60px; text-align: center; }
 .CommonV2 table.members td.tribew { width: 60px; text-align: center; background-color: #ff0; }
 .CommonV2 table.members td.box { width: 50px; text-align: center; }
+
+.preview-hidden {
+	display: none;
+}
+
+.preview-visible {
+	display: block;
+}
 
 .assigned {	background-color: #ff0; }
 .accepted {	background-color: #9FCFE0; }
