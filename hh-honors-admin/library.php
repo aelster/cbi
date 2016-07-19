@@ -694,7 +694,7 @@ function CreateHonors() {
 		Logger();
 	}
 	
-	DoQuery( "select date from dates where id = 1" );
+	DoQuery( "select date from dates where `label` = 'erev'" );
 	if( $GLOBALS['mysql_numrows'] == 0 ) {
 		?>
 		<script type='text/javascript'>
@@ -1159,9 +1159,9 @@ function DisplayDates() {
 	DoQuery( "select date from dates where `label` = 'reply'" );
 	if( $mysql_numrows > 0 ) {
 		list( $val ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
-		$date = new DateTime( $val );
+		$date2 = new DateTime( $val );
 	} else {
-		$date = new DateTime();
+		$date2 = new DateTime();
 	}
 	$jsx = array();
 	$jsx[] = "addField('reply')";
@@ -1171,7 +1171,7 @@ function DisplayDates() {
 	echo "<tr>";
 	printf( "<td>%s</td>", "Email Reply Deadline" );
 	$tag = MakeTag('reply');
-	printf( "<td><input $tag $js size=30 value=\"%s\"></td>", $date->format( "l, M jS, Y") );
+	printf( "<td><input $tag $js size=30 value=\"%s\"></td>", $date2->format( "l, M jS, Y") );
 	echo "</tr>\n";
 
 	echo "</table>\n";
@@ -2184,7 +2184,7 @@ function MailAssignment() {
 	
 	$name .= sprintf( " %s", $member['Last Name'] );
 	
-	DoQuery( "select date from dates where id = 1" );
+	DoQuery( "select date from dates where `label` = 'erev'" );
 	list( $td ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	$date = new DateTime( $td );
 	
@@ -2339,6 +2339,222 @@ function MailAssignment() {
 	}	
 	if( $gTrace ) array_pop( $gFunction );
 }
+
+function MailAssignmentByID() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+
+	$argc = func_num_args();
+	if( $argc > 0 ) {
+		$area = func_get_arg( 0 );
+	} else {
+		$area = "";
+	}
+	$remind = preg_match( "/remind/", $area );
+	
+	$preview = ( array_key_exists( 'preview', $_POST ) ) ? 1 : 0;
+	
+	$subject = "$gJewishYear CBI High Holy Day Honor";
+	
+	$message = Swift_Message::newInstance($subject);
+	
+	$tmp = preg_split( '/,/', $_POST['fields'] );
+	foreach( $tmp as $fld ) {
+		if( preg_match( "/^honor_/", $fld ) ) {
+			list( $xx, $honor_id ) = preg_split( '/_/', $fld );
+		} elseif( preg_match( "/^member_/", $fld ) ) {
+			list( $xx, $member_id ) = preg_split( '/_/', $fld );
+		}
+	}
+	DoQuery( "select * from members where id = $member_id" );
+	$member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+	
+	DoQuery( "select * from honors where id = $honor_id" );
+	$honor = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+	
+	DoQuery( "select * from assignments where honor_id = $honor_id and member_id = $member_id and jyear = $gJewishYear" );
+	$assignment = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+	$hash = $assignment['hash'];
+
+	if( $mail_live == 1 ) {
+		$today = date( 'Y-m-d' );
+		DoQuery( "select * from event_log where item like '%$hash%' and time >= '$today'" );
+		if( $GLOBALS['mysql_numrows'] ) {
+			if( $gTrace ) array_pop( $gFunction );
+			echo "Email already sent today<br>";
+			return;
+		}
+	}
+
+	if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
+		$name = $member['Female 1st Name'];
+	} elseif( empty( $member['Female 1st Name'] ) && ! empty( $memeber['Male 1st Name'] ) ) {
+		$name = $member['Male 1st Name' ];
+	} else {
+		$name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+	}
+	
+	$name .= sprintf( " %s", $member['Last Name'] );
+	
+	DoQuery( "select date from dates where `label` = 'erev'" );
+	list( $td ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	$date = new DateTime( $td );
+	
+	$service = $honor['service'];
+	switch( $service ) {
+		case( 'rh1' ):
+			$date->add( new DateInterval('P1D') );
+			break;
+		
+		case( 'rh2' ):
+			$date->add( new DateInterval('P2D') );
+			break;
+		
+		case( 'kn' ):
+			$date->add( new DateInterval('P9D') );
+			break;
+		
+		case( 'yka' ):
+		case( 'ykp' ):
+			$date->add( new DateInterval('P10D') );
+			break;
+	}
+
+	$html = $text = array();
+	$cid = $message->embed(Swift_Image::fromPath('assets/CBI_ner_tamid.png'));
+
+	$html[] = "<html><head></head><body>";
+	if( ! $preview ) {
+		$html[] = '<img src="' . $cid . '" alt="Image" />';
+	}
+	
+	$html[] = "Congregation B'nai Israel";
+	$text[] = "Congregation B'nai Israel";
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$html[] = sprintf( "Dear %s,", $name );
+	$text[] = sprintf( "Dear %s,", $name );
+
+	$html[] = "";
+	$text[] = "";
+	
+	if( $remind ) {
+		$str = sprintf( "You have the honor of %s during the %s service on %s.",
+							$honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
+	} else {
+		$str = "Thank you for the support you have given to Congregation B'nai Israel during the past year.";
+		$str .= sprintf( " In an effort to show our appreciation, we would like to offer you the honor of %s during the %s service on %s.",
+							$honor['honor'], $gService[ $honor['service']], $date->format( "l, M jS, Y") );
+	}
+	
+	$html[] = $str;
+	$text[] = $str;
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$str = "We ask that you be in the sanctuary at least 30 minutes prior to your honor";
+	$str .= " (15 minutes prior if it occurs at the beginning of the service,) and check in with";
+	$str .= " the Shamash, the person in charge of making sure that everyone who has an honor";
+	$str .= " is in the right place at the right time.";
+	
+	if( ! $remind ) {
+		$str .= " We will send you additional detailed information about your honor closer to the date.";
+	}
+	
+	$html[] = $str;
+	$text[] = $str;
+	
+	$html[] = "";
+	$text[] = "";
+	
+	if( ! $remind ) {
+		DoQuery( "select date from dates where label = 'reply'" );
+		list( $str ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$ts = strtotime( $str );
+		$reply_date = date( 'F dS, Y', $ts );
+	
+		$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
+	//	$url = "http://www.cbi18.org/hh-honors/?hash=$hash";
+		$html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by $reply_date.";
+		$text[] = "Click on the following link, $url, to confirm or decline this honor by $reply_date.";
+	
+		$html[] = "";
+		$text[] = "";
+	}
+	
+	$str = "If you have any questions, please do not hesitate to contact the CBI office at (714) 730-9693, or through e-mail at 
+ cbi18@cbi18.org.";
+	$html[] = $str;
+	$text[] = $str;
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$str = "Thank you again and we wish you and your family a happy and healthy New Year.";
+	$html[] = $str;
+	$text[] = $str;
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$html[] = "L&rsquo;Shana Tova,";
+	$text[] = "L'Shana Tova,";
+	
+	$html[] = "";
+	$text[] = "";
+	
+	$html[] = "Phyllis Abrams and Francine Wenhardt";
+	$text[] = "Phyllis Abrams and Francine Wenhardt";
+	
+	$html[] = "Ritual Vice Presidents";
+	$text[] = "Ritual Vice Presidents";
+	
+	if( $preview ) {
+		echo "<hr>" . join('<br>', $html );
+	
+	} else {
+		$str = preg_replace( "/\s+/", " ", $member['E-Mail Address'] );
+		if( preg_match( "/,/", $str ) ) {
+			$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
+		} elseif( preg_match( "/;/", $str ) ) {
+			$email = preg_split( "/;/", $str, NULL, PREG_SPLIT_NO_EMPTY );
+		} elseif( preg_match( "/ /", $str ) ) {
+			$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
+		} else {
+			if( empty($str) ) { return; }
+			$email = [ $str ];
+		}
+		if( empty( $email ) ) return;
+		
+		$message->setTo( $email );
+		$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
+		$message
+		->setBody( join('<br>',$html), 'text/html' )
+		->addPart( join('\n',$text), 'text/plain' )
+		;
+			
+		if( MyMail($message) ) {
+			DoQuery( "update assignments set sent = 1 where hash = '$hash'");
+			$userid = $GLOBALS['gUserId'];
+	
+			$text = [];
+			$text[] = "insert event_log set time=now()";
+			$text[] = "type = 'mail'";
+			$text[] = "userid = '$userid'";
+			$text[] = "item = 'Send honor to $name, hash: $hash'";
+			$query = join( ",", $text );
+			DoQuery( $query );
+		}
+	}	
+	if( $gTrace ) array_pop( $gFunction );
+}
+
 
 function MailAssignments( $area ) {
 	include( 'globals.php' );
