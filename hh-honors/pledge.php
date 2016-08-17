@@ -213,7 +213,7 @@ if ( jQuery.cookie( 'exodus_responsive_off' ) ) {
 
 				<a href="https://www.cbi18.org/">
 
-					<img src="wp-content/uploads/2015/09/CBI_logo_sm3.png" alt="Congregation B&#039;nai Israel" id="exodus-logo-regular">
+					<img src="/wp-content/uploads/2015/09/CBI_logo_sm3.png" alt="Congregation B&#039;nai Israel" id="exodus-logo-regular">
 
 					
 				</a>
@@ -345,6 +345,9 @@ if ( jQuery.cookie( 'exodus_responsive_off' ) ) {
 
 	$hash = $_REQUEST['hash'];
 	DoQuery( "select * from assignments where hash = '$hash'" );
+	
+	if( $mysql_numrows == 0 ) { return; }
+	
 	$assignment = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
 	$member_id = $assignment['member_id'];
 	$honor_id = $assignment['honor_id'];
