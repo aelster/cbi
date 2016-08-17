@@ -16,11 +16,11 @@ a img { /* this selector removes the default blue border displayed in some brows
 /* ~~ Styling for your site's links must remain in this order - including the group of selectors that create the hover effect. ~~ */
 a:link {
 	color: #42413C;
-	text-decoration: underline; /* unless you style your links to look extremely unique, it's best to provide underlines for quick visual identification */
+/*	text-decoration: underline; /* unless you style your links to look extremely unique, it's best to provide underlines for quick visual identification */
 }
 a:visited {
 	color: #6E6C64;
-	text-decoration: underline;
+/*	text-decoration: underline; */
 	cursor: pointer;
 }
 a:hover, a:active, a:focus { /* this group of selectors will give a keyboard navigator the same hover experience as the person using a mouse. */
@@ -45,9 +45,9 @@ a:hover, a:active, a:focus { /* this group of selectors will give a keyboard nav
 
 /* ~~ miscellaneous float/clear classes ~~ */
 .fltrt {  /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
-	margin-left: 150pxp;
-	height: 400px;
-	overflow: scroll;
+	margin-left: 20px;
+/*	height: 400px; */
+/*	overflow: scroll; */
 }
 .fltlft { /* this class can be used to float an element left in your page. The floated element must precede the element it should be next to on the page. */
 	float: left;

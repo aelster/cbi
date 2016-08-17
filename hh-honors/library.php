@@ -1495,6 +1495,7 @@ function LocalInit() {
 #============
 	DoQuery( "set transaction isolation level serializable" );
 
+	/*
 	$gCategories = array();
 	$gCategories[0] = '__Unassigned';
 	DoQuery( "select id, label from categories order by label" );
@@ -1510,15 +1511,16 @@ function LocalInit() {
 			DoQuery( "insert into dates set label = '$label', date = $val");
 		}
 	}
-#============
-	DoQuery( "select date from dates where id = 1", $gDb2 );
+	*/
+#============	
+	DoQuery( "select date from dates where label = 'erev'" );
 	list( $td ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	$date = new DateTime($td);
 	$date->add(new DateInterval('P1D'));
 	$jd = cal_to_jd( CAL_GREGORIAN, $date->format('m'), $date->format('d'), $date->format('Y') );
 	$arr = cal_from_jd( $jd, CAL_JEWISH );
 	$gJewishYear = $arr['year'];
-	
+
 #============
 	$date_server = new DateTime( '2000-01-01' );
 	$date_calif = new DateTime( '2000-01-01', new DateTimeZone('America/Los_Angeles'));
@@ -1773,13 +1775,13 @@ function PledgeUpdate() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
-function	SendConfirmation() {
+function SendConfirmation() {
 	include( 'globals.php' );
 	if( $gTrace ) {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
-	$subject = "5776 CBI High Holy Day Honor Confirmation";
+	$subject = "$gJewishYear CBI High Holy Day Honor Confirmation";
 	
 	$message = Swift_Message::newInstance($subject);
 	
@@ -1866,15 +1868,15 @@ function	SendConfirmation() {
 	}
 		
 	$query = sprintf( "update assignments set updated=now(), %s where hash = '%s'", join(',', $qarr ), $_REQUEST['hash'] );
-	DoQuery( $query, $gDb2 );
+	DoQuery( $query );
 	
 	$query = sprintf( "select member_id from assignments where hash = '%s'", $_REQUEST['hash'] );
-	DoQuery( $query, $gDb2 );
+	DoQuery( $query );
 	list( $mid ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	
 	$str = join(',', $qarr );
 	$query = sprintf( "insert into event_log set type='rsvp', userid=$mid, item='%s'", mysql_escape_string($str) );
-	DoQuery( $query, $gDb2 );
+	DoQuery( $query );
 	
 	$html[] = "";
 	$text[] = "";

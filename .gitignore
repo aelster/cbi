@@ -2,4 +2,4 @@
 *.komodoproject
 */.DS_Store
 .DS_Store
-
+wp-content
