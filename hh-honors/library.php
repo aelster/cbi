@@ -1521,6 +1521,12 @@ function LocalInit() {
 	$arr = cal_from_jd( $jd, CAL_JEWISH );
 	$gJewishYear = $arr['year'];
 
+#============	
+	DoQuery( "select ival from dates where label = 'mail_enabled'" );
+	list( $mail_enabled ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	DoQuery( "select ival from dates where label = 'mail_live'" );
+	list( $mail_live ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+
 #============
 	$date_server = new DateTime( '2000-01-01' );
 	$date_calif = new DateTime( '2000-01-01', new DateTimeZone('America/Los_Angeles'));
