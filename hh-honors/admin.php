@@ -7,10 +7,7 @@ include( 'globals.php' );
 include( 'library.php' );
 
 include( 'local_cbi_honors.php' );
-$gDb2 = OpenDb();
-
-include( 'local_cbi_auction.php' );
-$gDb = OpenDb();                # Open the MySQL database
+$gDb = OpenDb();
 
 $gLF = "\n";
 

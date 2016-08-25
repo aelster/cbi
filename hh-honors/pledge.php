@@ -369,7 +369,6 @@ if ( jQuery.cookie( 'exodus_responsive_off' ) ) {
 	list( $hstr ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 
 	printf( "<input type=hidden name=hh-name value=\"%s\">", $name );
-	printf( "<input type=hidden name=hh-email value=\"%s\"", $member['E-Mail Address'] );
 
 ?>
   <div class="content">

@@ -3396,7 +3396,7 @@ function Responses() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
-function	SendConfirmation() {
+function SendConfirmation() {
 	include( 'globals.php' );
 	if( $gTrace ) {
 		$gFunction[] = __FUNCTION__;
@@ -3477,9 +3477,7 @@ function	SendConfirmation() {
 	$message->setTo( array( 'bethelster1@gmail.com' => 'Beth Elster') );
 	$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
 	$message->setBcc(array(
-		'cbi18@cbi18.org' => 'Debbie Hebron',
-		'bertil@askelid.com' => 'Bertil Askelid',
-		'andy.elster@gmail.com' => 'Andy Elster'
+		'cbi18@cbi18.org' => 'Ana Cottle',
 	) );
 
 	$message

@@ -1875,7 +1875,7 @@ function SendConfirmation() {
 	list( $mid ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	
 	$str = join(',', $qarr );
-	$query = sprintf( "insert into event_log set type='rsvp', userid=$mid, item='%s'", mysql_escape_string($str) );
+	$query = sprintf( "insert into event_log set type='rsvp', time=now(), userid=$mid, item='%s'", mysql_escape_string($str) );
 	DoQuery( $query );
 	
 	$html[] = "";
@@ -1887,7 +1887,9 @@ function SendConfirmation() {
 	$html[] = "The CBI HH Honors Committee";
 	$text[] = "The CBI HH Honors Committee";	
 
-	$str = $_POST['hh-email'];
+	DoQuery( "select * from members where id = $mid" );
+	$member = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+	$str = preg_replace( "/\s+/", " ", $member['E-Mail Address'] );
 	if( preg_match( "/,/", $str ) ) {
 		$email = preg_split( "/,/", $str, NULL, PREG_SPLIT_NO_EMPTY );
 	} elseif( preg_match( "/;/", $str ) ) {
@@ -1895,11 +1897,15 @@ function SendConfirmation() {
 	} elseif( preg_match( "/ /", $str ) ) {
 		$email = preg_split( "/ /", $str, NULL, PREG_SPLIT_NO_EMPTY );
 	} else {
-		$email = $str;
+		if( empty($str) ) { return; }
+		$email = [ $str ];
 	}
-
+	
 	$message->setTo( $email );
 	$message->setFrom(array('cbi18@cbi18.org' => 'CBI'));	
+	$message->setBcc(array(
+		'hcoulter@cbi18.org' => 'Helene Coulter',
+	) );
 	$message
 	->setBody( join('<br>',$html), 'text/html' )
 	->addPart( join('\n',$text), 'text/plain' )
