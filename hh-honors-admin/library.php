@@ -1171,13 +1171,13 @@ function DisplayDates() {
 		$date2 = new DateTime();
 	}
 	$jsx = array();
-	$jsx[] = "addField('reply')";
+	$jsx[] = "addField('reply_date')";
 	$jsx[] = "toggleBgRed('update')";
 	$js = sprintf( "onChange=\"%s\"", join(';',$jsx) );
 
 	echo "<tr>";
 	printf( "<td>%s</td>", "Email Reply Deadline" );
-	$tag = MakeTag('reply');
+	$tag = MakeTag('reply_date');
 	printf( "<td><input $tag $js size=30 value=\"%s\"></td>", $date2->format( "l, M jS, Y") );
 	echo "</tr>\n";
 
@@ -2269,7 +2269,7 @@ function MailAssignment() {
 		DoQuery( "select date from dates where label = 'reply_date'" );
 		list( $str ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 		$ts = strtotime( $str );
-		$reply_date = date( 'F dS, Y', $ts );
+		$reply_date = date( 'F jS, Y', $ts );
 	
 		$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
 	//	$url = "http://www.cbi18.org/hh-honors/?hash=$hash";
@@ -2490,7 +2490,7 @@ function MailAssignmentByID() {
 		DoQuery( "select date from dates where label = 'reply_date'" );
 		list( $str ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 		$ts = strtotime( $str );
-		$reply_date = date( 'F dS, Y', $ts );
+		$reply_date = date( 'F jS, Y', $ts );
 	
 		$url = "http://" . $_SERVER['SERVER_NAME'] . "/hh-honors/?hash=$hash";
 	//	$url = "http://www.cbi18.org/hh-honors/?hash=$hash";
