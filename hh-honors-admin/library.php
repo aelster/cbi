@@ -1163,7 +1163,7 @@ function DisplayDates() {
 	echo "  <td colspan=2 style='background-color:grey;'>&nbsp;</td>";
 	echo "</tr>";
 		
-	DoQuery( "select date from dates where `label` = 'reply'" );
+	DoQuery( "select date from dates where `label` = 'reply_date'" );
 	if( $mysql_numrows > 0 ) {
 		list( $val ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 		$date2 = new DateTime( $val );
@@ -2266,7 +2266,7 @@ function MailAssignment() {
 	$text[] = "";
 	
 	if( ! $remind ) {
-		DoQuery( "select date from dates where label = 'reply'" );
+		DoQuery( "select date from dates where label = 'reply_date'" );
 		list( $str ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 		$ts = strtotime( $str );
 		$reply_date = date( 'F dS, Y', $ts );
@@ -2487,7 +2487,7 @@ function MailAssignmentByID() {
 	$text[] = "";
 	
 	if( ! $remind ) {
-		DoQuery( "select date from dates where label = 'reply'" );
+		DoQuery( "select date from dates where label = 'reply_date'" );
 		list( $str ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 		$ts = strtotime( $str );
 		$reply_date = date( 'F dS, Y', $ts );
