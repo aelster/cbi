@@ -1,4 +1,22 @@
 <?php
+
+if( $_SERVER['HTTP_HOST'] == 'cbi18.org' ) {
+	$parts[] = '/usr/lib/php';
+	$parts[] = '/usr/local/lib/php';
+	$parts[] = '/home/cbi18/site/php';
+	$parts[] = '/home/cbi18/site/Swift-5.0.1';
+}
+
+if( preg_match( '/local/', $_SERVER['HTTP_HOST'] ) ) {
+	$parts[] = '/usr/local/site/php';
+	$parts[] = '/usr/local/swiftmailer';
+	$parts[] = '/usr/local/fpdf';
+}
+$path = join( PATH_SEPARATOR, $parts );
+set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+
+date_default_timezone_set('America/Los_Angeles');
+
 require_once 'lib/swift_required.php';
 require_once( 'SiteLoader.php' );
 SiteLoad( 'Common' );
@@ -146,6 +164,11 @@ switch( $gAction ) {
 			DoQuery( "update dates set ival = $val where label = 'bozo'" );
 			$gTrace = $val;
 			$gDebug = $val;
+		}
+		
+		if( $func == "log" ) {
+			DisplayLogfile();
+			$gAction = 'Main';
 		}
 		
 		if( $func == "build-memb" ) {

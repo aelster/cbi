@@ -420,7 +420,13 @@ function AssignRSVP() {
 	}
 	$vx[] = "updated = now()";
 	
-	$query = sprintf( "update assignments set %s where honor_id = %d", join(',', $vx ), $honor_id );
+	$query = sprintf( "update assignments set %s where honor_id = %d and member_id = %d",
+					 join(',', $vx ), $honor_id, $member_id );
+	DoQuery( $query );
+
+	$str = join(',', $vx );
+	$mid = $GLOBALS['gUserId'];
+	$query = sprintf( "insert into event_log set type='rsvp', time=now(), userid=$mid, item='%s'", mysql_escape_string($str) );
 	DoQuery( $query );
 
 	if( $gTrace ) array_pop( $gFunction );
@@ -1411,6 +1417,52 @@ function DisplayItems() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
+function DisplayLogfile() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	
+	$members = [];
+	DoQuery( "select * from members" );
+	while( $member = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+		$mid = $member['ID'];
+		$members[$mid] = $member;
+	}
+	
+	echo "<div class=CommonV2>";
+	echo "<table>";
+	echo "<tr>";
+	echo "  <th>Date/Time</th>";
+	echo "  <th>Name</th>";
+	echo "  <th>Response</th>";
+	echo "</tr>";
+	
+	$dval = date("Y-01-01");
+	DoQuery( "select * from event_log where `type` = 'rsvp' and `time` >= '$dval' order by `time` ASC" );
+	while( $event = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+		$uid = $event['userid'];
+		$member = $members[$uid];
+		if( ! empty( $member['Female 1st Name' ] ) && empty( $member['Male 1st Name'] ) ) {
+			$name = $member['Female 1st Name'];
+		} elseif( empty( $member['Female 1st Name'] ) && ! empty( $memeber['Male 1st Name'] ) ) {
+			$name = $member['Male 1st Name' ];
+		} else {
+			$name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+		}
+		$name .= sprintf( " %s", $member['Last Name'] );
+		echo "<tr>";
+		echo "  <td>" . $event['time'] . "</td>";
+		echo "  <td>" . $name . "</td>";
+		echo "  <td>" . $event['item'] . "</td>";
+		echo "</tr>";
+	}
+	echo "</table>";
+	echo "</div>";
+	if( $gTrace ) array_pop( $gFunction );
+}
+
 function DisplayMain() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -1496,6 +1548,7 @@ function DisplayMain() {
 			echo "<input type=button onclick=\"setValue('func','edit');addAction('Honors');\" value=\"Honors List - All Days\">";
 			echo "<input type=button onclick=\"setValue('func','members');addAction('Main');\" value=\"Member List - This Year\">";
 			echo "<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">";
+			echo "<input type=button onclick=\"setValue('func','log');addAction('Main');\" value=\"Log File\">";
 
 			echo "</div>";
 			echo "<br>";
