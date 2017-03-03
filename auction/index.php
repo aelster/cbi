@@ -1,4 +1,8 @@
 <?php
+$path = '/usr/lib/php:/usr/local/lib/php:/home/cbi18/site/php:/home/cbi18/site/Swift-5.0.1';
+set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+date_default_timezone_set('America/Los_Angeles');
+
 require_once 'lib/swift_required.php';
 require_once( 'SiteLoader.php' );
 SiteLoad( 'Common' );

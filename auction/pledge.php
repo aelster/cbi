@@ -424,7 +424,7 @@ AddForm();
 	 }
 	 
 	$tagline = "We appreciate your support of CBI's programs, of our warm community";
-	$tagline .= " and of our Annual Gala celebrating our congregants that have served in the Israeli Defense Forces!";
+	$tagline .= " and of our Annual Gala honoring our out-going president Terry G!";
 	
 	 if( $cid == -1 ) {
 			$yyyy = date('Y', $gAuctionYear );

@@ -1,4 +1,8 @@
 <?php
+$path = '/usr/lib/php:/usr/local/lib/php:/home/cbi18/site/php:/home/cbi18/site/Swift-5.0.1';
+set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+date_default_timezone_set('America/Los_Angeles');
+
 require_once 'lib/swift_required.php';
 require_once( 'SiteLoader.php' );
 SiteLoad( 'Common' );
@@ -90,7 +94,7 @@ switch( $gAction ) {
    case( 'Main' ):
 		$func = $_POST['func'];
 		if( $func == "backup" ) {
-			exec( "perl /home/cbi18/site/my_backup.pl > /home/cbi18/backup_sql/manual.log", $out );
+			exec( "perl /home/cbi18/site/my_backup.pl auction > /home/cbi18/backup_sql/manual.log", $out );
 		}
 		break;
 	
