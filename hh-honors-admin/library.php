@@ -1578,7 +1578,9 @@ function DisplayMain() {
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 			echo "<input type=button $js value='View'>";
 			
-			echo "<input type=button onclick=\"setValue('area','gabbai');addAction('Download');\" value=\"Excel Download\">";
+			echo "<input type=button onclick=\"setValue('area','gabbai');addAction('Download');\" value=\"Gabbai Download\">";
+			
+			echo "<input type=button onclick=\"setValue('area','donations');addAction('Download');\" value=\"Money Download\">";
 
 			$jsx = array();
 			$jsx[] = "setValue('from','$func')";
@@ -1827,6 +1829,49 @@ function ExcelItems() {
 			}
 		}
 		$body[] = join(',',$line);
+	}
+
+	echo join("\n", $body );
+	exit;
+	
+	if( $gTrace ) array_pop( $gFunction );	
+}
+
+function ExcelMoney() {
+	include( 'globals.php' );
+	if( $gTrace ) {
+		$gFunction[] = __FUNCTION__;
+		Logger();
+	}
+	$ts = time() + $time_offset;
+	$str = date( 'Ymj', $ts );
+	header("Content-type: application/csv");
+	header("Content-Disposition: attachment;Filename=CBI-HH-Donations-$str.csv");
+
+	$body = [];
+	$body[] = '"Last Name","First Name(s)","Date","Amount"';
+
+	$query = "SELECT a.`female 1st name`, a.`male 1st name`, a.`last name`, b.updated, b.donation";
+	$query .= " from members a join assignments b on a.id = b.member_id";
+	$query .= " where b.donation > 0 and b.jyear = $gJewishYear";
+	$query .= " order by a.`last name` asc";
+	DoQuery( $query );
+	$outer = $GLOBALS['mysql_result'];
+	while( $orow = mysql_fetch_assoc( $outer ) ) {
+		$values = [];
+		
+		$values[] = sprintf( '"%s"', $orow["last name"] );
+		if( empty( $orow["female 1st name"] ) ) {
+			$values[] = sprintf( '"%s"', $orow["male 1st name"] );
+		} elseif( empty( $orow["male 1st name"] ) ) {
+			$values[] = sprintf( '"%s"', $orow["female 1st name"] );
+		} else {
+			$values[] = sprintf( '"%s %s"', $orow["female 1st name"], $orow["male 1st name"] );
+		}
+		$values[] = sprintf( '"%s"', $orow['updated'] );
+		$values[] = sprintf( '"%s"', $orow['donation'] );
+		
+		$body[] = join( ",", $values );
 	}
 
 	echo join("\n", $body );

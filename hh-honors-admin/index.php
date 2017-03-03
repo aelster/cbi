@@ -62,6 +62,8 @@ switch( $gAction )
 			ExcelItems();
 		} elseif( $area == "gabbai" ) {
 			ExcelGabbai();
+		} elseif( $area == "donations" ) {
+			ExcelMoney();
 		}
 		break;
 	
