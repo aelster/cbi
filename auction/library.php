@@ -2046,8 +2046,7 @@ function	SendConfirmation( $bidder_id, $item_id, $bid_id, $send_type ) {
 		));
 	}
 	$message->setBcc(array(
-        'bsjadler@cox.net' => 'Beth Adler',
-        'andy.elster@gmail.com' => 'Andy Elster'
+        'bsjadler@cox.net' => 'Beth Adler'
     ) );
 
 	$message
