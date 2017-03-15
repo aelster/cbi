@@ -766,9 +766,12 @@ function DisplayMain() {
 
 			echo "<ul>";
 			
+			DoQuery( "select id from items" );
+			printf( "<li># of items: %d</li>", $mysql_numrows );
+		
 			DoQuery( "select distinct email from bidders" );
 			printf( "<li># of bidders: %d</li>", $mysql_numrows );
-		
+
 			DoQuery( "select count(id) from bids" );
 			list( $num ) = mysql_fetch_array( $mysql_result );
 			printf( "<li># of bids: %d</li>", $num );
