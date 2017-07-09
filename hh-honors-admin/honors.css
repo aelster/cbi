@@ -61,3 +61,7 @@ input.topDays {
 .container input#preview {
    width: 10px;
 }
+
+.CommonV2 td.new {
+    color: lightgreen;
+}

@@ -1,25 +1,25 @@
 <?php
 
-if( $_SERVER['HTTP_HOST'] == 'cbi18.org' ) {
-	$parts[] = '/usr/lib/php';
-	$parts[] = '/usr/local/lib/php';
-	$parts[] = '/home/cbi18/site/php';
-	$parts[] = '/home/cbi18/site/Swift-5.0.1';
+if ($_SERVER['HTTP_HOST'] == 'cbi18.org') {
+    $parts[] = '/usr/lib/php';
+    $parts[] = '/usr/local/lib/php';
+    $parts[] = '/home/cbi18/site/php';
+    $parts[] = '/home/cbi18/site/Swift-5.0.1';
 }
 
-if( preg_match( '/local/', $_SERVER['HTTP_HOST'] ) ) {
-	$parts[] = '/usr/local/site/php';
-	$parts[] = '/usr/local/swiftmailer';
-	$parts[] = '/usr/local/fpdf';
+if (preg_match('/local/', $_SERVER['HTTP_HOST'])) {
+    $parts[] = '/usr/local/site/php';
+    $parts[] = '/usr/local/swiftmailer';
+    $parts[] = '/usr/local/fpdf';
 }
-$path = join( PATH_SEPARATOR, $parts );
+$path = join(PATH_SEPARATOR, $parts);
 set_include_path(get_include_path() . PATH_SEPARATOR . $path);
 
 date_default_timezone_set('America/Los_Angeles');
 
 require_once 'lib/swift_required.php';
 require_once( 'SiteLoader.php' );
-SiteLoad( 'Common' );
+SiteLoad('Common');
 
 include( 'globals.php' );
 include( 'library.php' );
@@ -32,272 +32,273 @@ $gLF = "\n";
 // Main Program
 //
 // Initial actions:
-//		Start 		==>	Before authentication
-//		Login			==> Verify the user password
+//		Start 		==> Before authentication
+//		Login		==> Verify the user password
 //		Welcome		==> After successful authentication
 //-----------------------------------------------------------------------------
 //
 
-$gAction = ( isset( $_POST[ "action" ] ) ) ? $_POST[ "action" ] : "";
-$gFrom = ( isset( $_POST[ 'from' ] ) ? $_POST[ 'from' ] : "" );
-$func = ( isset( $_POST['func'] ) ? $_POST['func'] : "" );
-$area = ( isset( $_POST['area'] ) ? $_POST['area'] : "" );
+$gAction = ( isset($_POST["action"]) ) ? $_POST["action"] : "";
+$gFrom = ( isset($_POST['from']) ? $_POST['from'] : "" );
+$func = ( isset($_POST['func']) ? $_POST['func'] : "" );
+$area = ( isset($_POST['area']) ? $_POST['area'] : "" );
 
-switch( $gAction )
-{
-	case( 'Back' ):
-	case( 'Logout' ):
-		continue;
-		
-	case( 'New' ):
-		if( $gFrom == "UserReleaseNotes" ) { $gAction = "Update"; }
-		break;
-	
-	case( 'Download'):
-		LocalInit();
-		$area = $_POST['area'];
-		if( $area == "spiritual" ) {
-			ExcelSpiritual();
-		} elseif( $area == "items" ) {
-			ExcelItems();
-		} elseif( $area == "gabbai" ) {
-			ExcelGabbai();
-		} elseif( $area == "donations" ) {
-			ExcelMoney();
-		}
-		break;
-	
-	default:
-		if( $gFrom == "UserFeatures" ) { $gAction = "Update"; }
-		if( $gFrom == "UserManager" ) { $gAction = "Update"; }
-		if( $gFrom == "UserReleaseNotes" ) { $gAction = "Update"; }
-		if( empty( $gAction ) ) { $gAction = "Start"; }
-		break;
+switch ($gAction) {
+    case( 'Back' ):
+    case( 'Logout' ):
+        continue;
+
+    case( 'New' ):
+        if ($gFrom == "UserReleaseNotes") {
+            $gAction = "Update";
+        }
+        break;
+
+    case( 'Download'):
+        LocalInit();
+        $area = $_POST['area'];
+        if ($area == "spiritual") {
+            ExcelSpiritual();
+        } elseif ($area == "items") {
+            ExcelItems();
+        } elseif ($area == "gabbai") {
+            ExcelGabbai();
+        } elseif ($area == "donations") {
+            ExcelMoney();
+        }
+        break;
+
+    default:
+        if ($gFrom == "UserFeatures") {
+            $gAction = "Update";
+        }
+        if ($gFrom == "UserManager") {
+            $gAction = "Update";
+        }
+        if ($gFrom == "UserReleaseNotes") {
+            $gAction = "Update";
+        }
+        if (empty($gAction)) {
+            $gAction = "Start";
+        }
+        break;
 }
 SessionStuff('start');
 WriteHeader();
 LocalInit();
 
-	echo "<div class=center>$gLF";
-	if( $area != 'assign') echo "<img src=\"assets/CBI_ner_tamid.png\">$gLF";
-	echo "<h2>$gJewishYear CBI High Holy Day Honors</h2>$gLF";
-	echo "</div>$gLF";
+echo "<div class=center>$gLF";
+if ($area != 'assign') {
+    echo "<img src=\"assets/CBI_ner_tamid.png\">$gLF";
+}
+echo "<h2>$gJewishYear CBI High Holy Day Honors</h2>$gLF";
+echo "</div>$gLF";
 AddForm();
 
-if( $gDebug ) { DumpPostVars( "After SessionStuff(start): gAction=[$gAction]" ); }
+if ($gDebug) {
+    DumpPostVars("After SessionStuff(start): gAction=[$gAction]");
+}
 
-$area = ( isset( $_POST[ "area" ] ) ) ? $_POST[ "area" ] : "";
+$area = ( isset($_POST["area"]) ) ? $_POST["area"] : "";
 
-switch( $gAction ) {
-   case 'Back':
-		if( $gFrom == "EditItem" ) {
-			$gAction = 'Main';
-			$_POST['area'] = 'items';
-		} elseif( $gFrom == "ShowBids" ) {
-			$gAction = 'Main';
-			$_POST['area'] = 'bidders';
-		} else {
-	      $gAction = 'Welcome';
-	      $func = "";
-		}
-		break;
-   
-   case( 'Continue' ):
-      $gAction = "Start";
-      break;
-	
-	case( 'Honors' ):
-		HonorsEdit();
-		$gAction = 'Main';
+switch ($gAction) {
+    case 'Back':
+        if ($gFrom == "EditItem") {
+            $gAction = 'Main';
+            $_POST['area'] = 'items';
+        } elseif ($gFrom == "ShowBids") {
+            $gAction = 'Main';
+            $_POST['area'] = 'bidders';
+        } else {
+            $gAction = 'Welcome';
+            $func = "";
+        }
+        break;
 
-   case( 'Login' ):
-      UserManager('verify');
-      break;
+    case( 'Continue' ):
+        $gAction = "Start";
+        break;
 
-	case( 'Mail'):
-		$func = $_POST['func'];
-		if( $func == "validate" ) {
-			MailValidate();
-			$gAction = "Mail";
-		}
-		
-		if( $func == "all" ) {
-			MailAssignments( $func );
-			$gAction = "Mail";
-		}
-		
-		if( $func == "unsent" ) {
-			MailAssignments( $func );
-			$gAction = "Mail";
-		}
-		
-		if( $func == "noresponse" ) {
-			MailAssignments( $func );
-			$gAction = "Mail";
-		}
-		
-		if( $func == "remind-rosh" ) {
-			MailAssignments( $func );
-			$gAction = "Mail";
-		}
-		
-		if( $func == "remind-yom" ) {
-			MailAssignments( $func );
-			$gAction = "Mail";
-		}
-		
-		break;
-		
-   case( 'Main' ):
-		$func = $_POST['func'];
-		if( $func == "backup" ) {
-			exec( "perl /home/cbi18/site/my_backup.pl honors", $out );
-		}
+    case( 'Honors' ):
+        HonorsEdit();
+        $gAction = 'Done';
+        break;
 
-		if( $func == "members" ) {
-			MembersEdit();
-			exit;
-		}
-		
-		if( $func == "bozo-mode" ) {
-			DoQuery( "select `ival` from dates where `label` = 'bozo'" );
-			list( $val ) = mysql_fetch_array( $mysql_result );
-			$val = 1 - $val;
-			DoQuery( "update dates set ival = $val where label = 'bozo'" );
-			$gTrace = $val;
-			$gDebug = $val;
-		}
-		
-		if( $func == "log" ) {
-			DisplayLogfile();
-			$gAction = 'Main';
-		}
-		
-		if( $func == "build-memb" ) {
-			CreateMembers();
-			$gAction = 'Main';
-		}
+    case( 'Login' ):
+        UserManager('verify');
+        break;
 
-		if( $func == "comp-memb" ) {
-			CompareMembers();
-			$gAction = 'Done';
-		}
+    case( 'Mail'):
+        $func = $_POST['func'];
+        if ($func == "validate") {
+            MailValidate();
+            $gAction = "Mail";
+        }
 
-		if( $func == "responses" ) {
-			Responses();
-			$gAction = "Mail";
-		}
-		
-		break;
-	
-	case( 'Update' ):
-		if( $gFrom == "Assign" ) {
-			if( $func == "add" ) {
-				AssignAdd();
-				$gAction = "Assign";
-			} elseif( $func == "del" ) {
-				AssignDel();
-				$gAction = "Assign";
-			} elseif( $func == "mail" ) {
-				MailAssignment();
-				$gAction = "Assign";
-			} elseif( $func == "mails" ) {
-				MailAssignments();
-				$gAction = "Assign";
-			} elseif( $func == "manual" ) {
-				AssignRSVP();
-				$gAction = "Assign";
-			}
-		
-		} elseif( $gFrom == "DisplayDates" ) {
-         DateUpdate();
-         $gAction = 'Main';
-			$_POST['area'] = 'dates';
-         
-		} elseif( $gFrom == "MailDisplay" ) {
-         MailUpdate();
-         $gAction = 'Main';
-			$_POST['area'] = 'mail';
-			
-		} elseif( $gFrom == "MembersEdit" ) {
-			MembersUpdate();
-			MembersEdit();
-			exit;
-			
-		} elseif( $gFrom == "DisplayFinancial" ) {
-         PledgeUpdate();
-         $gAction = 'Main';
-         
-		} elseif( $gFrom == "DisplaySpiritual" ) {
-         PledgeUpdate();
-         $gAction = 'Main';
-         
-      } elseif( $gFrom == 'DisplayMain' ) {
-         if( $area == 'reset' ) {
-				DoQuery( "start transaction" );
-				DoQuery( "truncate bids" );
-				DoQuery( "truncate bidders" );
-				DoQuery( "update items set status = 0 where status = 1" );
-				DoQuery( "commit" );
-         }
-         $gAction = 'Main';
-			
-		} elseif( $gFrom == "HonorsEdit" ) {
-			HonorsUpdate();
-			$gAction = "Edit";
-			$area = "honors";
-         
-      } elseif( $gFrom == "UserManagerPassword" ) {
-         UserManager('update');
-         $gAction = 'Start';
-         
-      } elseif( $gFrom == "UserManagerPrivileges" ) {
-         UserManager('update');
-         $gAction = 'Main';
-         $func = 'privileges';
-   
-      } elseif( $gFrom == 'Users' ) {
-         UserManager('update');
-         $gAction = "Main";
-         $func = 'users';
+        if ($func == "all") {
+            MailAssignments($func);
+            $gAction = "Mail";
+        }
 
-      } elseif( $gFrom == 'PledgeEdit' ) {
-         PledgeUpdate();
-         $gAction = 'Main';
+        if ($func == "unsent") {
+            MailAssignments($func);
+            $gAction = "Mail";
+        }
 
-		} elseif( $gFrom == "EditItem" ) {
-			UpdateItem();
-			$gAction = 'Main';
-			$_POST['area'] = 'items';
+        if ($func == "noresponse") {
+            MailAssignments($func);
+            $gAction = "Mail";
+        }
 
-		} elseif( $gFrom == "DisplayItems" ) {
-			UpdateItem();
-			$gAction = 'Main';
-			$_POST['area'] = 'items';
+        if ($func == "remind-rosh") {
+            MailAssignments($func);
+            $gAction = "Mail";
+        }
 
-		} elseif( $gFrom == "DisplayCategories" ) {
-			UpdateCategories();
-			$gAction = 'Main';
-			$_POST['area'] = 'categories';
+        if ($func == "remind-yom") {
+            MailAssignments($func);
+            $gAction = "Mail";
+        }
 
-      } else {
-         UserManager( 'update' );
-         $gAction = 'Welcome';
-      }
-      break;
+        break;
+
+    case( 'Main' ):
+        $func = $_POST['func'];
+        if ($func == "backup") {
+            exec("perl /home/cbi18/site/my_backup.pl honors", $out);
+        }
+
+        if ($func == "members") {
+            MembersEdit();
+            exit;
+        }
+
+        if ($func == "bozo-mode") {
+            DoQuery("select `ival` from dates where `label` = 'bozo'");
+            list( $val ) = mysql_fetch_array($mysql_result);
+            $val = 1 - $val;
+            DoQuery("update dates set ival = $val where label = 'bozo'");
+            $gTrace = $val;
+            $gDebug = $val;
+        }
+
+        if ($func == "log") {
+            DisplayLogfile();
+            $gAction = 'Main';
+        }
+
+        if ($func == "build-memb") {
+            CreateMembers();
+            $gAction = 'Main';
+        }
+
+        if ($func == "comp-memb") {
+            CompareMembers();
+            $gAction = 'Done';
+        }
+
+        if ($func == "responses") {
+            Responses();
+            $gAction = "Mail";
+        }
+
+        break;
+
+    case( 'Update' ):
+        if ($gFrom == "Assign") {
+            if ($func == "add") {
+                AssignAdd();
+                $gAction = "Assign";
+            } elseif ($func == "del") {
+                AssignDel();
+                $gAction = "Assign";
+            } elseif ($func == "mail") {
+                MailAssignment();
+                $gAction = "Assign";
+            } elseif ($func == "mails") {
+                MailAssignments();
+                $gAction = "Assign";
+            } elseif ($func == "manual") {
+                AssignRSVP();
+                $gAction = "Assign";
+            }
+        } elseif ($gFrom == "DisplayDates") {
+            DateUpdate();
+            $gAction = 'Main';
+            $_POST['area'] = 'dates';
+        } elseif ($gFrom == "MailDisplay") {
+            MailUpdate();
+            $gAction = 'Main';
+            $_POST['area'] = 'mail';
+        } elseif ($gFrom == "MembersEdit") {
+            MembersUpdate();
+            MembersEdit();
+            exit;
+        } elseif ($gFrom == "DisplayFinancial") {
+            PledgeUpdate();
+            $gAction = 'Main';
+        } elseif ($gFrom == "DisplaySpiritual") {
+            PledgeUpdate();
+            $gAction = 'Main';
+        } elseif ($gFrom == 'DisplayMain') {
+            if ($area == 'reset') {
+                DoQuery("start transaction");
+                DoQuery("truncate bids");
+                DoQuery("truncate bidders");
+                DoQuery("update items set status = 0 where status = 1");
+                DoQuery("commit");
+            }
+            $gAction = 'Main';
+        } elseif ($gFrom == "HonorsEdit") {
+            HonorsUpdate();
+            $gAction = "Edit";
+            $area = "honors";
+        } elseif ($gFrom == "UserManagerPassword") {
+            UserManager('update');
+            $gAction = 'Start';
+        } elseif ($gFrom == "UserManagerPrivileges") {
+            UserManager('update');
+            $gAction = 'Main';
+            $func = 'privileges';
+        } elseif ($gFrom == 'Users') {
+            UserManager('update');
+            $gAction = "Main";
+            $func = 'users';
+        } elseif ($gFrom == 'PledgeEdit') {
+            PledgeUpdate();
+            $gAction = 'Main';
+        } elseif ($gFrom == "EditItem") {
+            UpdateItem();
+            $gAction = 'Main';
+            $_POST['area'] = 'items';
+        } elseif ($gFrom == "DisplayItems") {
+            UpdateItem();
+            $gAction = 'Main';
+            $_POST['area'] = 'items';
+        } elseif ($gFrom == "DisplayCategories") {
+            UpdateCategories();
+            $gAction = 'Main';
+            $_POST['area'] = 'categories';
+        } else {
+            UserManager('update');
+            $gAction = 'Welcome';
+        }
+        break;
 }
 
 $_POST['action'] = $gAction;
 $_POST['func'] = $func;
 
-if( $gDebug ) { DumpPostVars( "After Login/Logout:  gAction=[$gAction]" ); }
+if ($gDebug) {
+    DumpPostVars("After Login/Logout:  gAction=[$gAction]");
+}
 
 $vect = $args = array();
 
 $vect['Assign'] = 'Assign';
 $vect['Edit'] = 'EditManager';
 $vect['Inactive'] = 'UserManager';
-$vect['Login']	= 'UserManager';
+$vect['Login'] = 'UserManager';
 $vect['Logout'] = 'UserManager';
 $vect['Mail'] = 'MailDisplay';
 $vect['Main'] = 'DisplayMain';
@@ -306,47 +307,45 @@ $vect['Start'] = 'UserManager';
 $vect['Welcome'] = 'DisplayMain';
 
 $args['Inactive'] = array('inactive');
-$args['Login'] = array( 'verify' );
-$args['Logout'] = array( 'logout' );
-$args['Resend'] = array( 'resend' );
+$args['Login'] = array('verify');
+$args['Logout'] = array('logout');
+$args['Resend'] = array('resend');
 $args['Start'] = array('login');
 
 echo "<div class=center>";
 
-if( ! empty( $vect[ $gAction ] ) ) {
-	$func = $vect[ $gAction ];
-	$arg = array_key_exists( $gAction, $args ) ? $args[ $gAction ] : NULL;
-	switch( count( $arg ) ) {
-		case( 0 ):
-			$func();
-			break;
-		
-		case( 1 ):
-			$func( $arg[0] );
-			break;
-		
-		case( 2 ):
-			$func( $arg[0], $arg[1] );
-			break;
-	}
+if (!empty($vect[$gAction])) {
+    $func = $vect[$gAction];
+    $arg = array_key_exists($gAction, $args) ? $args[$gAction] : NULL;
+    switch (count($arg)) {
+        case( 0 ):
+            $func();
+            break;
+
+        case( 1 ):
+            $func($arg[0]);
+            break;
+
+        case( 2 ):
+            $func($arg[0], $arg[1]);
+            break;
+    }
 } else {
-	switch( $gAction )
-	{
-		case( 'Done' ):
-			break;
-		
-		case( 'Reset Password' ):
-			UserManager( 'reset' );
-			SessionStuff( 'logout' );
-			break;
-		
-		default:
-			echo "action: $gAction<br>";
-			echo "I'm sorry but something unexpected occurred.  Please send all details<br>";
-			echo "of what you were doing and any error messages to $gSupport<br>";
-            echo "<input type=submit name=action value=Back>"; 
-        
-	}
+    switch ($gAction) {
+        case( 'Done' ):
+            break;
+
+        case( 'Reset Password' ):
+            UserManager('reset');
+            SessionStuff('logout');
+            break;
+
+        default:
+            echo "action: $gAction<br>";
+            echo "I'm sorry but something unexpected occurred.  Please send all details<br>";
+            echo "of what you were doing and any error messages to $gSupport<br>";
+            echo "<input type=submit name=action value=Back>";
+    }
 }
 
 echo "</div>";
@@ -354,5 +353,4 @@ echo "</div>";
 echo "</form>";
 echo "</body>";
 echo "</html>";
-
 ?>
