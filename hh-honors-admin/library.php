@@ -904,6 +904,24 @@ function CreateMembers() {
 		}
 		$query = "insert into members set " . join( ',', $qx );
 		DoQuery( $query );
+                
+                $query = "select * from member_attributes where id = " . $row['ID'];
+                DoQuery( $query );
+                $tmp = array();
+                if( $mysql_numrows == 0 ) {
+                    $query = "insert into member_attributes set ";
+                    $tmp[] = "id = " . $row['ID'];
+                    if( $row['Status'] == "Staff" ) $tmp[] = "staff = 1";
+                    if( $row['Status'] == "New") $tmp[] = "new = 1";
+                    $query .= join( ',', $tmp );
+                    DoQuery( $query );
+                } else {
+                    $query = "update member_attributes set ";
+                    if( $row['Status'] == "Staff" ) $tmp[] = "staff = 1";
+                    if( $row['Status'] == "New") $tmp[] = "new = 1";
+                    $query .= join( ',', $tmp ) . " where id = " . $row['ID'];
+                    if( ! empty( $tmp ) ) DoQuery( $query );
+                }
 	}
 	
 	if( $gTrace ) array_pop( $gFunction );
@@ -942,60 +960,6 @@ function DateUpdate() {
 			DoQuery( $query );
 	}
 	
-	if( $gTrace ) array_pop( $gFunction );
-}
-
-function DisplayBidders() {
-	include( 'globals.php' );
-	if( $gTrace ) {
-		$gFunction[] = __FUNCTION__;
-		Logger();
-	}
-	
-	$area = $_POST['area'];
-	$func = $_POST['func'];
-	
-	echo "<div class=CommonV2>";
-	echo "<input type=button value=Back onclick=\"setValue('from', '$func');addAction('Back');\">";
-	echo "<input type=button onclick=\"setValue('area','bidders');setValue('func','Back');addAction('Main');\" value=Refresh>";
-	
-	echo "<ul>";
-	echo "<li>Click on a blue header to sort, click again to reverse the sort</li>";
-	echo "</ul>";
-	
-	echo "<table class=sortable>";
-	
-	echo "<tr>";
-	echo "<th>Last</th>";
-	echo "<th>First</th>";
-	echo "<th>E-mail</th>";
-	echo "<th>Phone</th>";
-	echo "<th># bids</th>";
-	echo "</tr>\n";
-
-	DoQuery( "select * from bidders order by last asc, first asc" );
-	$outer = $mysql_result;
-	while( $row = mysql_fetch_assoc( $outer ) ) {
-		echo "<tr>";
-		printf( "<td>%s</td>", $row['last'] );
-		printf( "<td>%s</td>", $row['first'] );
-		printf( "<td>%s</td>", $row['email'] );
-		printf( "<td>%s</td>", FormatPhone( $row['phone'] ) );
-		$query = sprintf( "select * from bids where bidderId = %d", $row['id'] );
-		DoQuery( $query );
-		$jsx = array();
-		$jsx[] = "setValue('area','showbids')";
-		$jsx[] = sprintf( "setValue('id','%s')", $row['hash']);
-		$jsx[] = "addAction('Main')";
-		$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-		echo "<td class=c $js>";
-		printf( "%d", $mysql_numrows );
-		echo "</td>";
-		echo "</tr>\n";
-	}
-	echo "</table>";
-	echo "</div>";
-
 	if( $gTrace ) array_pop( $gFunction );
 }
 
@@ -1478,10 +1442,7 @@ function DisplayMain() {
 		$func = 'xxx';
 	}
 
-	if( $area == 'bidders' ) {
-		DisplayBidders();
-	
-	} elseif( $area == 'categories' ) {
+	if( $area == 'categories' ) {
 		DisplayCategories();
 	
 	} elseif( $area == 'dates' ) {
@@ -2198,35 +2159,6 @@ function LocalInit() {
 	$time_offset = $date_server->format('U') - $date_calif->format('U');
 #============
 
-	$gDebug = 0;
-	DoQuery( "select id, `Female Tribe`, `Male Tribe`, `Status` from members" );
-	$outer = $GLOBALS['mysql_result'];
-	while( list( $id, $ft, $mt, $status ) = mysql_fetch_array( $outer ) ) {
-		DoQuery( "select ftribe, mtribe, staff, new from member_attributes where id = $id" );
-		if( $GLOBALS['mysql_numrows'] == 0 ) {
-			$tmp = array();
-			$tmp[] = "id = $id";
-			$tmp[] = "ftribe = '$ft'";
-			$tmp[] = "mtribe = '$mt'";
-			if( $status == "Staff" ) $tmp[] = "staff = 1";
-			if( $status == "New") $tmp[] = "new = 1";
-			$query = "insert into member_attributes set " . join(',', $tmp );
-			DoQuery( $query );
-		} else {
-			list( $maf, $mam, $staff, $new ) = mysql_fetch_array( $GLOBALS["mysql_result"]);
-			$tmp = array();
-			if( $maf != $ft ) $tmp[] = "ftribe = '$ft'";
-			if( $mam != $mt ) $tmp[] = "mtribe = '$mt'";
-			$expected = ( $status == 'Staff' ) ? 1 : 0;
-			if( $staff != $expected ) $tmp[] = "staff = $expected";
-			$expected = ( $status == 'New' ) ? 1 : 0;
-			if( $new != $expected ) $tmp[] = "new = $expected";
-			if( count( $tmp ) ) {
-				$query = "update member_attributes set " . join( ',', $tmp ) . " where id = $id";
-				DoQuery( $query );
-			}
-		}
-	}
 	$gDebug = $x;
 }
 
@@ -3029,8 +2961,7 @@ function MailUpdate() {
 	}
 	
 	echo "<div class=CommonV2>";
-	echo "<table class=members>";
-	echo "<thead>";
+	echo "<table class='members sortable' style='table-layout: fixed;'>";
 	echo "<tr>";
 	echo "  <td class=box>ID</td>";
 	echo "  <td class=name>Name</td>";
@@ -3045,12 +2976,10 @@ function MailUpdate() {
 	echo "  <td class=box>Vol B</td>";
 	echo "  <td class=box>Vol C</td>";
 	echo "</tr>\n";
-	echo "</thead>";
-	echo "<tbody>";
 	
 	foreach( $members as $id => $row ) {
 		echo "<tr>";
-		echo "<td class=box>$id</td>";
+		echo "<td class='box mlist'>$id</td>";
 		$class = 'name';
 		if( ( ! empty( $row['Female 1st Name'] ) ) &&
 		    ( ! empty( $row['Male 1st Name'] ) ) &&
@@ -3088,7 +3017,6 @@ function MailUpdate() {
 		
 		echo "</tr>\n";
 	}
-	echo "</tbody>";
 	echo "</table>";
 	echo "</div>";
 	echo "</div>";
