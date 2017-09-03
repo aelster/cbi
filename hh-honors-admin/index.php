@@ -1,6 +1,6 @@
 <?php
 
-if ($_SERVER['HTTP_HOST'] == 'cbi18.org') {
+if ($_SERVER['HTTP_HOST'] == 'www.cbi18.org') {
     $parts[] = '/usr/lib/php';
     $parts[] = '/usr/local/lib/php';
     $parts[] = '/home/cbi18/site/php';

@@ -2430,8 +2430,8 @@ function MailAssignment() {
     $html[] = "";
     $text[] = "";
 
-    $html[] = "Phyllis Abrams and Francine Wenhardt";
-    $text[] = "Phyllis Abrams and Francine Wenhardt";
+    $html[] = "Francine Wenhardt and Barbara Zwart";
+    $text[] = "Francine Wenhardt and Barbara Zwart";
 
     $html[] = "Ritual Vice Presidents";
     $text[] = "Ritual Vice Presidents";
