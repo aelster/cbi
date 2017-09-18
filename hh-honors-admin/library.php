@@ -2379,6 +2379,12 @@ function MailAssignment() {
     $html[] = "";
     $text[] = "";
 
+    $html[] = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
+    $text[] = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
+
+    $html[] = "";
+    $text[] = "";
+
     $str = "We ask that you be in the sanctuary at least 30 minutes prior to your honor";
     $str .= " (15 minutes prior if it occurs at the beginning of the service,) and check in with";
     $str .= " the Shamash, the person in charge of making sure that everyone who has an honor";
@@ -2598,6 +2604,12 @@ function MailAssignmentByID() {
 
     $html[] = $str;
     $text[] = $str;
+
+    $html[] = "";
+    $text[] = "";
+
+    $html[] = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
+    $text[] = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
 
     $html[] = "";
     $text[] = "";
