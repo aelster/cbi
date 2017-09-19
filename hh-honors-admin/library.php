@@ -2325,24 +2325,29 @@ function MailAssignment() {
     DoQuery("select date from dates where `label` = 'erev'");
     list( $td ) = mysql_fetch_array($GLOBALS['mysql_result']);
     $date = new DateTime($td);
+    $rtext = "";
 
     $service = $honor['service'];
     switch ($service) {
         case( 'rh1' ):
             $date->add(new DateInterval('P1D'));
+            $rtext = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
             break;
 
         case( 'rh2' ):
             $date->add(new DateInterval('P2D'));
+            $rtext = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
             break;
 
         case( 'kn' ):
             $date->add(new DateInterval('P9D'));
+            $rtext = "Note that services begin at 6:15 PM.";
             break;
 
         case( 'yka' ):
         case( 'ykp' ):
             $date->add(new DateInterval('P10D'));
+            $rtext = "";
             break;
     }
 
@@ -2376,11 +2381,13 @@ function MailAssignment() {
     $html[] = $str;
     $text[] = $str;
 
-    $html[] = "";
-    $text[] = "";
-
-    $html[] = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
-    $text[] = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
+    if( !empty( $rtext ) ) {
+        $html[] = "";
+        $text[] = "";
+    
+        $html[] = $rtext;
+        $text[] = $rtext;
+    }
 
     $html[] = "";
     $text[] = "";
@@ -2443,7 +2450,7 @@ function MailAssignment() {
     $text[] = "Ritual Vice Presidents";
 
     if ($preview) {
-        echo "<hr>" . join('<br>', $html);
+        echo "<hr>" . join('<br>', $html) . "<hr>";
         echo "<br>";
         if ($_POST['from'] == "Assign") {
             echo "<br>";
@@ -2554,24 +2561,29 @@ function MailAssignmentByID() {
     DoQuery("select date from dates where `label` = 'erev'");
     list( $td ) = mysql_fetch_array($GLOBALS['mysql_result']);
     $date = new DateTime($td);
+    $rtext = "";
 
     $service = $honor['service'];
     switch ($service) {
         case( 'rh1' ):
             $date->add(new DateInterval('P1D'));
+            $rtext = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
             break;
 
         case( 'rh2' ):
             $date->add(new DateInterval('P2D'));
-            break;
+            $rtext = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
+           break;
 
         case( 'kn' ):
             $date->add(new DateInterval('P9D'));
+            $rtext = "Note that services begin at 6:15 PM.";
             break;
 
         case( 'yka' ):
         case( 'ykp' ):
             $date->add(new DateInterval('P10D'));
+            $rtext = "";
             break;
     }
 
@@ -2597,6 +2609,7 @@ function MailAssignmentByID() {
 
     if ($remind) {
         $str = sprintf("You have the honor of %s during the %s service on %s.", $honor['honor'], $gService[$honor['service']], $date->format("l, M jS, Y"));
+        
     } else {
         $str = "Thank you for the support you have given to Congregation B'nai Israel during the past year.";
         $str .= sprintf(" In an effort to show our appreciation, we would like to offer you the honor of %s during the %s service on %s.", $honor['honor'], $gService[$honor['service']], $date->format("l, M jS, Y"));
@@ -2605,12 +2618,14 @@ function MailAssignmentByID() {
     $html[] = $str;
     $text[] = $str;
 
-    $html[] = "";
-    $text[] = "";
-
-    $html[] = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
-    $text[] = "Note that services begin at 8:00 AM. We expect Shacharit will begin around 8:20, Torah service 9:20, Shofar service 10:20 and Musaf repetition around 11:45.";
-
+    if( !empty( $rtext ) ) {
+        $html[] = "";
+        $text[] = "";
+    
+        $html[] = $rtext;
+        $text[] = $rtext;
+    }
+    
     $html[] = "";
     $text[] = "";
 
@@ -2672,7 +2687,7 @@ function MailAssignmentByID() {
     $text[] = "Ritual Vice Presidents";
 
     if ($preview) {
-        echo "<hr>" . join('<br>', $html);
+        echo "<hr>" . join('<br>', $html) . "<hr>";
         echo "<input type=button value=Continue>";
         exit;
     } else {
