@@ -224,6 +224,10 @@ function DisplayCategories() {
 		Logger();
 	}
 	
+	if( ! array_key_exists( 0, $gCategories ) ) {
+		$gCategories[0] = '__Unassigned';
+	}
+	
 	$area = $_POST['area'];
 	$func = $_POST['func'];
 	
@@ -241,25 +245,25 @@ function DisplayCategories() {
 	echo "<table class=sortable>";
 	
 	echo "<tr>";
-	echo "<th>#</th>";
 	echo "<th>Label</th>";
 	echo "<th># of Items</th>";
 	echo "<th>Action</th>";
 	echo "</tr>\n";
 
-	$i=0;
+	asort($gCategories);
 	foreach( $gCategories as $id => $label ) {
-		$tag = MakeTag("pkg_$id");
+		$tag = MakeTag("cat_$id");
 
 		echo "<tr>";
-		echo "<td>$i</td>";
 		echo "<td><input type=text $tag value=\"$label\" onChange=\"addField('$id');toggleBgRed('update');\"></td>";
-		DoQuery( "select count(id) from items where itemCategory = '$id'" );
-		list($num) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$stmt = DoQuery( "select count(id) from items where itemCategory = '$id'" );
+		list($num) =  $stmt->fetch(PDO::FETCH_BOTH);
 		echo "<td class=c>$num</td>";
 		echo "<td class=c>";
 
-		if( $num == 0 && $i != 0) {
+		if( $id == 0 ) {
+			echo "&nbsp;";
+		} else {
 			$jsx = array();
 			$jsx[] = "setValue('area','category')";
 			$jsx[] = "setValue('from','DisplayCategories')";
@@ -269,25 +273,17 @@ function DisplayCategories() {
 			$jsx[] = sprintf( "myConfirm('%s')", CVT_Str_to_Overlib($txt) );
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 			echo "<input type=button value=Del $tag $js>";
-		} else {
-			echo "&nbsp;";
 		}
-		
 		echo "</td>";
 		echo "</tr>";
-		$i++;
 	}
 	
-	$i++;
 	$id=0;
 	$label="";
 	$tag = MakeTag("cat_$id");
 
 	echo "<tr>";
-	echo "<td>$i</td>";
 	echo "<td><input type=text $tag value=\"$label\" onChange=\"toggleBgRed('add_$id');\"></td>";
-	DoQuery( "select count(id) from items where itemCategory = '$id'" );
-	list($num) = mysql_fetch_array( $GLOBALS['mysql_result'] );
 	echo "<td class=c>&nbsp;</td>";
 	echo "<td class=c>";
 
@@ -340,8 +336,8 @@ function DisplayDates() {
 	echo "<th>Date</th>";
 	echo "</tr>\n";
 
-	DoQuery( "select * from dates order by `date` asc" );
-	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+	$stmt = DoQuery( "select * from dates order by `date` asc" );
+	while( $row =  $stmt->fetch(PDO::FETCH_ASSOC) ) {
 		$id = $row['id'];
 		$label = $row['label'];
 		$date = $row['date'];
@@ -527,8 +523,8 @@ function DisplayItems() {
 	$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 	echo "<input type=button $js value=Download>";
 
-	DoQuery( "select count(id) from items" );
-	list( $num ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+	$stmt = DoQuery( "select count(id) from items" );
+	list( $num ) =  $stmt->fetch(PDO::FETCH_BOTH);
 	echo "<h2>There are $num items in the database</h2>";
 	
 	echo "<ul>";
@@ -548,15 +544,14 @@ function DisplayItems() {
 	echo "<th>Description</th>";
 	echo "<th>Misc</th>";
 	echo "</tr>";
-
+	
 	$i=0;
-	foreach( $gCategories as $cid => $label ) {
-		DoQuery( "select * from items where itemCategory = '$cid' order by `itemTitle` asc" );
-		$outer = $GLOBALS['mysql_result'];
-		while( $row = mysql_fetch_assoc( $outer ) ) {
+		$outer = DoQuery( "select * from items order by `itemTitle` asc" );
+		while( $row = $outer->fetch( PDO::FETCH_BOTH ) ) {
 			$i++;
 			$iid = $row['id'];
 			$pid = $row['itemPackage'];
+			$cid = $row['itemCategory'];
 			echo "<tr>";
 			echo "<td class=c>$iid</td>";
 			echo "<td>" . $gPackages[$pid] . "</td>";
@@ -589,7 +584,7 @@ function DisplayItems() {
 
 			echo "</td>";
 			echo "</tr>\n";
-		}
+		
 	}
 	
 	echo "</table>";
@@ -693,7 +688,7 @@ function DisplayMain() {
 		SourceDisplay();
 		
 	} else {
-		printf( "User: %s<br>", $GLOBALS['gUserName'] );
+		printf( "User: %s<br>", $gUserName );
 		if( UserManager( 'authorized', 'control' ) ) {
 			echo "<div class=control>";
 			echo "<h3>Control User Features</h3>";
@@ -772,22 +767,22 @@ function DisplayMain() {
 			DoQuery( "select distinct email from bidders" );
 			printf( "<li># of bidders: %d</li>", $mysql_numrows );
 
-			DoQuery( "select count(id) from bids" );
-			list( $num ) = mysql_fetch_array( $mysql_result );
+			$stmt = DoQuery( "select count(id) from bids" );
+			list( $num ) = $stmt->fetch( PDO::FETCH_BOTH);
 			printf( "<li># of bids: %d</li>", $num );
 			
 			DoQuery( "select distinct itemId from bids" );
 			printf( "<li># of items with bids: %d</li>", $mysql_numrows );
 		
 			$v1 = array();
-			DoQuery( "select id from items" );
-			while( list( $id ) = mysql_fetch_array( $mysql_result ) ) {
+			$stmt = DoQuery( "select id from items" );
+			while( list( $id ) = $stmt->fetch( PDO::FETCH_BOTH) ) {
 				$v1[] = $id;
 			}
 			$total = 0;
 			foreach( $v1 as $itemId ) {
-				DoQuery( "select max( bid ) from bids where itemId = $itemId" );
-				list( $bid ) = mysql_fetch_array( $mysql_result );
+				$stmt = DoQuery( "select max( bid ) from bids where itemId = $itemId" );
+				list( $bid ) = $stmt->fetch( PDO::FETCH_BOTH);
 				$total += $bid;
 			}
 			printf( "<li>Sum of winning bids: \$ %s</li>", number_format( $total, 2 ) );
@@ -811,7 +806,11 @@ function DisplayPackages() {
 		$gFunction[] = __FUNCTION__;
 		Logger();
 	}
-	
+
+	if( ! array_key_exists( 0, $gCategories ) ) {
+		$gPackages[0] = '__Unassigned';
+	}
+		
 	$area = $_POST['area'];
 	$func = $_POST['func'];
 	
@@ -829,7 +828,6 @@ function DisplayPackages() {
 	echo "<table class=sortable>";
 	
 	echo "<tr>";
-	echo "<th>#</th>";
 	echo "<th>Label</th>";
 	echo "<th># of Items</th>";
 	echo "<th>Action</th>";
@@ -839,15 +837,16 @@ function DisplayPackages() {
 		$tag = MakeTag("pkg_$id");
 
 		echo "<tr>";
-		echo "<td>$id</td>";
 		$opt = ( $id == 0 ) ? "disabled" : "";
 		echo "<td><input type=text $tag $opt size=40 value=\"$label\" onChange=\"addField('$id');toggleBgRed('update');\"></td>";
-		DoQuery( "select count(id) from items where itemPackage = '$id'" );
-		list($num) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+		$stmt = DoQuery( "select count(id) from items where itemPackage = '$id'" );
+		list($num) = $stmt->fetch(PDO::FETCH_BOTH);
 		echo "<td class=c>$num</td>";
 		echo "<td class=c>";
 
-		if( $num == 0 && $id != 0 ) {
+		if( $id == 0 ) {
+			echo "&nbsp;";
+		} else {
 			$jsx = array();
 			$jsx[] = "setValue('area','package')";
 			$jsx[] = "setValue('from','DisplayPackages')";
@@ -857,8 +856,6 @@ function DisplayPackages() {
 			$jsx[] = sprintf( "myConfirm('%s')", CVT_Str_to_Overlib($txt) );
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 			echo "<input type=button value=Del $tag $js>";
-		} else {
-			echo "&nbsp;";
 		}
 		
 		echo "</td>";
@@ -870,7 +867,6 @@ function DisplayPackages() {
 	$tag = MakeTag("pkg_$id");
 
 	echo "<tr>";
-	echo "<td>&nbsp;</td>";
 	echo "<td><input type=text $tag size=40 value=\"$label\" onclick=\"this.select();\" onChange=\"toggleBgRed('add_$id');\"></td>";
 	echo "<td class=c>&nbsp;</td>";
 	echo "<td class=c>";
@@ -1323,16 +1319,16 @@ function EditItem() {
 	echo "<th>Value</th>";
 	echo "</tr>";
 
-	DoQuery( "show fields from items" );
+	$stmt = DoQuery( "show fields from items" );
 	$fields = array();
-	while( $row = mysql_fetch_assoc( $GLOBALS['mysql_result'] ) ) {
+	while( $row =  $stmt->fetch(PDO::FETCH_ASSOC) ) {
 		$label = $row['Field'];
 		if( $label == "id" ) continue;
 		$fields[] = $row['Field'];
 	}
 	
-	DoQuery( "select * from items where id = '$iid'" );
-	$row = mysql_fetch_assoc( $GLOBALS['mysql_result'] );
+	$stmt = DoQuery( "select * from items where id = '$iid'" );
+	$row =  $stmt->fetch(PDO::FETCH_ASSOC);
 	
 	foreach( $fields as $fld ) {
 		$tag = MakeTag('fld_'.$fld);
@@ -1629,14 +1625,19 @@ function HashAdd() {
 function LocalInit() {
 	include( 'globals.php' );
 	
-	$gDebug = 0;
-	$gTrace = 0;
-	$x = isset( $_REQUEST['bozo'] ) ? 1 : 0;
-	if( $x ) {
-		$gDebug = $x;
-		$gTrace = $x;
-	}
-	$gGala = isset( $_REQUEST['gala']) ? 1 : 0;
+    $val = key_exists('debug', $_SESSION) ? $_SESSION['debug'] : 0;
+	$val = 1;
+    $gDebug = $gTrace = $val;
+
+    $gAction = isset($_POST['action']) ? $_POST['action'] : 'xxx';
+    if ($gAction == 'xxx') {
+        $loggedin = key_exists('loggedin', $_SESSION) && $_SESSION['loggedin'];
+        if ($loggedin) {
+            $gAction = 'refresh';
+        } else {
+            $gAction = 'login';
+        }
+    }
 	
 	$gFrom = array_key_exists( 'from', $_POST ) ? $_POST['from'] : '';
 	$gFunction = array();
@@ -1646,38 +1647,125 @@ function LocalInit() {
 		$tmp = preg_match( '/(.+)\?(.+)/', $gSourceCode, $matches );
 		$gSourceCode = $matches[1];
 	}
-#============
-	DoQuery( "set transaction isolation level serializable" );
+
+	$date_server = new DateTime( '2000-01-01' );
+	$date_calif = new DateTime( '2000-01-01', new DateTimeZone('America/Los_Angeles'));
+	$time_offset = $date_server->format('U') - $date_calif->format('U');
+	
+#	DoQuery( "set transaction isolation level serializable" );
 
 	$gCategories = array();
 	$gCategories[0] = '__Unassigned';
-	DoQuery( "select id, label from categories order by label" );
-	while( list( $id, $label ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
-		$gCategories[$id] = $label;
+	$stmt = DoQuery('select id, label from categories order by label');
+    while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
+		$gCategories[ $row['id'] ] = $row['label' ];
 	}
 	asort( $gCategories );
 	
 	$gPackages = array();
 	$gPackages[0] = '__Unassigned';
-	DoQuery( "select id, label from packages order by label" );
-	while( list( $id, $label ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
-		$gPackages[$id] = $label;
+
+	$stmt = DoQuery('select id, label from packages order by label');
+    while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
+		$gPackages[ $row['id'] ] = $row['label' ];
 	}
 	
 	foreach( array( 'open', 'close', 'mail', 'auction' ) as $label ) {
-		DoQuery( "select date from dates where label = '$label'" );
-		if( $mysql_numrows == 0 ) {
+		$stmt = $gDb->prepare('select date from dates where label = :label');
+    	$stmt->execute(array(':label' => $label ) );
+		if( $stmt->rowCount() == 0 ) {
 			$val = ( $label == 'mail' ) ? 0 : time();
-			DoQuery( "insert into dates set label = '$label', date = $val");
+			$stmt = $gDb->prepare('insert into dates set label = :label, date = :date');
+    		$stmt->execute(array(':label' => $label, ':date' => $val ) );
 		} elseif( $label == 'close' ) {
-			list( $gAuctionYear ) = mysql_fetch_array( $GLOBALS['mysql_result'] );
+			list( $gAuctionYear ) = $stmt->fetch(PDO::FETCH_BOTH);;
 		}
 	}
-	
-#============
-	$date_server = new DateTime( '2000-01-01' );
-	$date_calif = new DateTime( '2000-01-01', new DateTimeZone('America/Los_Angeles'));
-	$time_offset = $date_server->format('U') - $date_calif->format('U');
+}
+
+function LoginMain() {
+    include 'globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+    ?>
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+                <h2>Please Login</h2>
+                <p><input type=button value="Forgot your password?"
+                          <?php
+                          $jsx = array();
+                          $jsx[] = "setValue('area','display')";
+                          $jsx[] = "addAction('forgot')";
+                          $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                          echo $js . ">";
+                          ?> 
+                </p>
+                <hr>
+
+                <?php
+                //check for any errors
+                if (isset($gError)) {
+                    foreach ($gError as $error) {
+                        echo '<p class="bg-danger">' . $error . '</p>';
+                    }
+                }
+
+                if (isset($_GET['action'])) {
+
+                    //check the action
+                    switch ($_GET['action']) {
+                        case 'active':
+                            echo "<h2 class='bg-success'>Your account is now active you may now log in.</h2>";
+                            break;
+                        case 'reset':
+                            echo "<h2 class='bg-success'>Please check your inbox for a reset link.</h2>";
+                            break;
+                        case 'resetAccount':
+                            echo "<h2 class='bg-success'>Password changed, you may now login.</h2>";
+                            break;
+                    }
+                }
+                ?>
+
+                <div class="form-group">
+                    <input type="text" name="username" id="username" class="form-control input-lg" placeholder="User Name" value="<?php
+                    if (isset($gError)) {
+                        echo htmlspecialchars($_POST['username'], ENT_QUOTES);
+                    }
+                    ?>" tabindex="1">
+                </div>
+
+                <div class="form-group">
+                    <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password" tabindex="3">
+                </div>
+
+
+                <hr>
+                <div class="row">
+                    <div class="col-xs-6 col-md-6">
+                        <input type=button value="Login"
+                        <?php
+                        $jsx = array();
+                        $jsx[] = "addAction('verify')";
+                        $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                        echo $js
+                        ?> 
+                               class="btn btn-primary btn-block btn-lg" tabindex="5">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+
+    <?php
 }
 
 function MailUpdate() {
@@ -2187,16 +2275,20 @@ function UpdateCategories() {
 	} elseif( $func == "delete" ) {
 		foreach( $tmp as $cid ) {
 			DoQuery( "delete from categories where id = '$cid'" );
+			
 		}
 		
 	} elseif( $func == "add" ) {
 		$label = $_POST["cat_0"];
-		DoQuery( "insert into categories set label = '$label'");
+		DoQuery( "select * from categories where label = '$label'" );
+		if( ! $GLOBALS['gPDO_num_rows'] ) {
+			DoQuery( "insert into categories set label = '$label'");
+		}
 	}
 	
 	$gCategories = array();
-	DoQuery( "select id, label from categories order by label" );
-	while( list( $id, $label ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
+	$stmt = DoQuery( "select id, label from categories order by label" );
+	while( list( $id, $label ) =  $stmt->fetch(PDO::FETCH_BOTH) ) {
 		$gCategories[$id] = $label;
 	}
 	asort( $gCategories );
@@ -2267,15 +2359,19 @@ function UpdatePackages() {
 		
 	} elseif( $func == "add" ) {
 		$label = CleanString( $_POST["pkg_0"] );
-		DoQuery( "insert into packages set label = '$label'");
+		DoQuery( "select * from packages where label = '$label'" );
+		if( ! $GLOBALS['gPDO_num_rows'] ) {
+			DoQuery( "insert into packages set label = '$label'");
+		}
 	}
-	
+	/*
 	$gPackages = array();
 	$gPackages[0] = '__Unassigned';
 	DoQuery( "select id, label from packages order by label" );
 	while( list( $id, $label ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
 		$gPackages[$id] = $label;
 	}
+	asort( $gPackages );
 
 	foreach( $gPackages as $pid => $label ) {
 		if( $pid == 0 ) continue;
@@ -2292,17 +2388,57 @@ function UpdatePackages() {
 		DoQuery( "update items set itemPackage = $newpid where itemPackage = $tpid" );
 		DoQuery( "update packages set id = $newpid where id = $tpid" );
 	}
-
+*/
 	$gPackages = array();
 	$gPackages[0] = '__Unassigned';
-	DoQuery( "select id, label from packages order by label" );
-	while( list( $id, $label ) = mysql_fetch_array( $GLOBALS['mysql_result'] ) ) {
+	$stmt = DoQuery( "select id, label from packages order by label" );
+	while( list( $id, $label ) = $stmt->fetch(PDO::FETCH_BOTH) ) {
 		$gPackages[$id] = $label;
 	}
-
+	asort( $gPackages );
+	
 	$gAction = "Edit";
 	$_POST['area'] = 'package';
 	if( $gTrace ) array_pop( $gFunction );
+}
+
+function UserVerify() {
+    include 'globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+
+	$gError = array();
+	
+    if (!isset($_POST['username']))
+        $gError[] = "Please fill out all fields";
+    if (!isset($_POST['password']))
+        $gError[] = "Please fill out all fields";
+
+    $username = $_POST['username'];
+	$gAction = 'Start';
+    if ($user->isValidUsername($username)) {
+        if (!isset($_POST['password'])) {
+            $gError[] = 'A password must be entered';
+        }
+        $password = $_POST['password'];
+
+        if ($user->login($username, $password)) {
+            $_SESSION['username'] = $username;
+            $gAction = 'Main';
+			$gUserName = $username;
+			echo "gUserName set to: $username<br>";
+        } else {
+            $gError[] = 'Wrong username or password or your account has not been activated.';
+        }
+    } else {
+        $gError[] = 'Usernames are required to be Alphanumeric, and between 3-16 characters long';
+    }
+	
+    if ($gTrace) {
+        array_pop($gFunction);
+    }
 }
 
 function WriteHeader() {
@@ -2314,6 +2450,8 @@ function WriteHeader() {
 	$styles = array();
 	$styles[] = "/css/CommonV2.css";
 	$styles[] = "admin.css";
+	$styles[] = "style/bootstrap.min.css";
+	$styles[] = "style/main.css";
 	
 	foreach( $styles as $style ) {
 		printf( "<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\" />$gLF", $style );

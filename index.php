@@ -20,11 +20,28 @@ td, th {
    background-color: #ddd;
 }
 
+p.test {
+                 font-size: 16pt;
+            text-align: center;
+            background-color: red;
+        }
+
 </style>
 </head>";
 
+$path = __FILE__;
+$test = preg_match( '/andy\/src/', $path );
+if( $test ) {
+    echo "<p class=test>** TEST **</p>";
+    echo "Path is $path";
+}
+
 echo "<h3>Directories:</h3>";
-echo "<ul>";
+echo "<ul>
+
+  <li><a href='http://local-cbi/'>CBI - Published</a></li>
+    <li><a href='http://local-cbi-test/'>CBI - Test</a></li>
+  <br>";
 
 $dh = opendir(".");
 while( ($file = readdir($dh) ) !== false) {
@@ -35,13 +52,31 @@ while( ($file = readdir($dh) ) !== false) {
 	   }
 }
 closedir($dh);
+
+function getMySQLVersion() { 
+  $output = shell_exec('mysql -V'); 
+  preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $version); 
+  return $version[0]; 
+}
+
+function getApacheVersion() { 
+  $output = apache_get_version();
+  preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $version); 
+  return $version[0]; 
+}
+
+$php_vers = phpversion();
+$mysql_vers = getMySQLVersion();
+$apache_vers = getApacheVersion();
+
 echo "</ul>";
 echo "
 <h3>Software (As of 3/5/17):</h3>
 <table>
-<tr><th class=e>PHP</th><td class=v>5.6.30</td></td></tr>
-<tr><th class=e>MySQL</th><td class=v>5.6.35</td></td></tr>
-<tr><th class=e>Apache</th><td class=v>2.4.25</td></td></tr>
+<tr><th class=e>PHP</th><td class=v>$php_vers</td></td></tr>
+<tr><th class=e>MySQL</th><td class=v>$mysql_vers</td></td></tr>
+<tr><th class=e>Apache</th><td class=v>$apache_vers</td></td></tr>
 </table>
-"
+";
+
 ?>

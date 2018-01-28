@@ -1,17 +1,7 @@
 <?php
-$path = '/usr/lib/php:/usr/local/lib/php:/home/cbi18/site/php:/home/cbi18/site/Swift-5.0.1';
-set_include_path(get_include_path() . PATH_SEPARATOR . $path);
-date_default_timezone_set('America/Los_Angeles');
 
-require_once 'lib/swift_required.php';
-require_once( 'SiteLoader.php' );
-SiteLoad( 'Common' );
+require_once( 'includes/config.php' );
 
-include( 'globals.php' );
-include( 'library.php' );
-include( 'local_cbi_auction.php' );
-
-$gDb = OpenDb();                # Open the MySQL database
 $gLF = "\n";
 
 //-----------------------------------------------------------------------------
@@ -55,9 +45,8 @@ switch( $gAction )
 		if( empty( $gAction ) ) { $gAction = "Start"; }
 		break;
 }
-SessionStuff('start');
 WriteHeader();
-LocalInit();
+#LocalInit2();
 	$yyyy = date('Y', $gAuctionYear );
 	echo "<div class=center>$gLF";
 	echo "<img src=\"assets/CBI_ner_tamid.png\">$gLF";
@@ -77,6 +66,9 @@ switch( $gAction ) {
 		} elseif( $gFrom == "ShowBids" ) {
 			$gAction = 'Main';
 			$_POST['area'] = 'bidders';
+		} elseif( $gFrom == 'source' ) {
+			$gAction = 'Main';
+				
 		} else {
 	      $gAction = 'Welcome';
 	      $func = "";
@@ -170,6 +162,14 @@ switch( $gAction ) {
          $gAction = 'Welcome';
       }
       break;
+	  
+	case 'verify':
+        if( $user->is_logged_in() ) {
+            $gAction = 'Main';
+        } else {
+            UserVerify();
+        }
+        break;
 }
 
 $_POST['action'] = $gAction;
@@ -187,6 +187,7 @@ $vect['Main'] = 'DisplayMain';
 $vect['Resend'] = 'UserManager';
 $vect['Start'] = 'UserManager';
 $vect['Welcome'] = 'DisplayMain';
+$vect['verify'] = 'LoginMain';
 
 $args['Inactive'] = array('inactive');
 $args['Login'] = array( 'verify' );

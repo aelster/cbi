@@ -7,13 +7,24 @@ global $mysql_numrows;
 global $mysql_result;
 #=====================================================
 
-global $gAccessLevel;
+// This are the PDO global variables that I will use
+
+global $gPDO_attr;
+global $gPDO_dsn;
+global $gPDO_pass;
+global $gPDO_user;
+global $gPDO_num_rows;
+
+#=====================================================
+
+global $gAccessLevels;
 global $gAction;
 global $gActive;
 global $gAuctionYear;
 global $gDb;
 global $gDebug;
 global $gEnabled;
+global $gError;
 global $gFrom;
 global $gFunction;
 global $gGala;
@@ -25,6 +36,10 @@ global $gSpiritIDtoType;
 global $gSpiritIDstats;
 global $gTrace;
 global $gUserId;
+global $gUserName;
+
+global $error;
+global $user;           // Object: active user
 
 global $gSiteEnabled;
 

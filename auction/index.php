@@ -1,5 +1,18 @@
 <?php
-$path = '/usr/lib/php:/usr/local/lib/php:/home/cbi18/site/php:/home/cbi18/site/Swift-5.0.1';
+
+$tpath = array();
+if( preg_match( "/cbi18.org/", $_SERVER['HTTP_HOST'] ) === 1 ) {
+    $tpath[] = '/usr/lib/php/';
+    $tpath[] = '/usr/local/lib/php';
+    $tpath[] = '/home/cbi18/site/php';
+    $tpath[] = '/home/cbi18/site/Swift-5.0.1';
+} else {
+    $tpath[] = '/usr/local/site/php';
+    $tpath[] = '/usr/local/swiftmailer';
+    $tpath[] = '/usr/local/fpdf';
+}
+
+$path = implode( PATH_SEPARATOR, $tpath );
 set_include_path(get_include_path() . PATH_SEPARATOR . $path);
 date_default_timezone_set('America/Los_Angeles');
 
