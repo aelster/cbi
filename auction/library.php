@@ -191,9 +191,8 @@ function DisplayBidders() {
 	echo "<th># bids</th>";
 	echo "</tr>\n";
 
-	DoQuery( "select * from bidders order by last asc, first asc" );
-	$outer = $mysql_result;
-	while( $row = mysql_fetch_assoc( $outer ) ) {
+	$outer = DoQuery( "select * from bidders order by last asc, first asc" );
+	while( $row = $outer->fetch(PDO::FETCH_ASSOC) ) {
 		echo "<tr>";
 		printf( "<td>%s</td>", $row['last'] );
 		printf( "<td>%s</td>", $row['first'] );
@@ -207,7 +206,7 @@ function DisplayBidders() {
 		$jsx[] = "addAction('Main')";
 		$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
 		echo "<td class=c $js>";
-		printf( "%d", $mysql_numrows );
+		printf( "%d", $GLOBALS['gPDO_num_rows'] );
 		echo "</td>";
 		echo "</tr>\n";
 	}
@@ -1178,22 +1177,22 @@ function DisplayTopBids() {
 	$func = $_POST['func'];
 	
 	$items = array();
-	DoQuery( "select * from items order by itemTitle asc" );
-	while( $row = mysql_fetch_assoc( $mysql_result ) ) {
+	$stmt = DoQuery( "select * from items order by itemTitle asc" );
+	while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
 		$id = $row['id'];
 		$items[$id] = $row;
 	}
 	
 	$bidders = array();
-	DoQuery( "select * from bidders" );
-	while( $row = mysql_fetch_assoc( $mysql_result ) ) {
+	$stmt = DoQuery( "select * from bidders" );
+	while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
 		$id = $row['id'];
 		$bidders[$id] = $row;
 	}
 	
 	$with_bids = array();
-	DoQuery( "select distinct itemId from bids order by bid desc" );
-	while( list( $iid ) = mysql_fetch_array( $mysql_result ) ) {
+	$stmt = DoQuery( "select distinct itemId from bids order by bid desc" );
+	while( list( $iid ) = $stmt->fetch(PDO::FETCH_NUM)  ) {
 		$with_bids[] = $iid;
 	}
 ?>
@@ -1258,8 +1257,8 @@ function DisplayTopBids() {
 	$sum = 0;
 	$tot_bids = 0;
 	foreach( $with_bids as $x => $iid ) {
-		DoQuery( "select * from bids where itemId = $iid order by bid desc" );
-		$row = mysql_fetch_assoc( $mysql_result );
+		$stmt = DoQuery( "select * from bids where itemId = $iid order by bid desc" );
+		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		$sold = ( $items[$iid]['status'] == $gStatusClosed ) ? "sold_" : "";
 		
 		printf( "<td class=${sold}c>%d</td>", $iid );
