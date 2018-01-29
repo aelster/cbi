@@ -2,9 +2,9 @@
 
 function AddForm() {
 	include( 'globals.php' );
-	echo "<form name=fMain id=fMain method=post action=\"$gSourceCode\">";
+	echo "<form name=fMain id=fMain method=post action=\"" . DIR . "$gSourceCode\">";
 	
-	$hidden = array( 'action', 'area', 'fields', 'func', 'from', 'id' );
+	$hidden = array( 'action', 'area', 'fields', 'func', 'from', 'key', 'id' );
 	foreach( $hidden as $var ) {
 		$tag = MakeTag($var);
 		echo "<input type=hidden $tag>";
@@ -1622,64 +1622,76 @@ function HashAdd() {
 }
 
 function LocalInit() {
-	include( 'globals.php' );
-	
+    include( 'globals.php' );
+
     $val = key_exists('debug', $_SESSION) ? $_SESSION['debug'] : 0;
-	$val = 1;
     $gDebug = $gTrace = $val;
 
-    $gAction = isset($_POST['action']) ? $_POST['action'] : 'xxx';
-    if ($gAction == 'xxx') {
-        $loggedin = key_exists('loggedin', $_SESSION) && $_SESSION['loggedin'];
-        if ($loggedin) {
-            $gAction = 'refresh';
-        } else {
-            $gAction = 'login';
+    if (array_key_exists('action', $_POST)) {
+        $gAction = $_POST['action'];
+    } else {
+        $tmp = preg_split("/&/", $_SERVER['QUERY_STRING'], NULL, PREG_SPLIT_NO_EMPTY);
+        foreach ($tmp as $str) {
+            list( $key, $val ) = preg_split("/=/", $str, NULL, PREG_SPLIT_NO_EMPTY);
+            if ($key == 'action') {
+                $gAction = $val;
+            } elseif ($key == 'key') {
+                $gResetKey = $val;
+            }
         }
     }
-	
-	$gFrom = array_key_exists( 'from', $_POST ) ? $_POST['from'] : '';
-	$gFunction = array();
-	$gSourceCode = $_SERVER['REQUEST_URI'];
-	$gPreSelected = ( preg_match( '/id=(\d+)/', $gSourceCode, $matches ) ) ? $matches[1] : 0;
-	if( $gPreSelected > 0 ) {
-		$tmp = preg_match( '/(.+)\?(.+)/', $gSourceCode, $matches );
-		$gSourceCode = $matches[1];
-	}
 
-	$date_server = new DateTime( '2000-01-01' );
-	$date_calif = new DateTime( '2000-01-01', new DateTimeZone('America/Los_Angeles'));
-	$time_offset = $date_server->format('U') - $date_calif->format('U');
-	
+    $gFrom = array_key_exists('from', $_POST) ? $_POST['from'] : '';
+    $gSourceCode = $_SERVER['SCRIPT_NAME'];
+    /*
+      $gPreSelected = ( preg_match( '/id=(\d+)/', $gSourceCode, $matches ) ) ? $matches[1] : 0;
+      if( $gPreSelected > 0 ) {
+      $tmp = preg_match( '/(.+)\?(.+)/', $gSourceCode, $matches );
+      $gSourceCode = $matches[1];
+      }
+     */
+    if (preg_match("/^\//", $gSourceCode)) {
+        $gSourceCode = substr($gSourceCode, 1);
+    }
+
+    $gFunction = array();
+
+    $date_server = new DateTime('2000-01-01');
+    $date_calif = new DateTime('2000-01-01', new DateTimeZone('America/Los_Angeles'));
+    $time_offset = $date_server->format('U') - $date_calif->format('U');
+
 #	DoQuery( "set transaction isolation level serializable" );
 
-	$gCategories = array();
-	$gCategories[0] = '__Unassigned';
-	$stmt = DoQuery('select id, label from categories order by label');
-    while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
-		$gCategories[ $row['id'] ] = $row['label' ];
-	}
-	asort( $gCategories );
-	
-	$gPackages = array();
-	$gPackages[0] = '__Unassigned';
+    $gCategories = array();
+    $gCategories[0] = '__Unassigned';
+    $stmt = DoQuery('select id, label from categories order by label');
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $gCategories[$row['id']] = $row['label'];
+    }
+    asort($gCategories);
 
-	$stmt = DoQuery('select id, label from packages order by label');
-    while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
-		$gPackages[ $row['id'] ] = $row['label' ];
-	}
-	
-	foreach( array( 'open', 'close', 'mail', 'auction' ) as $label ) {
-		$stmt = $gDb->prepare('select date from dates where label = :label');
-    	$stmt->execute(array(':label' => $label ) );
-		if( $stmt->rowCount() == 0 ) {
-			$val = ( $label == 'mail' ) ? 0 : time();
-			$stmt = $gDb->prepare('insert into dates set label = :label, date = :date');
-    		$stmt->execute(array(':label' => $label, ':date' => $val ) );
-		} elseif( $label == 'close' ) {
-			list( $gAuctionYear ) = $stmt->fetch(PDO::FETCH_BOTH);;
-		}
-	}
+    $gPackages = array();
+    $gPackages[0] = '__Unassigned';
+
+    $stmt = DoQuery('select id, label from packages order by label');
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $gPackages[$row['id']] = $row['label'];
+    }
+
+    foreach (array('open', 'close', 'mail', 'auction') as $label) {
+        $stmt = $gDb->prepare('select date from dates where label = :label');
+        $stmt->execute(array(':label' => $label));
+        if ($stmt->rowCount() == 0) {
+            $val = ( $label == 'mail' ) ? 0 : time();
+            $stmt = $gDb->prepare('insert into dates set label = :label, date = :date');
+            $stmt->execute(array(':label' => $label, ':date' => $val));
+        } elseif ($label == 'close') {
+            list( $gAuctionYear ) = $stmt->fetch(PDO::FETCH_BOTH);
+            ;
+        }
+    }
+    $yyyy = date('Y', $gAuctionYear);
+    $gTitle = $yyyy . " " . SITETITLE;
 }
 
 function LoginMain() {
@@ -2471,5 +2483,10 @@ function WriteHeader() {
 	
 	echo "<body>$gLF";
 	AddOverlib();
+	echo "<div class=center>$gLF";
+	echo "<img src=\"assets/CBI_ner_tamid.png\">$gLF";
+	echo "<h2>$gTitle</h2>$gLF";
+	echo "</div>$gLF";
+
 }
 ?>

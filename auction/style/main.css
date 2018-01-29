@@ -1,0 +1,77 @@
+@charset "UTF-8";
+/* CSS Document */
+
+.bg-danger, .bg-success {
+	padding: 0 5px;
+}
+
+a {
+	color: #EF1F2F;
+	text-decoration: none;
+}
+
+.admin {
+    background-color: lightgreen;
+    text-align: center;
+}
+
+.lists table {
+    background-color: #000000;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.lists th {
+    background-color: #addfff;
+    border: 1px solid #000000;
+    padding: 0px 5px 0px 5px;
+    text-align: center;
+}
+
+.lists td {
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    padding: 0px 5px 0px 5px;
+}
+
+.lists td.c {
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    padding: 0px 5px 0px 5px;
+    text-align: center;
+}
+
+table {
+   border-collapse: collapse;
+}
+
+th {
+   border: 1px solid #000;
+   background-color: lightblue;
+   padding: 5px;
+   text-align: center;
+}
+
+th.del {
+   border: 1px solid #000;
+   background-color: red;
+   padding: 5px;
+   text-align: center;
+}
+
+td {
+   border: 1px solid #000;
+   padding: 5px;
+}
+
+td.c {
+   border: 1px solid #000;
+   padding: 5px;
+   text-align: center;
+}
+
+td.action {
+   border: 1px solid #000;
+   padding: 5px;
+   text-align: center;
+}

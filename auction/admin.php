@@ -14,157 +14,152 @@ $gLF = "\n";
 //-----------------------------------------------------------------------------
 //
 
-$gAction = ( isset( $_POST[ "action" ] ) ) ? $_POST[ "action" ] : "";
-$gFrom = ( isset( $_POST[ 'from' ] ) ? $_POST[ 'from' ] : "" );
-$func = ( isset( $_POST['func'] ) ? $_POST['func'] : "" );
+$func = ( isset($_POST['func']) ? $_POST['func'] : "" );
 
-switch( $gAction )
-{
-	case( 'Back' ):
-	case( 'Logout' ):
-		continue;
-		
-	case( 'New' ):
-		if( $gFrom == "UserReleaseNotes" ) { $gAction = "Update"; }
-		break;
-	
-	case( 'Download'):
-		LocalInit();
-		$area = $_POST['area'];
-		if( $area == "spiritual" ) {
-			ExcelSpiritual();
-		} elseif( $area == "items" ) {
-			ExcelItems();
-		}
-		break;
-	
-	default:
-		if( $gFrom == "UserFeatures" ) { $gAction = "Update"; }
-		if( $gFrom == "UserManager" ) { $gAction = "Update"; }
-		if( $gFrom == "UserReleaseNotes" ) { $gAction = "Update"; }
-		if( empty( $gAction ) ) { $gAction = "Start"; }
-		break;
+switch ($gAction) {
+    case( 'Back' ):
+    case( 'Logout' ):
+        continue;
+
+    case( 'New' ):
+        if ($gFrom == "UserReleaseNotes") {
+            $gAction = "Update";
+        }
+        break;
+
+    case( 'Download'):
+        $area = $_POST['area'];
+        if ($area == "spiritual") {
+            ExcelSpiritual();
+        } elseif ($area == "items") {
+            ExcelItems();
+        }
+        break;
+
+    default:
+        if ($gFrom == "UserFeatures") {
+            $gAction = "Update";
+        }
+        if ($gFrom == "UserManager") {
+            $gAction = "Update";
+        }
+        if ($gFrom == "UserReleaseNotes") {
+            $gAction = "Update";
+        }
+        if (empty($gAction)) {
+            $gAction = "Start";
+        }
+        break;
 }
 WriteHeader();
-#LocalInit2();
-	$yyyy = date('Y', $gAuctionYear );
-	echo "<div class=center>$gLF";
-	echo "<img src=\"assets/CBI_ner_tamid.png\">$gLF";
-	echo "<h2>$yyyy CBI Gala Auction</h2>$gLF";
-	echo "</div>$gLF";
 AddForm();
 
-if( $gDebug ) { DumpPostVars( "After SessionStuff(start): gAction=[$gAction]" ); }
+if ($gDebug) {
+    DumpPostVars("End of Phase #1 - Begin Updates: gAction=[$gAction]");
+}
 
-$area = ( isset( $_POST[ "area" ] ) ) ? $_POST[ "area" ] : "";
+$area = ( isset($_POST["area"]) ) ? $_POST["area"] : "";
 
-switch( $gAction ) {
-   case 'Back':
-		if( $gFrom == "EditItem" ) {
-			$gAction = 'Main';
-			$_POST['area'] = 'items';
-		} elseif( $gFrom == "ShowBids" ) {
-			$gAction = 'Main';
-			$_POST['area'] = 'bidders';
-		} elseif( $gFrom == 'source' ) {
-			$gAction = 'Main';
-				
-		} else {
-	      $gAction = 'Welcome';
-	      $func = "";
-		}
-	break;
-   
-   case( 'Continue' ):
-      $gAction = "Start";
-      break;
+switch ($gAction) {
+    case 'Back':
+        if ($gFrom == "EditItem") {
+            $gAction = 'Main';
+            $_POST['area'] = 'items';
+        } elseif ($gFrom == "ShowBids") {
+            $gAction = 'Main';
+            $_POST['area'] = 'bidders';
+        } elseif ($gFrom == 'source') {
+            $gAction = 'Main';
+        } else {
+            $gAction = 'Welcome';
+            $func = "";
+        }
+        break;
 
-   case( 'Login' ):
-      UserManager('verify');
-      break;
+    case( 'Continue' ):
+        $gAction = "Start";
+        break;
 
-   case( 'Main' ):
-		$func = $_POST['func'];
-		if( $func == "backup" ) {
-			exec( "perl /home/cbi18/site/my_backup.pl auction > /home/cbi18/backup_sql/manual.log", $out );
-		}
-		break;
-	
-	case( 'Update' ):
-      if( $gFrom == "DisplayDates" ) {
-         DateUpdate();
-         $gAction = 'Main';
-			$_POST['area'] = 'dates';
-         
-		} elseif( $gFrom == "DisplayMail" ) {
-         MailUpdate();
-         $gAction = 'Main';
-			$_POST['area'] = 'mail';
-         
-		} elseif( $gFrom == "DisplayFinancial" ) {
-         PledgeUpdate();
-         $gAction = 'Main';
-         
-		} elseif( $gFrom == "DisplaySpiritual" ) {
-         PledgeUpdate();
-         $gAction = 'Main';
-         
-      } elseif( $gFrom == 'DisplayMain' ) {
-         if( $area == 'reset' ) {
-				DoQuery( "start transaction" );
-				DoQuery( "truncate bids" );
-				DoQuery( "truncate bidders" );
-				DoQuery( "update items set status = 0 where status = 1" );
-				DoQuery( "commit" );
-         }
-         $gAction = 'Main';
-         
-      } elseif( $gFrom == "UserManagerPassword" ) {
-         UserManager('update');
-         $gAction = 'Main';
-         
-      } elseif( $gFrom == "UserManagerPrivileges" ) {
-         UserManager('update');
-         $gAction = 'Main';
-         $func = 'privileges';
-   
-      } elseif( $gFrom == 'Users' ) {
-         UserManager('update');
-         $gAction = "Main";
-         $func = 'users';
+    case( 'Login' ):
+        UserManager('verify');
+        break;
 
-      } elseif( $gFrom == 'PledgeEdit' ) {
-         PledgeUpdate();
-         $gAction = 'Main';
+    case( 'Main' ):
+        $func = $_POST['func'];
+        if ($func == "backup") {
+            exec("perl /home/cbi18/site/my_backup.pl auction > /home/cbi18/backup_sql/manual.log", $out);
+        }
+        break;
 
-		} elseif( $gFrom == "EditItem" ) {
-			UpdateItem();
-			$gAction = 'Main';
-			$_POST['area'] = 'items';
+    case( 'Update' ):
+        if ($gFrom == "DisplayDates") {
+            DateUpdate();
+            $gAction = 'Main';
+            $_POST['area'] = 'dates';
+        } elseif ($gFrom == "DisplayMail") {
+            MailUpdate();
+            $gAction = 'Main';
+            $_POST['area'] = 'mail';
+        } elseif ($gFrom == "DisplayFinancial") {
+            PledgeUpdate();
+            $gAction = 'Main';
+        } elseif ($gFrom == "DisplaySpiritual") {
+            PledgeUpdate();
+            $gAction = 'Main';
+        } elseif ($gFrom == 'DisplayMain') {
+            if ($area == 'reset') {
+                DoQuery("start transaction");
+                DoQuery("truncate bids");
+                DoQuery("truncate bidders");
+                DoQuery("update items set status = 0 where status = 1");
+                DoQuery("commit");
+            }
+            $gAction = 'Main';
+        } elseif ($gFrom == "UserManagerPassword") {
+            UserManager('update');
+            $gAction = 'Main';
+        } elseif ($gFrom == "UserManagerPrivileges") {
+            UserManager('update');
+            $gAction = 'Main';
+            $func = 'privileges';
+        } elseif ($gFrom == 'Users') {
+            UserManager('update');
+            $gAction = "Main";
+            $func = 'users';
+        } elseif ($gFrom == 'PledgeEdit') {
+            PledgeUpdate();
+            $gAction = 'Main';
+        } elseif ($gFrom == "EditItem") {
+            UpdateItem();
+            $gAction = 'Main';
+            $_POST['area'] = 'items';
+        } elseif ($gFrom == "DisplayItems") {
+            UpdateItem();
+            $gAction = 'Main';
+            $_POST['area'] = 'items';
+        } elseif ($gFrom == "DisplayCategories") {
+            UpdateCategories();
+            $gAction = 'Main';
+            $_POST['area'] = 'categories';
+        } elseif ($gFrom == "DisplayPackages") {
+            UpdatePackages();
+            $gAction = 'Main';
+            $_POST['area'] = 'packages';
+        } else {
+            UserManager('update');
+            $gAction = 'Welcome';
+        }
+        break;
 
-		} elseif( $gFrom == "DisplayItems" ) {
-			UpdateItem();
-			$gAction = 'Main';
-			$_POST['area'] = 'items';
+    case 'forgot':
+        if ($area == 'check') {
+            UserManager('forgot');
+            $gAction = 'Start';
+        }
+        break;
 
-		} elseif( $gFrom == "DisplayCategories" ) {
-			UpdateCategories();
-			$gAction = 'Main';
-			$_POST['area'] = 'categories';
-
-		} elseif( $gFrom == "DisplayPackages" ) {
-			UpdatePackages();
-			$gAction = 'Main';
-			$_POST['area'] = 'packages';
-
-      } else {
-         UserManager( 'update' );
-         $gAction = 'Welcome';
-      }
-      break;
-	  
-	case 'verify':
-        if( $user->is_logged_in() ) {
+    case 'verify':
+        if ($user->is_logged_in()) {
             $gAction = 'Main';
         } else {
             UserVerify();
@@ -175,62 +170,66 @@ switch( $gAction ) {
 $_POST['action'] = $gAction;
 $_POST['func'] = $func;
 
-if( $gDebug ) { DumpPostVars( "After Login/Logout:  gAction=[$gAction]" ); }
+if ($gDebug) {
+    DumpPostVars("End of Phase #2 - Begin Display:  gAction=[$gAction]");
+}
 
 $vect = $args = array();
 
 $vect['Edit'] = 'EditManager';
 $vect['Inactive'] = 'UserManager';
-$vect['Login']	= 'UserManager';
+$vect['Login'] = 'UserManager';
 $vect['Logout'] = 'UserManager';
 $vect['Main'] = 'DisplayMain';
 $vect['Resend'] = 'UserManager';
+$vect['Reset'] = 'UserManager';
 $vect['Start'] = 'UserManager';
 $vect['Welcome'] = 'DisplayMain';
+$vect['forgot'] = 'UserManager';
 $vect['verify'] = 'LoginMain';
 
 $args['Inactive'] = array('inactive');
-$args['Login'] = array( 'verify' );
-$args['Logout'] = array( 'logout' );
-$args['Resend'] = array( 'resend' );
+$args['Login'] = array('verify');
+$args['Logout'] = array('logout');
+$args['Resend'] = array('resend');
+$args['Reset'] = array('reset');
 $args['Start'] = array('login');
+$args['forgot'] = array('forgot');
 
 echo "<div class=center>";
 
-if( ! empty( $vect[ $gAction ] ) ) {
-	$func = $vect[ $gAction ];
-	$arg = array_key_exists( $gAction, $args ) ? $args[ $gAction ] : NULL;
-	switch( count( $arg ) ) {
-		case( 0 ):
-			$func();
-			break;
-		
-		case( 1 ):
-			$func( $arg[0] );
-			break;
-		
-		case( 2 ):
-			$func( $arg[0], $arg[1] );
-			break;
-	}
+if (!empty($vect[$gAction])) {
+    $func = $vect[$gAction];
+    $arg = array_key_exists($gAction, $args) ? $args[$gAction] : NULL;
+    switch (count($arg)) {
+        case( 0 ):
+            $func();
+            break;
+
+        case( 1 ):
+            $func($arg[0]);
+            break;
+
+        case( 2 ):
+            $func($arg[0], $arg[1]);
+            break;
+    }
 } else {
-	switch( $gAction )
-	{
-		case( 'Done' ):
-			break;
-		
-		case( 'Reset Password' ):
-			UserManager( 'reset' );
-			SessionStuff( 'logout' );
-			break;
-		
-		default:
-			echo "action: $gAction<br>";
-			echo "I'm sorry but something unexpected occurred.  Please send all details<br>";
-			echo "of what you were doing and any error messages to $gSupport<br>";
-            echo "<input type=submit name=action value=Back>"; 
-        
-	}
+    switch ($gAction) {
+        case( 'Done' ):
+            break;
+
+        case( 'Reset Password' ):
+            UserManager('reset');
+            SessionStuff('logout');
+            break;
+
+        default:
+            echo "action: $gAction<br>";
+            echo "I'm sorry but something unexpected occurred.  Please send all details<br>";
+            echo "of what you were doing and any error messages to $gSupport<br>";
+            echo "<input type=submit name=action value=Back>";
+    }
 }
 
 echo "</div>";
@@ -238,5 +237,4 @@ echo "</div>";
 echo "</form>";
 echo "</body>";
 echo "</html>";
-
 ?>
