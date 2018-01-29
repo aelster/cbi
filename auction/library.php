@@ -639,6 +639,7 @@ function DisplayMain() {
 		Logger();
 	}
 	
+        $xxx=23;
 	$func = $_POST['func'];
 	$area = $_POST['area'];
 	
