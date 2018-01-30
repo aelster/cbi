@@ -70,6 +70,9 @@ switch ($gAction) {
             $_POST['area'] = 'bidders';
         } elseif ($gFrom == 'source') {
             $gAction = 'Main';
+        } elseif( $gFrom == 'UserManagerNew' ) {
+            $gAction = 'Main';
+            $func = 'users';
         } else {
             $gAction = 'Welcome';
             $func = "";
@@ -88,9 +91,19 @@ switch ($gAction) {
         $func = $_POST['func'];
         if ($func == "backup") {
             exec("perl /home/cbi18/site/my_backup.pl auction > /home/cbi18/backup_sql/manual.log", $out);
+        } elseif( $func == 'debug' ) {
+            $val = ! $_SESSION['debug'];
+            $gDebug = $gTrace = $_SESSION['debug'] = $val;
         }
         break;
 
+    case( 'New' ):
+        if( $area == 'verify' ) {
+            UserManager('new');
+            $gAction = 'Done';
+        }
+        break;
+        
     case( 'Update' ):
         if ($gFrom == "DisplayDates") {
             DateUpdate();
@@ -151,6 +164,11 @@ switch ($gAction) {
         }
         break;
 
+    case 'activate':
+        UserManager('activate');
+        $gAction = 'Main';
+        break;
+    
     case 'forgot':
         if ($area == 'check') {
             UserManager('forgot');
@@ -181,6 +199,7 @@ $vect['Inactive'] = 'UserManager';
 $vect['Login'] = 'UserManager';
 $vect['Logout'] = 'UserManager';
 $vect['Main'] = 'DisplayMain';
+$vect['New'] = 'UserManager';
 $vect['Resend'] = 'UserManager';
 $vect['Reset'] = 'UserManager';
 $vect['Start'] = 'UserManager';
@@ -191,6 +210,7 @@ $vect['verify'] = 'LoginMain';
 $args['Inactive'] = array('inactive');
 $args['Login'] = array('verify');
 $args['Logout'] = array('logout');
+$args['New'] = ['new'];
 $args['Resend'] = array('resend');
 $args['Reset'] = array('reset');
 $args['Start'] = array('login');

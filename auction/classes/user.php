@@ -43,11 +43,10 @@ class User extends Password {
 
         if ($this->password_verify($password, $row['password']) == 1) {
             $_SESSION['loggedin'] = true;
-            $_SESSION['username'] = $row['username'];
             $_SESSION['userid'] = $row['userid'];
+            $_SESSION['username'] = $row['username'];
             $_SESSION['admin'] = $row['admin'];
-            $_SESSION['debug'] = $row['debug'];
-            $this->userid = $row['userid'];
+            $_SESSION['debug'] = 0;
             return true;
         }
     }
@@ -61,7 +60,4 @@ class User extends Password {
             return true;
         }
     }
-
 }
-
-?>

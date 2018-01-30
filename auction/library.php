@@ -706,6 +706,9 @@ function DisplayMain() {
 			$js = sprintf( "onClick=\"%s\"", join(';',$jsx) );
 			echo "<input type=button $js value='Reset Bids'>";
 
+                        $str = ( $gDebug ) ? 'Debug Off' : 'Debug On';
+                        echo "<input type=button onclick=\"setValue('func','debug');addAction('Main');\" value=\"$str\">";
+
 			echo "</div>";
 		}
 		
@@ -1633,11 +1636,18 @@ function LocalInit() {
     } else {
         $tmp = preg_split("/&/", $_SERVER['QUERY_STRING'], NULL, PREG_SPLIT_NO_EMPTY);
         foreach ($tmp as $str) {
-            list( $key, $val ) = preg_split("/=/", $str, NULL, PREG_SPLIT_NO_EMPTY);
-            if ($key == 'action') {
-                $gAction = $val;
-            } elseif ($key == 'key') {
-                $gResetKey = $val;
+            if( preg_match( '/=/', $str ) ) {
+                list( $key, $val ) = preg_split("/=/", $str, NULL, PREG_SPLIT_NO_EMPTY);
+                if ($key == 'action') {
+                    $gAction = $val;
+                } elseif ($key == 'key') {
+                    $gResetKey = $val;
+                }
+            } else {
+                if( $tmp == 'bozo' ) {
+                    $gDebug = 1;
+                    $_SESSION['debug'] = 1;
+                }
             }
         }
     }
