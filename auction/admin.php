@@ -14,7 +14,8 @@ $gLF = "\n";
 //-----------------------------------------------------------------------------
 //
 
-$func = ( isset($_POST['func']) ? $_POST['func'] : "" );
+$gArea = ( isset($_POST['area']) ? $_POST['area'] : "" );
+$gFunc = ( isset($_POST['func']) ? $_POST['func'] : "" );
 
 switch ($gAction) {
     case( 'Back' ):
@@ -28,10 +29,9 @@ switch ($gAction) {
         break;
 
     case( 'Download'):
-        $area = $_POST['area'];
-        if ($area == "spiritual") {
+        if ($gArea == "spiritual") {
             ExcelSpiritual();
-        } elseif ($area == "items") {
+        } elseif ($gArea == "items") {
             ExcelItems();
         }
         break;
@@ -52,30 +52,29 @@ switch ($gAction) {
         break;
 }
 WriteHeader();
+LocalInit();
+WriteBody();
 AddForm();
 
 if ($gDebug) {
     DumpPostVars("End of Phase #1 - Begin Updates: gAction=[$gAction]");
 }
 
-$area = ( isset($_POST["area"]) ) ? $_POST["area"] : "";
-
 switch ($gAction) {
     case 'Back':
         if ($gFrom == "EditItem") {
             $gAction = 'Main';
-            $_POST['area'] = 'items';
+            $gArea = 'items';
         } elseif ($gFrom == "ShowBids") {
             $gAction = 'Main';
-            $_POST['area'] = 'bidders';
+            $gArea = 'bidders';
         } elseif ($gFrom == 'source') {
             $gAction = 'Main';
         } elseif( $gFrom == 'UserManagerNew' ) {
-            $gAction = 'Main';
-            $func = 'users';
+            $gAction = 'Login';
         } else {
             $gAction = 'Welcome';
-            $func = "";
+            $gFunc = "";
         }
         break;
 
@@ -88,17 +87,16 @@ switch ($gAction) {
         break;
 
     case( 'Main' ):
-        $func = $_POST['func'];
-        if ($func == "backup") {
+        if ($gFunc == "backup") {
             exec("perl /home/cbi18/site/my_backup.pl auction > /home/cbi18/backup_sql/manual.log", $out);
-        } elseif( $func == 'debug' ) {
+        } elseif( $gFunc == 'debug' ) {
             $val = ! $_SESSION['debug'];
             $gDebug = $gTrace = $_SESSION['debug'] = $val;
         }
         break;
 
     case( 'New' ):
-        if( $area == 'verify' ) {
+        if( $gArea == 'verify' ) {
             UserManager('new');
             $gAction = 'Done';
         }
@@ -108,11 +106,11 @@ switch ($gAction) {
         if ($gFrom == "DisplayDates") {
             DateUpdate();
             $gAction = 'Main';
-            $_POST['area'] = 'dates';
+            $gArea = 'dates';
         } elseif ($gFrom == "DisplayMail") {
             MailUpdate();
             $gAction = 'Main';
-            $_POST['area'] = 'mail';
+            $gArea = 'mail';
         } elseif ($gFrom == "DisplayFinancial") {
             PledgeUpdate();
             $gAction = 'Main';
@@ -120,7 +118,7 @@ switch ($gAction) {
             PledgeUpdate();
             $gAction = 'Main';
         } elseif ($gFrom == 'DisplayMain') {
-            if ($area == 'reset') {
+            if ($gArea == 'reset') {
                 DoQuery("start transaction");
                 DoQuery("truncate bids");
                 DoQuery("truncate bidders");
@@ -134,30 +132,30 @@ switch ($gAction) {
         } elseif ($gFrom == "UserManagerPrivileges") {
             UserManager('update');
             $gAction = 'Main';
-            $func = 'privileges';
+            $gFunc = 'privileges';
         } elseif ($gFrom == 'Users') {
             UserManager('update');
             $gAction = "Main";
-            $func = 'users';
+            $gFunc = 'users';
         } elseif ($gFrom == 'PledgeEdit') {
             PledgeUpdate();
             $gAction = 'Main';
         } elseif ($gFrom == "EditItem") {
             UpdateItem();
             $gAction = 'Main';
-            $_POST['area'] = 'items';
+            $gArea = 'items';
         } elseif ($gFrom == "DisplayItems") {
             UpdateItem();
             $gAction = 'Main';
-            $_POST['area'] = 'items';
+            $gArea = 'items';
         } elseif ($gFrom == "DisplayCategories") {
             UpdateCategories();
             $gAction = 'Main';
-            $_POST['area'] = 'categories';
+            $gArea = 'categories';
         } elseif ($gFrom == "DisplayPackages") {
             UpdatePackages();
             $gAction = 'Main';
-            $_POST['area'] = 'packages';
+            $gArea = 'packages';
         } else {
             UserManager('update');
             $gAction = 'Welcome';
@@ -166,11 +164,10 @@ switch ($gAction) {
 
     case 'activate':
         UserManager('activate');
-        $gAction = 'Main';
         break;
     
     case 'forgot':
-        if ($area == 'check') {
+        if ($gArea == 'check') {
             UserManager('forgot');
             $gAction = 'Start';
         }
@@ -184,9 +181,6 @@ switch ($gAction) {
         }
         break;
 }
-
-$_POST['action'] = $gAction;
-$_POST['func'] = $func;
 
 if ($gDebug) {
     DumpPostVars("End of Phase #2 - Begin Display:  gAction=[$gAction]");

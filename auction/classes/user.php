@@ -13,10 +13,10 @@ class User extends Password {
     }
 
     private function get_user_hash($username) {
-
+echo "get_user_hash[$username]<br>";
         try {
-            $stmt = $this->_db->prepare('SELECT * FROM users WHERE username = :username AND active=:active ');
-            $stmt->execute(array('username' => $username, 'active' => true));
+            $stmt = DoQuery('SELECT * FROM users WHERE username = :username AND active=:active ',
+                    ['username' => $username, 'active' => 'YES'] );
             return $stmt->fetch(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
             echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
@@ -45,7 +45,7 @@ class User extends Password {
             $_SESSION['loggedin'] = true;
             $_SESSION['userid'] = $row['userid'];
             $_SESSION['username'] = $row['username'];
-            $_SESSION['admin'] = $row['admin'];
+            $_SESSION['disabled'] = $row['disabled'];
             $_SESSION['debug'] = 0;
             return true;
         }
