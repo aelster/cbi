@@ -625,7 +625,6 @@ function DisplayMain() {
         $gFunc = 'xxx';
     }
 
-    echo "gArea = [$gArea]<br>";
     if ($gArea == 'bidders') {
         DisplayBidders();
     } elseif ($gArea == 'categories') {
@@ -654,109 +653,121 @@ function DisplayMain() {
         SourceDisplay();
     } else {
         printf("User: %s<br>", $gUserName);
-        if (UserManager('authorized', 'control')) {
+        if( $_SESSION['level'] >= $gAccessNameToLevel['control'] ) {
             echo "<div class=control>";
-            echo "<h3>Control User Features</h3>";
-            echo "<input type=button onclick=\"setValue('func','source');addAction('Main');\" value=\"Source\">";
-            echo "<input type=button onclick=\"setValue('func','backup');addAction('Main');\" value=\"Backup\">";
-            echo "<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">";
-            echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
-            echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
-            echo "<input type=button onclick=\"setValue('func','hash');addAction('Main');\" value=\"Add Hashes\">";
+            echo "<h3>Control User Features";
+            if (! UserManager('authorized', 'control')) {
+                echo " - Disabled</h3>";
+            } else {
+                echo "</h3>";
+                echo "<input type=button onclick=\"setValue('func','source');addAction('Main');\" value=\"Source\">";
+                echo "<input type=button onclick=\"setValue('func','backup');addAction('Main');\" value=\"Backup\">";
+                echo "<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">";
+                echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
+                echo "<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>";
+                echo "<input type=button onclick=\"setValue('func','hash');addAction('Main');\" value=\"Add Hashes\">";
 
-            $jsx = array();
-            $jsx[] = "setValue('area','reset')";
-            $jsx[] = "setValue('from','DisplayMain')";
-            $jsx[] = "myConfirm('Are you sure you want to delete all bidders and bids?')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value='Reset Bids'>";
+                $jsx = array();
+                $jsx[] = "setValue('area','reset')";
+                $jsx[] = "setValue('from','DisplayMain')";
+                $jsx[] = "myConfirm('Are you sure you want to delete all bidders and bids?')";
+                $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                echo "<input type=button $js value='Reset Bids'>";
 
-            $str = ( $gDebug ) ? 'Debug Off' : 'Debug On';
-            echo "<input type=button onclick=\"setValue('func','debug');addAction('Main');\" value=\"$str\">";
-
+                $str = ( $gDebug ) ? 'Debug Off' : 'Debug On';
+                echo "<input type=button onclick=\"setValue('func','debug');addAction('Main');\" value=\"$str\">";
+            }
             echo "</div>";
         }
 
-        if (UserManager('authorized', 'admin')) {
+        if( $_SESSION['level'] >= $gAccessNameToLevel['admin'] ) {
             echo "<div class=admin>";
-            echo "<h3>Admin User Features</h3>";
+            echo "<h3>Admin User Features";
+            if (!UserManager('authorized', 'admin')) {
+                echo " - Disabled</h3>";
+            } else {
+                echo "</h3>";
 
-            $jsx = array();
-            $jsx[] = "setValue('area','categories')";
-            $jsx[] = "addAction('Main')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value=Categories>";
+                $jsx = array();
+                $jsx[] = "setValue('area','categories')";
+                $jsx[] = "addAction('Main')";
+                $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                echo "<input type=button $js value=Categories>";
 
-            $jsx = array();
-            $jsx[] = "setValue('area','packages')";
-            $jsx[] = "addAction('Main')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value=Packages>";
+                $jsx = array();
+                $jsx[] = "setValue('area','packages')";
+                $jsx[] = "addAction('Main')";
+                $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                echo "<input type=button $js value=Packages>";
 
-            $jsx = array();
-            $jsx[] = "setValue('area','dates')";
-            $jsx[] = "addAction('Main')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value=Dates>";
+                $jsx = array();
+                $jsx[] = "setValue('area','dates')";
+                $jsx[] = "addAction('Main')";
+                $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                echo "<input type=button $js value=Dates>";
 
-            $jsx = array();
-            $jsx[] = "setValue('area','items')";
-            $jsx[] = "addAction('Main')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value=Items>";
-
+                $jsx = array();
+                $jsx[] = "setValue('area','items')";
+                $jsx[] = "addAction('Main')";
+                $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                echo "<input type=button $js value=Items>";
+            }
             echo "</div>";
             echo "<br>";
         }
 
-        if (UserManager('authorized', 'office')) {
+        if( $_SESSION['level'] >= $gAccessNameToLevel['office'] ) {
             echo "<div class=office>";
-            echo "<h3>User Features</h3>";
+            echo "<h3>User Features";
+            if (!UserManager('authorized', 'office')) {
+                echo " - Disabled</h3>";
+            } else {
+                echo "</h3>";
 
-            echo "<input type=button onclick=\"setValue('func','Back');addAction('Main');\" value=Refresh>";
+                echo "<input type=button onclick=\"setValue('func','Back');addAction('Main');\" value=Refresh>";
 
-            $jsx = array();
-            $jsx[] = "setValue('area','bidders')";
-            $jsx[] = "addAction('Main')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value=Bidders>";
+                $jsx = array();
+                $jsx[] = "setValue('area','bidders')";
+                $jsx[] = "addAction('Main')";
+                $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                echo "<input type=button $js value=Bidders>";
 
-            $jsx = array();
-            $jsx[] = "setValue('area','topbids')";
-            $jsx[] = "addAction('Main')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value=\"Top Bids\">";
+                $jsx = array();
+                $jsx[] = "setValue('area','topbids')";
+                $jsx[] = "addAction('Main')";
+                $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                echo "<input type=button $js value=\"Top Bids\">";
 
-            echo "<ul>";
+                echo "<ul>";
 
-            DoQuery("select id from items");
-            printf("<li># of items: %d</li>", $mysql_numrows);
+                DoQuery("select id from items");
+                printf("<li># of items: %d</li>", $mysql_numrows);
 
-            DoQuery("select distinct email from bidders");
-            printf("<li># of bidders: %d</li>", $mysql_numrows);
+                DoQuery("select distinct email from bidders");
+                printf("<li># of bidders: %d</li>", $mysql_numrows);
 
-            $stmt = DoQuery("select count(id) from bids");
-            list( $num ) = $stmt->fetch(PDO::FETCH_BOTH);
-            printf("<li># of bids: %d</li>", $num);
+                $stmt = DoQuery("select count(id) from bids");
+                list( $num ) = $stmt->fetch(PDO::FETCH_BOTH);
+                printf("<li># of bids: %d</li>", $num);
 
-            DoQuery("select distinct itemId from bids");
-            printf("<li># of items with bids: %d</li>", $mysql_numrows);
+                DoQuery("select distinct itemId from bids");
+                printf("<li># of items with bids: %d</li>", $mysql_numrows);
 
-            $v1 = array();
-            $stmt = DoQuery("select id from items");
-            while (list( $id ) = $stmt->fetch(PDO::FETCH_BOTH)) {
-                $v1[] = $id;
+                $v1 = array();
+                $stmt = DoQuery("select id from items");
+                while (list( $id ) = $stmt->fetch(PDO::FETCH_BOTH)) {
+                    $v1[] = $id;
+                }
+                $total = 0;
+                foreach ($v1 as $itemId) {
+                    $stmt = DoQuery("select max( bid ) from bids where itemId = $itemId");
+                    list( $bid ) = $stmt->fetch(PDO::FETCH_BOTH);
+                    $total += $bid;
+                }
+                printf("<li>Sum of winning bids: \$ %s</li>", number_format($total, 2));
+
+                echo "</ul>";
             }
-            $total = 0;
-            foreach ($v1 as $itemId) {
-                $stmt = DoQuery("select max( bid ) from bids where itemId = $itemId");
-                list( $bid ) = $stmt->fetch(PDO::FETCH_BOTH);
-                $total += $bid;
-            }
-            printf("<li>Sum of winning bids: \$ %s</li>", number_format($total, 2));
-
-            echo "</ul>";
-
             echo "</div>";
             echo "<br>";
         }
@@ -1589,7 +1600,7 @@ function LocalInit() {
     include( 'globals.php' );
 
     $val = key_exists('debug', $_SESSION) ? $_SESSION['debug'] : 0;
-    $val = 1;
+#    $val = 1;
     $val = $val || preg_match('/bozo/', $_SERVER['QUERY_STRING']);
     $gDebug = $gTrace = $val;
     $_SESSION['debug'] = $val;

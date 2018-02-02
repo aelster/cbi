@@ -13,7 +13,6 @@ class User extends Password {
     }
 
     private function get_user_hash($username) {
-echo "get_user_hash[$username]<br>";
         try {
             $stmt = DoQuery('SELECT * FROM users WHERE username = :username AND active=:active ',
                     ['username' => $username, 'active' => 'YES'] );
@@ -42,12 +41,17 @@ echo "get_user_hash[$username]<br>";
         $row = $this->get_user_hash($username);
 
         if ($this->password_verify($password, $row['password']) == 1) {
-            $_SESSION['loggedin'] = true;
             $_SESSION['userid'] = $row['userid'];
             $_SESSION['username'] = $row['username'];
             $_SESSION['disabled'] = $row['disabled'];
-            $_SESSION['debug'] = 0;
-            return true;
+            $_SESSION['debug'] = $row['debug'];
+            if( $_SESSION['disabled'] ) {
+                $_SESSION['loggedin'] = true;
+                return false;
+            } else {
+                $_SESSION['loggedin'] = true;
+                return true;
+            }
         }
     }
 

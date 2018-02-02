@@ -18,6 +18,12 @@ global $gPDO_num_rows;
 #=====================================================
 
 global $gAccessLevels;
+global $gAccessLevel;
+global $gAccessLevelEnabled;
+global $gAccessLevels;
+global $gAccessNameEnabled;
+global $gAccessNameToId;
+global $gAccessNameToLevel;
 global $gAction;
 global $gActive;
 global $gArea;
