@@ -18,17 +18,17 @@ $gArea = ( isset($_POST['area']) ? $_POST['area'] : "" );
 $gFunc = ( isset($_POST['func']) ? $_POST['func'] : "" );
 
 switch ($gAction) {
-    case( 'Back' ):
-    case( 'Logout' ):
+    case 'Back':
+    case 'Logout' :
         continue;
 
-    case( 'New' ):
+    case 'New':
         if ($gFrom == "UserReleaseNotes") {
             $gAction = "Update";
         }
         break;
 
-    case( 'Download'):
+    case 'Download':
         if ($gArea == "spiritual") {
             ExcelSpiritual();
         } elseif ($gArea == "items") {

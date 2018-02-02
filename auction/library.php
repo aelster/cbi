@@ -1600,7 +1600,6 @@ function LocalInit() {
     include( 'globals.php' );
 
     $val = key_exists('debug', $_SESSION) ? $_SESSION['debug'] : 0;
-#    $val = 1;
     $val = $val || preg_match('/bozo/', $_SERVER['QUERY_STRING']);
     $gDebug = $gTrace = $val;
     $_SESSION['debug'] = $val;
@@ -2485,9 +2484,8 @@ function WriteHeader() {
 
     $scripts = array();
     $scripts[] = "/scripts/overlib/overlib.js";
-    $scripts[] = "/scripts/overlib/overlib_hideform.js";
+#    $scripts[] = "/scripts/overlib/overlib_hideform.js";
     $scripts[] = "/scripts/commonv2.js";
-    $scripts[] = "/scripts/sha256.js";
     $scripts[] = "/scripts/sorttable.js";
     $scripts[] = "hhPledges.js";
 

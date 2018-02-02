@@ -6,12 +6,13 @@ ob_implicit_flush(TRUE);
 //set timezone
 date_default_timezone_set('America/Los_Angeles');
 
-if ($_SERVER['HTTP_HOST'] == 'www.cbi18.org') {
+if( preg_match( '/cbi18.org/', $_SERVER['HTTP_HOST']) ) {
     $production = 1;
     $parts[] = '/usr/lib/php';
     $parts[] = '/usr/local/lib/php';
     $parts[] = '/home/cbi18/site/php';
     $parts[] = '/home/cbi18/site/Swift-5.0.1';
+    define('DIR', 'https://cbi18.org/');
 }
 
 if (preg_match('/local/', $_SERVER['HTTP_HOST'])) {
@@ -19,6 +20,7 @@ if (preg_match('/local/', $_SERVER['HTTP_HOST'])) {
     $parts[] = '/usr/local/site/php';
     $parts[] = '/usr/local/swiftmailer';
     $parts[] = '/usr/local/fpdf';
+    define('DIR', 'http://local-cbi-test/');
 }
 
 $path = join(PATH_SEPARATOR, $parts);
@@ -29,7 +31,6 @@ include 'library.php';
 include 'local_cbi_auction.php';
 
 //application address
-define('DIR', 'http://local-cbi-test/');
 define('SITEEMAIL', 'andy.elster@gmail.com');
 define('SITETITLE', 'CBI Auction Manager');
 
