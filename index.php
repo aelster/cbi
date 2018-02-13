@@ -1,4 +1,8 @@
 <?php
+
+//set timezone
+date_default_timezone_set('America/Los_Angeles');
+
 echo "
 <head>
 <style>
@@ -30,8 +34,8 @@ p.test {
 </head>";
 
 $path = __FILE__;
-$test = preg_match( '/andy\/src/', $path );
-if( $test ) {
+$test = preg_match('/andy\/src/', $path);
+if ($test) {
     echo "<p class=test>** TEST **</p>";
     echo "Path is $path";
 }
@@ -44,25 +48,27 @@ echo "<ul>
   <br>";
 
 $dh = opendir(".");
-while( ($file = readdir($dh) ) !== false) {
-       if( $file == "." || $file == ".." ) continue;
-       if( $file == ".git" ) continue;
-       if( is_dir($file) ) {
-       	   printf( "<li><a href=%s>%s</a></li>\n", $file, $file );
-	   }
+while (($file = readdir($dh) ) !== false) {
+    if ($file == "." || $file == "..")
+        continue;
+    if ($file == ".git")
+        continue;
+    if (is_dir($file)) {
+        printf("<li><a href=%s>%s</a></li>\n", $file, $file);
+    }
 }
 closedir($dh);
 
-function getMySQLVersion() { 
-  $output = shell_exec('mysql -V'); 
-  preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $version); 
-  return $version[0]; 
+function getMySQLVersion() {
+    $output = shell_exec('/usr/local/mysql/bin/mysql --version');
+    preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $version);
+    return $version[0];
 }
 
-function getApacheVersion() { 
-  $output = apache_get_version();
-  preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $version); 
-  return $version[0]; 
+function getApacheVersion() {
+    $output = apache_get_version();
+    preg_match('@[0-9]+\.[0-9]+\.[0-9]+@', $output, $version);
+    return $version[0];
 }
 
 $php_vers = phpversion();
@@ -78,5 +84,4 @@ echo "
 <tr><th class=e>Apache</th><td class=v>$apache_vers</td></td></tr>
 </table>
 ";
-
 ?>
