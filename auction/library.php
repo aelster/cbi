@@ -27,9 +27,9 @@ function BidAdd() {
     $email = $_POST['bidder_email'];
 
     $qx = array();
-    DoQuery("select * from bidders where email = '$email'");
-    if ($mysql_numrows) {
-        $row = mysql_fetch_assoc($mysql_result);
+    $stmt = DoQuery("select * from bidders where email = '$email'");
+    if ($gPDO_num_rows) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
         $bidder_id = $row['id'];
         $get_new_hash = empty($row['hash']);
         if (isset($_POST['bidder_phone'])) {
@@ -46,15 +46,15 @@ function BidAdd() {
             $qx[] = sprintf("phone = '%d'", preg_replace("/[^0-9]/", "", $_POST['bidder_phone']));
         }
         $query = sprintf("insert into bidders set %s", join(',', $qx));
-        DoQuery($query);
-        $bidder_id = $mysql_last_id;
+        $stmt = DoQuery($query);
+        $bidder_id = $gPDO_lastInserID;
     }
 
     DoQuery("start transaction");
     while ($get_new_hash) {
         $random_hash = substr(md5(uniqid(rand(), true)), 8, 8); // 6 characters long
         DoQuery("select * from bidders where hash = '$random_hash'");
-        if (!$mysql_numrows) {
+        if (!$gPDO_num_rows) {
             DoQuery("update bidders set hash = '$random_hash' where id = $bidder_id");
             $get_new_hash = 0;
         }
@@ -67,11 +67,11 @@ function BidAdd() {
 #
     DoQuery("start transaction");
 
-    DoQuery("select * from items where id = $item_id");
-    $item = mysql_fetch_assoc($mysql_result);
+    $stmt = DoQuery("select * from items where id = $item_id");
+    $item = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    DoQuery("select * from bids where itemId = $item_id order by bid desc limit 1");
-    $top_bid = mysql_fetch_assoc($mysql_result);
+    $stmt = DoQuery("select * from bids where itemId = $item_id order by bid desc limit 1");
+    $top_bid = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($gStatus[$item['status']] == 'Closed') {  # Oops, we've missed this item altogether
         $_POST['id'] = -5;
@@ -101,7 +101,7 @@ function BidAdd() {
         }
         $query = sprintf("insert into bids set %s", join(',', $qx));
         DoQuery($query);
-        $bid_id = $mysql_last_id;
+        $bid_id = $gPDO_lastInsertID;
 
         if ($bid_amount == $item['buyNowPrice']) {
             SendConfirmation($bidder_id, $item_id, $bid_id, $gSendBought);
@@ -191,14 +191,14 @@ function DisplayBidders() {
         printf("<td>%s</td>", $row['email']);
         printf("<td>%s</td>", FormatPhone($row['phone']));
         $query = sprintf("select * from bids where bidderId = %d", $row['id']);
-        DoQuery($query);
+        $stmt = DoQuery($query);
         $jsx = array();
         $jsx[] = "setValue('area','showbids')";
         $jsx[] = sprintf("setValue('id','%s')", $row['hash']);
         $jsx[] = "addAction('Main')";
         $js = sprintf("onclick=\"%s\"", join(';', $jsx));
         echo "<td class=c $js>";
-        printf("%d", $GLOBALS['gPDO_num_rows']);
+        echo $stmt->rowCount();
         echo "</td>";
         echo "</tr>\n";
     }
@@ -741,17 +741,17 @@ function DisplayMain() {
                 echo "<ul>";
 
                 DoQuery("select id from items");
-                printf("<li># of items: %d</li>", $mysql_numrows);
+                printf("<li># of items: %d</li>", $gPDO_num_rows);
 
                 DoQuery("select distinct email from bidders");
-                printf("<li># of bidders: %d</li>", $mysql_numrows);
+                printf("<li># of bidders: %d</li>", $gPDO_num_rows);
 
                 $stmt = DoQuery("select count(id) from bids");
                 list( $num ) = $stmt->fetch(PDO::FETCH_BOTH);
                 printf("<li># of bids: %d</li>", $num);
 
                 DoQuery("select distinct itemId from bids");
-                printf("<li># of items with bids: %d</li>", $mysql_numrows);
+                printf("<li># of items with bids: %d</li>", $gPDO_num_rows);
 
                 $v1 = array();
                 $stmt = DoQuery("select id from items");
@@ -1243,8 +1243,8 @@ function DisplayTopBids() {
 
         printf("<td class=${sold}right>\$ %s</td>", number_format($row['bid'], 2));
 
-        printf("<td class=${sold}c>%d</td>", $mysql_numrows);
-        $tot_bids += $mysql_numrows;
+        printf("<td class=${sold}c>%d</td>", $gPDO_num_rows);
+        $tot_bids += $gPDO_num_rows;
         echo "</tr>\n";
         $sum += $row['bid'];
     }
@@ -1574,7 +1574,7 @@ function HashAdd() {
         Logger();
     }
     DoQuery("select id, hash from bidders where hash is NULL");
-    if ($mysql_numrows) {
+    if ($gPDO_num_rows) {
         $outer = $mysql_result;
         while (list( $bidder_id, $hash ) = mysql_fetch_array($outer)) {
             if (empty($hash)) {
@@ -1583,7 +1583,7 @@ function HashAdd() {
                 while ($get_new_hash) {
                     $random_hash = substr(md5(uniqid(rand(), true)), 8, 6); // 6 characters long
                     DoQuery("select * from bidders where hash = '$random_hash'");
-                    if (!$mysql_numrows) {
+                    if (!$gPDO_num_rows) {
                         DoQuery("update bidders set hash = '$random_hash' where id = $bidder_id");
                         $get_new_hash = 0;
                     }
@@ -1601,14 +1601,14 @@ function LocalInit() {
 
     $val = key_exists('debug', $_SESSION) ? $_SESSION['debug'] : 0;
     $val = $val || preg_match('/bozo/', $_SERVER['QUERY_STRING']);
+    #$val = 1;
     $gDebug = $gTrace = $val;
     $_SESSION['debug'] = $val;
 
-    if (preg_match('/syzygy/', $_SERVER['QUERY_STRING'])) {
+    $force = 0;
+    if($force && preg_match('/syzygy/', $_SERVER['QUERY_STRING'])) {
         $stmt = DoQuery('show tables');
-        echo "# tables found: " . $stmt->rowCount() . "<br>";
         while (list($table) = $stmt->fetch(PDO::FETCH_NUM)) {
-            echo "<!-- truncate $table -->\n";
             DoQuery("truncate $table");
         }
     }
@@ -1636,13 +1636,14 @@ function LocalInit() {
 
     $gFrom = array_key_exists('from', $_POST) ? $_POST['from'] : '';
     $gSourceCode = $_SERVER['SCRIPT_NAME'];
-    /*
-      $gPreSelected = ( preg_match( '/id=(\d+)/', $gSourceCode, $matches ) ) ? $matches[1] : 0;
+    
+    // id=(nn) allows quick access to a prior bidder for an item
+      $gPreSelected = ( preg_match( '/id=(\d+)/', $_SERVER['QUERY_STRING'], $matches ) ) ? $matches[1] : 0;
+      
       if( $gPreSelected > 0 ) {
-      $tmp = preg_match( '/(.+)\?(.+)/', $gSourceCode, $matches );
-      $gSourceCode = $matches[1];
+      $tmp = preg_match( '/(.+)\?(.+)/', $_SERVER['QUERY_STRING'], $matches );
       }
-     */
+
     if (preg_match("/^\//", $gSourceCode)) {
         $gSourceCode = substr($gSourceCode, 1);
     }
@@ -2039,18 +2040,13 @@ function PledgeUpdate() {
 function SendConfirmation($bidder_id, $item_id, $bid_id, $send_type) {
     include( 'globals.php' );
     if ($gTrace) {
-        $gFunction[] = __FUNCTION__;
+        $gFunction[] = sprintf( "%s(%d,%d,%d,%d)", __FUNCTION__, $bidder_id, $item_id, $bid_id, $send_type);
         Logger();
     }
 
-    DoQuery("select * from bidders where id = $bidder_id");
-    $bidder = mysql_fetch_assoc($mysql_result);
-
-    DoQuery("select * from items where id = $item_id");
-    $item = mysql_fetch_assoc($mysql_result);
-
-    DoQuery("select * from bids where id = $bid_id");
-    $bid = mysql_fetch_assoc($mysql_result);
+    $bidder = DoQuery("select * from bidders where id = $bidder_id")->fetch(PDO::FETCH_ASSOC);
+    $item = DoQuery("select * from items where id = $item_id")->fetch(PDO::FETCH_ASSOC);
+    $bid = DoQuery("select * from bids where id = $bid_id")->fetch(PDO::FETCH_ASSOC);
 
     switch ($send_type) {
         case ( $gSendOld ):
@@ -2129,15 +2125,15 @@ function SendConfirmation($bidder_id, $item_id, $bid_id, $send_type) {
     }
 
     if ($send_type == $gSendOld) {
-        $html[] = "Click here to view the current bid: http://www.cbi18.org/auction/?id=$item_id";
-        $text[] = "Click here to view the current bid: http://www.cbi18.org/auction/?id=$item_id";
+        $html[] = "Click here to view the current bid: " . DIR . $gSourceCode . "?id=$item_id";
+        $text[] = "Click here to view the current bid: " . DIR . $gSourceCode . "?id=$item_id";
 
         $html[] = "";
         $text[] = "";
     }
 
-    $html[] = "Click here to go to the auction site: http://www.cbi18.org/auction";
-    $text[] = "Click here to go to the auction site: http://www.cbi18.org/auction";
+    $html[] = "Click here to go to the auction site: " . DIR . $gSourceCode;
+    $text[] = "Click here to go to the auction site: " . DIR . $gSourceCode;
 
     $html[] = "";
     $text[] = "";
@@ -2247,7 +2243,7 @@ function ShowBids() {
         echo "<td>$title</td>";
 
         DoQuery("select bid from bids where itemId = $iid and bidderId = $bidderId order by bid desc");
-        printf("<td class=c>%d</td>", $mysql_numrows);
+        printf("<td class=c>%d</td>", $gPDO_num_rows);
 
         list( $my_bid ) = mysql_fetch_array($mysql_result);
         printf("<td class=right>\$ %s</td>", number_format($my_bid, 2));
@@ -2297,8 +2293,8 @@ function UpdateCategories() {
         }
     } elseif ($gFunc == "add") {
         $label = $_POST["cat_0"];
-        DoQuery("select * from categories where label = '$label'");
-        if (!$GLOBALS['gPDO_num_rows']) {
+        $stmt = DoQuery("select * from categories where label = '$label'");
+        if (! $stmt->rowCount() ) {
             DoQuery("insert into categories set label = '$label'");
         }
     }
@@ -2372,8 +2368,8 @@ function UpdatePackages() {
         }
     } elseif ($gFunc == "add") {
         $label = CleanString($_POST["pkg_0"]);
-        DoQuery("select * from packages where label = '$label'");
-        if (!$GLOBALS['gPDO_num_rows']) {
+        $stmt = DoQuery("select * from packages where label = '$label'");
+        if (! $stmt->rowCount() ) {
             DoQuery("insert into packages set label = '$label'");
         }
     }
@@ -2464,6 +2460,12 @@ function WriteBody() {
     echo "<img src=\"assets/CBI_ner_tamid.png\">$gLF";
     echo "<h2>$gTitle</h2>$gLF";
     echo "</div>$gLF";    
+    
+    if( $gDebug ) {
+        echo "<script type='text/javascript'>";
+        echo "createDebugWindow();";
+        echo "</script>";
+    }
 }
 
 function WriteHeader() {

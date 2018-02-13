@@ -4,8 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="pingback" href="https://www.cbi18.org/xmlrpc.php" />
     <!-- InstanceBeginEditable name="doctitle" -->
-    <title>CBI Auction Home</title>
-    <!-- InstanceEndEditable -->
+        <title>CBI Auction Home</title>
+        <!-- InstanceEndEditable -->
     <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Feed" href="https://www.cbi18.org/feed/" />
     <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Comments Feed" href="https://www.cbi18.org/comments/feed/" />
     <link rel="alternate" type="application/rss+xml" title="Congregation B&#039;nai Israel &raquo; Home Comments Feed" href="https://www.cbi18.org/home/feed/" />
@@ -252,82 +252,9 @@ AddForm();
 
 	  <div id="exodus-header-menu-inner" class="exodus-centered-content exodus-clearfix">
 
-	    <ul id="exodus-header-menu-content" class="sf-menu"><li id="menu-item-8835" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-8587 current_page_item menu-item-8835"><a href="https://www.cbi18.org/">Home</a></li>
-	      <li id="menu-item-9317" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-9317"><a href="#">About Us</a>
-		<ul class="sub-menu">
-		  <li id="menu-item-8677" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8677"><a href="https://www.cbi18.org/contact-us/">Contact Us</a></li>
-		  <li id="menu-item-8606" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8606"><a href="https://www.cbi18.org/who-we-are/">Who We Are</a></li>
-		  <li id="menu-item-9010" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9010"><a href="https://www.cbi18.org/clergy-and-staff/">Our Clergy, Staff and Board of Directors</a></li>
-		  <li id="menu-item-8594" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8594"><a href="https://www.cbi18.org/history/">Our History</a></li>
-		  <li id="menu-item-8627" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8627"><a href="#">Our Facility</a>
-		    <ul class="sub-menu">
-		      <li id="menu-item-8592" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8592"><a href="https://www.cbi18.org/facility-rental/">Facility Rental</a></li>
-		      <li id="menu-item-8593" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8593"><a href="https://www.cbi18.org/gift-shop/">Gift Shop</a></li>
-		    </ul>
-		  </li>
-		  <li id="menu-item-8628" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8628"><a href="https://www.cbi18.org/shofar/">Shofar Newsletter</a></li>
-		  <li id="menu-item-8590" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8590"><a href="https://www.cbi18.org/in-the-news/">In the News</a></li>
-		  <li id="menu-item-8927" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8927"><a href="https://www.cbi18.org/videos/">Videos</a></li>
-		  <li id="menu-item-8629" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8629"><a href="https://www.cbi18.org/partnerships/">Partnerships</a></li>
-		</ul>
-	      </li>
-	      <li id="menu-item-8630" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8630"><a href="#">Calendar</a>
-		<ul class="sub-menu">
-		  <li id="menu-item-9320" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9320"><a href="https://www.cbi18.org/thisweek/">This Week at CBI</a></li>
-		  <li id="menu-item-8556" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8556"><a href="https://www.cbi18.org/calendar/">Monthly Calendar</a></li>
-		  <li id="menu-item-9370" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9370"><a href="https://www.cbi18.org/religious-school-calendar/">Religious School Calendar</a></li>
-		</ul>
-	      </li>
-	      <li id="menu-item-8633" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8633"><a href="#">Community</a>
-		<ul class="sub-menu">
-		  <li id="menu-item-8595" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8595"><a href="https://www.cbi18.org/membership/">Membership</a></li>
-		  <li id="menu-item-8634" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children menu-item-8634"><a href="https://www.cbi18.org/youth-teens/">Youth and Teens</a>
-		    <ul class="sub-menu">
-		      <li id="menu-item-8983" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8983"><a href="https://www.cbi18.org/machar-k-3/">Machar (K-3)</a></li>
-		      <li id="menu-item-8982" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8982"><a href="https://www.cbi18.org/kadima-4-6/">Kadima (4-6)</a></li>
-		      <li id="menu-item-8981" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8981"><a href="https://www.cbi18.org/usy-7-12/">USY (7-12)</a></li>
-		      <li id="menu-item-8984" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8984"><a href="https://www.cbi18.org/camp-bnai-ruach/">Camp B&#8217;nai Ruach</a></li>
-		    </ul>
-		  </li>
-		  <li id="menu-item-8640" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8640"><a href="#">Adults</a>
-		    <ul class="sub-menu">
-		      <li id="menu-item-8635" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8635"><a href="https://www.cbi18.org/mens-club/">Men&#8217;s Club</a></li>
-		      <li id="menu-item-8636" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8636"><a href="https://www.cbi18.org/sisterhood/">Sisterhood</a></li>
-		      <li id="menu-item-8637" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8637"><a href="https://www.cbi18.org/groups/">Group Activities</a></li>
-		    </ul>
-		  </li>
-		  <li id="menu-item-8639" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8639"><a href="https://www.cbi18.org/families/">Families</a></li>
-		  <li id="menu-item-8643" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8643"><a href="https://www.cbi18.org/social-action/">Social Action</a></li>
-		  <li id="menu-item-8644" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8644"><a href="https://www.cbi18.org/pastoral-care/">Pastoral Care</a></li>
-		</ul>
-	      </li>
-	      <li id="menu-item-8650" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8650"><a href="#">Learning</a>
-		<ul class="sub-menu">
-		  <li id="menu-item-8647" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8647"><a href="https://www.cbi18.org/preschool/">Preschool</a></li>
-		  <li id="menu-item-8896" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8896"><a href="https://www.cbi18.org/education/religious-school/">Religious School</a></li>
-		  <li id="menu-item-8649" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8649"><a href="https://www.cbi18.org/education/adult-education/">Adult Education</a></li>
-		  <li id="menu-item-9354" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-9354"><a href="https://www.cbi18.org/sermons-and-teachings/">Sermons and Teachings</a></li>
-		</ul>
-	      </li>
-	      <li id="menu-item-8651" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8651"><a href="#">Worship &#038; Life Cycle</a>
-		<ul class="sub-menu">
-		  <li id="menu-item-8653" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8653"><a href="https://www.cbi18.org/erev-shabbat-friday-night/">Erev Shabbat (Friday Night)</a></li>
-		  <li id="menu-item-8652" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8652"><a href="https://www.cbi18.org/shabbat-mornings/">Shabbat Mornings</a></li>
-		  <li id="menu-item-8654" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8654"><a href="https://www.cbi18.org/holidays/">Holidays</a></li>
-		  <li id="menu-item-8655" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8655"><a href="https://www.cbi18.org/weekday/">Weekday</a></li>
-		  <li id="menu-item-8656" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8656"><a href="https://www.cbi18.org/cbi-coastal/">CBI Coastal</a></li>
-		  <li id="menu-item-8657" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8657"><a href="https://www.cbi18.org/life-cycle-events/">Life Cycle Events</a></li>
-		  <li id="menu-item-8662" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8662"><a href="https://www.cbi18.org/pastoral-care/">Pastoral Care</a></li>
-		</ul>
-	      </li>
-	      <li id="menu-item-8673" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-has-children menu-item-8673"><a href="#">Giving</a>
-		<ul class="sub-menu">
-		  <li id="menu-item-8557" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8557"><a href="https://www.cbi18.org/donate/">Donate</a></li>
-		  <li id="menu-item-8674" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8674"><a href="https://www.cbi18.org/volunteer-opportunities/">Volunteer Opportunities</a></li>
-		  <li id="menu-item-8952" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8952"><a href="https://www.cbi18.org/about-our-funds/">About our Funds</a></li>
-		  <li id="menu-item-8675" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-8675"><a href="https://www.cbi18.org/legacy-giving/">Endowment and Legacy Giving</a></li>
-		</ul>
-	      </li>
+	    <ul id="exodus-header-menu-content" class="sf-menu">
+        <li id="menu-item-8835" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-8587 current_page_item menu-item-8835"><a href="https://www.cbi18.org/">Back to the main CBI site</a></li>
+	     
 	    </ul>
 	    <ul class="exodus-list-icons">
 	      <li><a href="https://www.facebook.com/cbi18" class="el-icon-facebook" title="Facebook" target="_blank"></a></li>
@@ -339,334 +266,336 @@ AddForm();
 
 <div class="content">
 <!-- InstanceBeginEditable name="EditRegion3" -->
-<div class="fltlft" id="leftDirectory">
-	 <?php
-	 DoQuery( "select label, date from dates" );
-	 while( list( $label, $ts ) = mysql_fetch_array( $mysql_result ) ) {
-		$myDate[$label] = $ts;
-	 }
-	 $now = time();
-	 
-	 if( $now >= $myDate['open'] || $gGala ) {
-		DoQuery( "select * from items where status != $gStatusHidden and itemIsLive = 0 and itemPackage = 0" );
-		$avail = $GLOBALS['mysql_numrows'];
-		$jsx = array();
-		$jsx[] = "setValue('area','bid')";
-		$jsx[] = sprintf( "setValue('id','%d')", -2);
-		$jsx[] = "addAction('')";
-		$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-		echo "<a $js>Silent Auction ($avail)</a><br>";
-		
-		DoQuery( "select * from items where itemIsLive = 1 and status = 0 and itemPackage = 0" );
-		if( $mysql_numrows ) {
-		  $jsx = array();
-		  $jsx[] = "setValue('area','bid')";
-		  $jsx[] = sprintf( "setValue('id','%d')", -3);
-		  $jsx[] = "addAction('')";
-		  $js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-		  echo "<a $js>Live Auction ($mysql_numrows)</a><br>";
-		}
-		
-		DoQuery( "select * from packages" );
-		if( $mysql_numrows ) {
-		  $jsx = array();
-		  $jsx[] = "setValue('area','bid')";
-		  $jsx[] = sprintf( "setValue('id','%d')", -8);
-		  $jsx[] = "addAction('')";
-		  $js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-		  echo "<a $js>Packages ($mysql_numrows)</a><br>";
-		}
-		
-		echo "<br>";
-		
-		foreach( $gCategories as $id => $label ) {
-		  DoQuery( "select * from items where itemPackage = 0 and status != $gStatusHidden and itemCategory = $id" );
-		  if( $mysql_numrows > 0) {
-			  $jsx = array();
-			  $jsx[] = "setValue('area','bid')";
-			  $jsx[] = sprintf( "setValue('id','%d')", $id);
-			  $jsx[] = "addAction('')";
-			  $js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-  #		  echo "<li>$label (<a href=\"$gSourceCode\" $js>$avail</a>)</li>";
-			 echo "<a $js>$label ($mysql_numrows)</a><br>";
-		  }
-		}
-	 }
+                    <div class="fltlft" id="leftDirectory">
+                        <?php
+                        $stmt = DoQuery("select label, date from dates");
+                        while (list( $label, $ts ) = $stmt->fetch(PDO::FETCH_NUM)) {
+                            $myDate[$label] = $ts;
+                        }
+                        $now = time();
+
+                        if ($now >= $myDate['open'] || $gGala) {
+                            $stmt = DoQuery("select * from items where status != $gStatusHidden and itemIsLive = 0 and itemPackage = 0");
+                            $avail = $stmt->rowCount();
+                            $jsx = array();
+                            $jsx[] = "setValue('area','bid')";
+                            $jsx[] = sprintf("setValue('id','%d')", -2);
+                            $jsx[] = "addAction('')";
+                            $js = sprintf("onclick=\"%s\"", join(';', $jsx));
+                            echo "<a $js>Silent Auction ($avail)</a><br>";
+
+                            $stmt = DoQuery("select * from items where itemIsLive = 1 and status = 0 and itemPackage = 0");
+                            $num = $stmt->rowCount();
+                            if ($num) {
+                                $jsx = array();
+                                $jsx[] = "setValue('area','bid')";
+                                $jsx[] = sprintf("setValue('id','%d')", -3);
+                                $jsx[] = "addAction('')";
+                                $js = sprintf("onclick=\"%s\"", join(';', $jsx));
+                                echo "<a $js>Live Auction ($num)</a><br>";
+                            }
+
+                            $stmt = DoQuery("select * from packages");
+                            $num = $stmt->rowCount();
+                            if ($num) {
+                                $jsx = array();
+                                $jsx[] = "setValue('area','bid')";
+                                $jsx[] = sprintf("setValue('id','%d')", -8);
+                                $jsx[] = "addAction('')";
+                                $js = sprintf("onclick=\"%s\"", join(';', $jsx));
+                                echo "<a $js>Packages ($num)</a><br>";
+                            }
+
+                            echo "<br>";
+
+                            foreach ($gCategories as $id => $label) {
+                                $stmt = DoQuery("select * from items where itemPackage = 0 and status != $gStatusHidden and itemCategory = $id");
+                                $num = $stmt->rowCount();
+                                if ($num > 0) {
+                                    $jsx = array();
+                                    $jsx[] = "setValue('area','bid')";
+                                    $jsx[] = sprintf("setValue('id','%d')", $id);
+                                    $jsx[] = "addAction('')";
+                                    $js = sprintf("onclick=\"%s\"", join(';', $jsx));
+                                    #		  echo "<li>$label (<a href=\"$gSourceCode\" $js>$avail</a>)</li>";
+                                    echo "<a $js>$label ($num)</a><br>";
+                                }
+                            }
+                        }
 #	 echo "</li>";
-	 $cid = isset( $_POST['id'] ) ? $_POST['id'] : 0;
-	 ?>
-  </div>
-  
-  <div class="fltrt" id="rightContents">
-<?php
-  if( $gDebug ) { DumpPostVars(); }
-	 if( $now < $myDate['open'] ) {
-		$open = $gGala;
-		$dstr = sprintf( "%s at %s", date( "l, F jS, Y", $myDate['open'] ), date( "g:i A", $myDate['open'] ) );
-	 } elseif( $now < $myDate['close'] ) {
-		$open = 1;
-	   $dstr = sprintf( "%s at %s", date( "l, F jS, Y", $myDate['close'] ), date( "g:i A", $myDate['close'] ) );
-	 } else {
-		$open = $gGala;
-		$dstr = sprintf( "%s at %s", date( "l, F jS, Y", $myDate['close'] ), date( "g:i A", $myDate['close'] ) );
-	 }
-	 $dstr2 = date( "l, F jS, Y", $myDate['auction'] );
-	 
-	 if( $gPreSelected > 0 ) {
-		DoQuery( "select itemCategory from items where id = $gPreSelected" );
-		if( $mysql_numrows == 0 ) {
-		  $cid = -1;
-		} else {
-		  list( $cid ) = mysql_fetch_array( $mysql_result );
-		}
-	 } else {
-		$cid = isset( $_POST['id'] ) ? $_POST['id'] : -1;
-	 }
-	 
-	$tagline = "We appreciate your support of CBI's programs, of our warm community";
-	$tagline .= " and of our Annual Gala honoring our out-going president Terry G!";
-	
-	 if( $cid == -1 ) {
-			$yyyy = date('Y', $gAuctionYear );
+                        $cid = isset($_POST['id']) ? $_POST['id'] : 0;
+                        ?>
+                    </div>
 
-?>
-    <p>Welcome to the <?php echo $yyyy ?> Congregation B'nai Israel Annual Gala Auction Site</p>
-	 <?php
-		if( $now < $myDate['open'] ) {
-?>
-<p><strong>THE ONLINE AUCTION IS COMING SOON! </strong></p>
-<p> The online auction will be open <?php echo $dstr ?>.
-<p><?php echo $tagline ?></p>
-<?php
-		} elseif( $now < $myDate['close'] ) {
-?>
-<p>
-<strong>THE ONLINE AUCTION IS NOW OPEN!</strong><br>
-<br>
-The online auction will remain open through <?php echo $dstr ?>.<br>
-<br>
-Items that have not reached the "BUY NOW" amount by that time will be put
-on display at CBI on <?php echo $dstr2 ?>, with the highest online bid received as the bidding starting point.
-<br>
-<p><?php echo $tagline ?></p>
-<?php
-		} else {
-?>
-<p><strong>THE ONLINE AUCTION IS NOW CLOSED</strong></p>
-<p>Items that have not been sold will be put
-on display at CBI on <?php echo $dstr2 ?>, with the highest online bid received as the bidding starting point.
-Bids will continue to be accepted from 11:30 AM - 1:00 PM, and at the gala that evening from 5:00 - 5:45 PM.
-Auction items range from vacation getaways to donated items guaranteed to delight and surprise.
-Many are exclusive offers from our members, sharing their special talents.  </p>
-<p><strong>A VERY SPECIAL THANK YOU TO OUR DONORS AND BIDDERS! </strong></p>
-<p><?php echo $tagline ?></p>
-<?php
-		}
-	 } elseif( $cid == -4 ) {
-?>
-	 <p>Thank you for supporting Congregation B'nai Israel.</p>
-	 <p>You should be receiving an email confirming your latest bid.</p>
-	 <p>We also encourage you to bid on additional items.</p>
-<?php
-	 } elseif( $cid == -5 ) {
-?>
-	 <p>We're terribly sorry but somebody just completed a BuyNow for this item and it is no longer available.</p>
-	 <p>We also encourage you to bid on additional items.</p>
-<?php
-	 } elseif( $cid == -6 ) {
-?>
-	 <p>We're terribly sorry but somebody beat you to that price.  Please try again.</p>
-	 <p>We also encourage you to bid on additional items.</p>
-<?php
-	 } elseif( $cid == -7 ) {
-?>
-	 <p>We're terribly sorry but somebody already bid a higher price.  Please try again.</p>
-	 <p>We also encourage you to bid on additional items.</p>
-<?php
-	 } else {
-		if( $cid == -2 ) {
-		  DoQuery( "select * from items where status != $gStatusHidden and itemIsLive = 0 and itemPackage = 0 order by itemTitle asc" );
-		  $title = "Silent Auction Items";
-		} elseif( $cid == -3 ) {
-		  DoQuery( "select * from items where status != $gStatusHidden and itemIsLive = 1 and itemPackage = 0 order by itemTitle asc" );
-		  $title = "Live Auction Items";
-		} elseif( $cid == -8 ) {
-		  $title = "All Packages";
-		} else {
-		  DoQuery( "select * from items where status != $gStatusHidden and itemCategory = $cid order by itemTitle asc" );
-		  $title = $gCategories[$cid];
-		}
-		
-		if( $cid == -8 ) {
-		  echo "<h3>$title</h3>";
-		  echo "<hr>";
-		  
-		  $pids = array_keys( $gPackages );
-		  foreach( $pids as $pid ) {
-			 if( $pid == 0 ) continue;
-			 
-			 echo "<table class=items>";
-		  
-			 DoQuery( "select sum(itemValue) from items where itemPackage = $pid" );
-			 $row = mysql_fetch_array( $mysql_result );
-			 echo "<tr>";
-			 echo "<td colspan=2><b>$pid: " . $gPackages[$pid] . sprintf( ", Total Value: \$ %s", number_format( $row[0], 2 ) ). "</td>";
-			 echo "</tr>";
-			 
-			 DoQuery( "select itemTitle, itemDesc from items where itemPackage = $pid" );
-			 while( list( $it, $id ) = mysql_fetch_array( $mysql_result ) ) {
-				echo "<tr>";
-				echo "<td>&nbsp;&nbsp;&bull;&nbsp;$it - $id</td>";
-				echo "</tr>";
-			 }
-		  echo "</table>";
-		  echo "<hr>";
-		  }
-		  
-		} else {
-		  $cols = ( $open ) ? 4 : 2;
-		
-		echo "<table class=items>";
-		echo "<thead>";
-		echo "<tr>";
-		echo "<th colspan=$cols class=top><h3>$title</h3></th>";
-		echo "</tr>";
-		
+                    <div class="fltrt" id="rightContents">
+                        <?php
+                        if ($gDebug) {
+                            DumpPostVars();
+                        }
+                        if ($now < $myDate['open']) {
+                            $open = $gGala;
+                            $dstr = sprintf("%s at %s", date("l, F jS, Y", $myDate['open']), date("g:i A", $myDate['open']));
+                        } elseif ($now < $myDate['close']) {
+                            $open = 1;
+                            $dstr = sprintf("%s at %s", date("l, F jS, Y", $myDate['close']), date("g:i A", $myDate['close']));
+                        } else {
+                            $open = $gGala;
+                            $dstr = sprintf("%s at %s", date("l, F jS, Y", $myDate['close']), date("g:i A", $myDate['close']));
+                        }
+                        $dstr2 = date("l, F jS, Y", $myDate['auction']);
+                        if ($gPreSelected > 0) {
+                            $stmt = DoQuery("select itemCategory from items where id = $gPreSelected");
+                            if ($gPDO_num_rows == 0) {
+                                $cid = -1;
+                            } else {
+                                list( $cid ) = $stmt->fetch(PDO::FETCH_NUM);
+                            }
+                        } else {
+                            $cid = isset($_POST['id']) ? $_POST['id'] : -1;
+                        }
 
-		echo "<tr>";
-		echo "<th class=bottom>&nbsp;</th>";
-		if( $open ) {
-		  echo "<th class=bottom>Current Bid</th>";
-		  echo "<th class=bottom>New Bid</th>";
-		  echo "<th class=bottomr>Value</th>";
-		} else {
-		  echo "<th class=bottom>Status</th>";
-		}
-		echo "</tr>";
-		echo "</thead>";
+                        $tagline = "We appreciate your support of CBI's programs, of our warm community";
+                        $tagline .= " and of our Annual Gala honoring Barbara and Joe Baim!";
 
-		$outer = $mysql_result;
-		while( $row = mysql_fetch_assoc( $outer ) ) {
-		  $iid = $row['id'];
-		  $sold = ( $row['status'] == $gStatusClosed );
+                        if ($cid == -1) {
+                            $yyyy = date('Y', $gAuctionYear);
+                            ?>
+                            <p>Welcome to the <?php echo $yyyy ?> Congregation B'nai Israel Annual Gala Auction Site</p>
+                            <?php
+                            if ($now < $myDate['open']) {
+                                ?>
+                                <p><strong>THE ONLINE AUCTION IS COMING SOON! </strong></p>
+                                <p> The online auction will be open <?php echo $dstr ?></p>
+                                <p><?php echo $tagline ?></p>
+                                <?php
+                            } elseif ($now < $myDate['close']) {
+                                ?>
+                                <p>
+                                    <strong>THE ONLINE AUCTION IS NOW OPEN!</strong><br>
+                                    <br>
+                                    The online auction will remain open through <?php echo $dstr ?>.<br>
+                                    <br>
+                                    Items that have not reached the "BUY NOW" amount by that time will be put
+                                    on display at CBI on <?php echo $dstr2 ?>, with the highest online bid received as the bidding starting point.
+                                    <br>
+                                <p><?php echo $tagline ?></p>
+                                <?php
+                            } else {
+                                ?>
+                                <p><strong>THE ONLINE AUCTION IS NOW CLOSED</strong></p>
+                                <p>Items that have not been sold will be put
+                                    on display at CBI on <?php echo $dstr2 ?>, with the highest online bid received as the bidding starting point.
+                                    Bids will continue to be accepted from 11:30 AM - 1:00 PM, and at the gala that evening from 5:00 - 5:45 PM.
+                                    Auction items range from vacation getaways to donated items guaranteed to delight and surprise.
+                                    Many are exclusive offers from our members, sharing their special talents.  </p>
+                                <p><strong>A VERY SPECIAL THANK YOU TO OUR DONORS AND BIDDERS! </strong></p>
+                                <p><?php echo $tagline ?></p>
+                                <?php
+                            }
+                        } elseif ($cid == -4) {
+                            ?>
+                            <p>Thank you for supporting Congregation B'nai Israel.</p>
+                            <p>You should be receiving an email confirming your latest bid.</p>
+                            <p>We also encourage you to bid on additional items.</p>
+                            <?php
+                        } elseif ($cid == -5) {
+                            ?>
+                            <p>We're terribly sorry but somebody just completed a BuyNow for this item and it is no longer available.</p>
+                            <p>We also encourage you to bid on additional items.</p>
+                            <?php
+                        } elseif ($cid == -6) {
+                            ?>
+                            <p>We're terribly sorry but somebody beat you to that price.  Please try again.</p>
+                            <p>We also encourage you to bid on additional items.</p>
+                            <?php
+                        } elseif ($cid == -7) {
+                            ?>
+                            <p>We're terribly sorry but somebody already bid a higher price.  Please try again.</p>
+                            <p>We also encourage you to bid on additional items.</p>
+                            <?php
+                        } else {
+                            if ($cid == -2) {
+                                $outer = DoQuery("select * from items where status != $gStatusHidden and itemIsLive = 0 and itemPackage = 0 order by itemTitle asc");
+                                $title = "Silent Auction Items";
+                            } elseif ($cid == -3) {
+                                $outer = DoQuery("select * from items where status != $gStatusHidden and itemIsLive = 1 and itemPackage = 0 order by itemTitle asc");
+                                $title = "Live Auction Items";
+                            } elseif ($cid == -8) {
+                                $title = "All Packages";
+                            } else {
+                                $outer = DoQuery("select * from items where status != $gStatusHidden and itemCategory = $cid order by itemTitle asc");
+                                $title = $gCategories[$cid];
+                            }
 
-		  echo "<tr id=\"itm_$iid\">";
-		  
-		  // Col #1, Title/Description
-		  echo "<td>";
-		  printf( "<b>%s</b><br>%s", $row['itemTitle'], $row['itemDesc']);
-		  echo "</td>";
-		  
-		  // Col #2, Sold or Current Bid/Buy Now
-		  echo "<td class=c>";
-		  if( $row['itemIsLive'] == 1 ) {
-			 echo "Live";
-		  } elseif( $open ) {
-			 if( $sold ) {
-				echo "<img src=\"assets/icon_sold.png\" alt=Sold />";
-			 } else {
-				DoQuery( "select max(bid) from bids where itemId = $iid");
-				list( $bid) = mysql_fetch_array( $mysql_result);
-				printf( "\$ %s", number_format( $bid, 2 ) );
-				
-				if( $row['buyNowPrice'] > 0 ) {
-				  echo "<br>";
-				  $jsx = array();
-				  $jsx[] = "setValue('area','buynow')";
-				  $jsx[] = sprintf( "setValue('id','%d')", $iid);
-				  $jsx[] = "addAction('bid')";
-				  $js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-				  printf( "<input type=button $js value=\"Buy Now:\$ %s\">", number_format( $row['buyNowPrice'],2) );
-				}
-			 }
-		  } else {
-			 if( $sold ) {
-				echo "<img src=\"assets/icon_sold.png\" alt=Sold />";
-			 } else {
-				echo "&nbsp;";
-			 }
-		  }
-		  echo "</td>";
-		  
-		  // Col #3, New bid/Submit
-		  
-		  if( $open ) {
-			 echo "<td class=c>";
-			 if( $sold || ( $row['itemIsLive'] == 1 ) ) {
-				echo "&nbsp;";
-			 } else {
-				$ll = max( $row['bidOpen'], $bid + $row['bidIncrement'] );
-				$ul = $ll + 9*$row['bidIncrement'];
-				if( $row['buyNowPrice'] > $row['bidOpen'] ) {
-					$ul = min( $ul, $row['buyNowPrice'] );
-				}  
-				$tag = MakeTag('bid_'.$iid);
-				echo "<select $tag>";
-				if( $row['bidIncrement'] > 0 ) {
-				  $sel = "selected";
-				  for( $val=$ll; $val<$ul; $val+= $row['bidIncrement'] ) {
-					 echo "<option value=$val $sel>\$ " . number_format($val,2) . "</option>";
-					 $sel = "";
-				  }
-				}
-				echo "</select>";
-				echo "<br>";
-				$jsx = array();
-				$jsx[] = "setValue('area','bid')";
-				$jsx[] = sprintf( "setValue('id','%d')", $iid);
-				$jsx[] = "addAction('bid')";
-				$js = sprintf( "onclick=\"%s\"", join(';',$jsx) );
-				echo "<input type=button $js value=\"Submit\">";
-			 }
-			 echo "</td>";
-		  }
+                            if ($cid == -8) {
+                                echo "<h3>$title</h3>";
+                                echo "<hr>";
 
-		  // Col #4, Value
-		  if( $open ) {
-			 echo "<td class=price>";
-			 if( $sold ) {
-				echo "&nbsp;";
-			 } else {
-				if( $row['itemValue'] < 0 ) {
-				  printf( "%s", "Priceless" );
-				} else {
-				  printf( "\$ %s", number_format( $row['itemValue'], 2 ) );
-				}
-			 }
-			 echo "</td>";
-		  }
-		  echo "</tr>\n";
-		  
-		  echo "<tr>";
-		  echo "<td class=bar></td>";
-		  echo "<td class=bar2></td>";
-		  if( $open ) {
-			 echo "<td class=bar2></td>";
-			 echo "<td class=bar2></td>";
-		  }
-		  echo "</tr>\n";
-		}
-		echo "</table>";
-		}
-	 }
-	 if( $gPreSelected > 0 ) {
-		echo "<script type=\"text/javascript\">myScroll('$gPreSelected');</script>";
-	 }
-	 ?>
-  </div>
- 
-      <br />
-    <div id="bottom_buttons">
-<?php
-if( $site_enabled ) {
-?>
-<?php
-} else {
-  echo "The pledge site is currently disabled.  Please check back in a few minutes";  
-}
-?>
+                                $pids = array_keys($gPackages);
+                                foreach ($pids as $pid) {
+                                    if ($pid == 0)
+                                        continue;
 
-    <!-- InstanceEndEditable -->
+                                    echo "<table class=items>";
+
+                                    $stmt = DoQuery("select sum(itemValue) from items where itemPackage = $pid");
+                                    $row = $stmt->fetch(PDO::FETCH_NUM);
+                                    echo "<tr>";
+                                    echo "<td colspan=2><b>$pid: " . $gPackages[$pid] . sprintf(", Total Value: \$ %s", number_format($row[0], 2)) . "</td>";
+                                    echo "</tr>";
+
+                                    $stmt = DoQuery("select itemTitle, itemDesc from items where itemPackage = $pid");
+                                    while (list( $it, $id ) = $stmt->fetch(PDO::FETCH_NUM)) {
+                                        echo "<tr>";
+                                        echo "<td>&nbsp;&nbsp;&bull;&nbsp;$it - $id</td>";
+                                        echo "</tr>";
+                                    }
+                                    echo "</table>";
+                                    echo "<hr>";
+                                }
+                            } else {
+                                $cols = ( $open ) ? 4 : 2;
+
+                                echo "<table class=items>";
+                                echo "<thead>";
+                                echo "<tr>";
+                                echo "<th colspan=$cols class=top><h3>$title</h3></th>";
+                                echo "</tr>";
+
+
+                                echo "<tr>";
+                                echo "<th class=bottom>&nbsp;</th>";
+                                if ($open) {
+                                    echo "<th class=bottom>Current Bid</th>";
+                                    echo "<th class=bottom>New Bid</th>";
+                                    echo "<th class=bottomr>Value</th>";
+                                } else {
+                                    echo "<th class=bottom>Status</th>";
+                                }
+                                echo "</tr>";
+                                echo "</thead>";
+
+                                while( $row = $outer->fetch(PDO::FETCH_ASSOC)) {
+                                    $iid = $row['id'];
+                                    $sold = ( $row['status'] == $gStatusClosed );
+
+                                    echo "<tr id=\"itm_$iid\">";
+
+                                    // Col #1, Title/Description
+                                    echo "<td>";
+                                    printf("<b>%s</b><br>%s", $row['itemTitle'], $row['itemDesc']);
+                                    echo "</td>";
+
+                                    // Col #2, Sold or Current Bid/Buy Now
+                                    echo "<td class=c>";
+                                    if ($row['itemIsLive'] == 1) {
+                                        echo "Live";
+                                    } elseif ($open) {
+                                        if ($sold) {
+                                            echo "<img src=\"assets/icon_sold.png\" alt=Sold />";
+                                        } else {
+                                            $inner = DoQuery("select max(bid) from bids where itemId = $iid");
+                                            list( $bid) = $inner->fetch(PDO::FETCH_NUM);
+                                            printf("\$ %s", number_format($bid, 2));
+
+                                            if ($row['buyNowPrice'] > 0) {
+                                                echo "<br>";
+                                                $jsx = array();
+                                                $jsx[] = "setValue('area','buynow')";
+                                                $jsx[] = sprintf("setValue('id','%d')", $iid);
+                                                $jsx[] = "addAction('bid')";
+                                                $js = sprintf("onclick=\"%s\"", join(';', $jsx));
+                                                printf("<input type=button $js value=\"Buy Now:\$ %s\">", number_format($row['buyNowPrice'], 2));
+                                            }
+                                        }
+                                    } else {
+                                        if ($sold) {
+                                            echo "<img src=\"assets/icon_sold.png\" alt=Sold />";
+                                        } else {
+                                            echo "&nbsp;";
+                                        }
+                                    }
+                                    echo "</td>";
+
+                                    // Col #3, New bid/Submit
+
+                                    if ($open) {
+                                        echo "<td class=c>";
+                                        if ($sold || ( $row['itemIsLive'] == 1 )) {
+                                            echo "&nbsp;";
+                                        } else {
+                                            $ll = max($row['bidOpen'], $bid + $row['bidIncrement']);
+                                            $ul = $ll + 9 * $row['bidIncrement'];
+                                            if ($row['buyNowPrice'] > $row['bidOpen']) {
+                                                $ul = min($ul, $row['buyNowPrice']);
+                                            }
+                                            $tag = MakeTag('bid_' . $iid);
+                                            echo "<select $tag>";
+                                            if ($row['bidIncrement'] > 0) {
+                                                $sel = "selected";
+                                                for ($val = $ll; $val < $ul; $val += $row['bidIncrement']) {
+                                                    echo "<option value=$val $sel>\$ " . number_format($val, 2) . "</option>";
+                                                    $sel = "";
+                                                }
+                                            }
+                                            echo "</select>";
+                                            echo "<br>";
+                                            $jsx = array();
+                                            $jsx[] = "setValue('area','bid')";
+                                            $jsx[] = sprintf("setValue('id','%d')", $iid);
+                                            $jsx[] = "addAction('bid')";
+                                            $js = sprintf("onclick=\"%s\"", join(';', $jsx));
+                                            echo "<input type=button $js value=\"Submit\">";
+                                        }
+                                        echo "</td>";
+                                    }
+
+                                    // Col #4, Value
+                                    if ($open) {
+                                        echo "<td class=price>";
+                                        if ($sold) {
+                                            echo "&nbsp;";
+                                        } else {
+                                            if ($row['itemValue'] < 0) {
+                                                printf("%s", "Priceless");
+                                            } else {
+                                                printf("\$ %s", number_format($row['itemValue'], 2));
+                                            }
+                                        }
+                                        echo "</td>";
+                                    }
+                                    echo "</tr>\n";
+
+                                    echo "<tr>";
+                                    echo "<td class=bar></td>";
+                                    echo "<td class=bar2></td>";
+                                    if ($open) {
+                                        echo "<td class=bar2></td>";
+                                        echo "<td class=bar2></td>";
+                                    }
+                                    echo "</tr>\n";
+                                }
+                                echo "</table>";
+                            }
+                        }
+                        if ($gPreSelected > 0) {
+                            echo "<script type=\"text/javascript\">myScroll('$gPreSelected');</script>";
+                        }
+                        ?>
+                    </div>
+
+                    <br />
+                    <div id="bottom_buttons">
+                        <?php
+                        if ($site_enabled) {
+                            ?>
+                            <?php
+                        } else {
+                            echo "The pledge site is currently disabled.  Please check back in a few minutes";
+                        }
+                        ?>
+
+                        <!-- InstanceEndEditable -->
 
 </div>
 

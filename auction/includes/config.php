@@ -61,4 +61,6 @@ require_once( 'SiteLoader.php' );
 SiteLoad('Common');
 
 SessionStuff('start');
+
+$_SESSION['debug'] = 0;
 ?>

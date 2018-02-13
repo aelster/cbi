@@ -11,9 +11,10 @@ global $mysql_result;
 
 global $gPDO_attr;
 global $gPDO_dsn;
+global $gPDO_lastInsertID;
+global $gPDO_num_rows;
 global $gPDO_pass;
 global $gPDO_user;
-global $gPDO_num_rows;
 
 #=====================================================
 
