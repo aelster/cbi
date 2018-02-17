@@ -1462,12 +1462,11 @@ function ExcelItems() {
 
     $body[] = join(',', $fields);
 
-    DoQuery("select * from items order by id asc");
-    $outer = $mysql_result;
-    while ($row = mysql_fetch_assoc($outer)) {
+    $outer = DoQuery("select * from items order by id asc");
+    while ($row = $outer->fetch(PDO::FETCH_ASSOC)) {
         $id = $row['id'];
-        DoQuery("select max(bid) from bids where itemId = $id");
-        list( $bid) = mysql_fetch_array($mysql_result);
+        $inner = DoQuery("select max(bid) from bids where itemId = $id");
+        list( $bid) = $inner->fetch(PDO::FETCH_NUM);
         $line = array();
         foreach ($row as $x => $fld) {
             if ($x == "itemCategory") {
@@ -1598,9 +1597,13 @@ function HashAdd() {
 
 function LocalInit() {
     include( 'globals.php' );
+    $open_bypass = "bjbaim";
 
     $val = key_exists('debug', $_SESSION) ? $_SESSION['debug'] : 0;
     $val = $val || preg_match('/bozo/', $_SERVER['QUERY_STRING']);
+    $gGala = preg_match("/$open_bypass/", $_SERVER['QUERY_STRING']);
+    error_log('SERVER["QUERY_STRING"] = ' . $_SERVER['QUERY_STRING']);
+    error_log('gGala: ' . $gGala);
     #$val = 1;
     $gDebug = $gTrace = $val;
     $_SESSION['debug'] = $val;
@@ -1646,6 +1649,14 @@ function LocalInit() {
 
     if (preg_match("/^\//", $gSourceCode)) {
         $gSourceCode = substr($gSourceCode, 1);
+    }
+    
+    if( $gGala ) {
+        if( preg_match( '/\?/', $gSourceCode ) ) {
+            $gSourceCode .= "&" . $open_bypass;
+        } else {
+            $gSourceCode .= "?" . $open_bypass;
+        }
     }
 
     $gFunction = array();
@@ -1720,7 +1731,7 @@ function LoginMain() {
 
             <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
                 <h2>Please Login</h2>
-                <p><input type=button value="Forgot your password?"
+                <p><input type=button value="Forgot your password?" tabindex="99"
     <?php
     $jsx = array();
     $jsx[] = "setValue('area','display')";
@@ -1765,7 +1776,7 @@ function LoginMain() {
                 </div>
 
                 <div class="form-group">
-                    <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password" tabindex="3">
+                    <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password" tabindex="2">
                 </div>
 
 

@@ -49,6 +49,9 @@ class User extends Password {
                 $_SESSION['loggedin'] = true;
                 return false;
             } else {
+                $str = date('Y-m-d H:i:s');
+                DoQuery( 'update users set lastlogin = :ll where userid = :id', array( ':ll' => $str, ':id' => $row['userid']));
+                
                 $_SESSION['loggedin'] = true;
                 return true;
             }

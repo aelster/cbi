@@ -14,6 +14,7 @@ $gLF = "\n";
 //-----------------------------------------------------------------------------
 //
 
+LocalInit();
 $gArea = ( isset($_POST['area']) ? $_POST['area'] : "" );
 $gFunc = ( isset($_POST['func']) ? $_POST['func'] : "" );
 
@@ -36,6 +37,12 @@ switch ($gAction) {
         }
         break;
 
+    case 'Reset':
+        if( array_key_exists('password',$_POST) ) {
+            UserManager('reset');
+        }
+        break;
+        
     default:
         if ($gFrom == "UserFeatures") {
             $gAction = "Update";
