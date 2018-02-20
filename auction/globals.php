@@ -39,6 +39,7 @@ global $gFunction;
 global $gGala;
 global $gLF;
 global $gMailAdmin;
+global $gProduction;
 global $gResetKey;
 global $gSourceCode;
 global $gSpiritIDtoDesc;

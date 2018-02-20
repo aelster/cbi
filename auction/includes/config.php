@@ -6,7 +6,7 @@ date_default_timezone_set('America/Los_Angeles');
 ob_implicit_flush(TRUE);
 
 if( preg_match( '/cbi18.org/', $_SERVER['HTTP_HOST']) ) {
-    $production = 1;
+    $gProduction = 1;
     $parts[] = '/usr/lib/php';
     $parts[] = '/usr/local/lib/php';
     $parts[] = '/home/cbi18/site/php';
@@ -15,7 +15,7 @@ if( preg_match( '/cbi18.org/', $_SERVER['HTTP_HOST']) ) {
 }
 
 if (preg_match('/local/', $_SERVER['HTTP_HOST'])) {
-    $production = 0;
+    $gProduction = 0;
     $parts[] = '/usr/local/site/php';
     $parts[] = '/usr/local/swiftmailer';
     $parts[] = '/usr/local/fpdf';
@@ -36,7 +36,7 @@ define('SITETITLE', 'CBI Auction Manager');
 try {
     //create PDO connection
     $gDb = new PDO($gPDO_dsn, $gPDO_user, $gPDO_pass, $gPDO_attr);
-    if ($production) {
+    if ($gProduction) {
         $gDb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
     } else {
         $gDb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
