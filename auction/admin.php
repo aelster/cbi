@@ -18,6 +18,10 @@ LocalInit();
 $gArea = ( isset($_POST['area']) ? $_POST['area'] : "" );
 $gFunc = ( isset($_POST['func']) ? $_POST['func'] : "" );
 
+if ($gDebug) {
+    DumpPostVars(sprintf( "Begin Phase #1> gAction: [%s], gFunc: [%s], gArea: [%s]", $gAction, $gFunc, $gArea ));
+}
+
 switch ($gAction) {
     case 'Back':
     case 'Logout' :
@@ -60,11 +64,20 @@ switch ($gAction) {
 }
 WriteHeader();
 LocalInit();
+if( $gDebug & $gDebugWindow ) {
+    echo "<script type='text/javascript'>";
+    echo "debug_disabled=0;";
+    echo "clearDebugWindow();";
+    echo "createDebugWindow();";
+    echo "debug('---start of run ---')";
+    echo "</script>";
+
+}
 WriteBody();
 AddForm();
 
 if ($gDebug) {
-    DumpPostVars("End of Phase #1 - Begin Updates: gAction=[$gAction]");
+    DumpPostVars(sprintf( "Begin Phase #2> gAction: [%s], gFunc: [%s], gArea: [%s]", $gAction, $gFunc, $gArea ));
 }
 
 switch ($gAction) {
@@ -96,9 +109,8 @@ switch ($gAction) {
     case( 'Main' ):
         if ($gFunc == "backup") {
             exec("perl /home/cbi18/site/my_backup.pl auction > /home/cbi18/backup_sql/manual.log", $out);
-        } elseif( $gFunc == 'debug' ) {
-            $val = ! $_SESSION['debug'];
-            $gDebug = $gTrace = $_SESSION['debug'] = $val;
+        } elseif( $gFunc == "debug" ) {
+            $gAction = 'Debug';
         }
         break;
 
@@ -109,7 +121,7 @@ switch ($gAction) {
         }
         break;
         
-    case( 'Update' ):
+    case 'Update':
         if ($gFrom == "DisplayDates") {
             DateUpdate();
             $gAction = 'Main';
@@ -163,6 +175,10 @@ switch ($gAction) {
             UpdatePackages();
             $gAction = 'Main';
             $gArea = 'packages';
+        } elseif( $gFrom == "MyDebug" ) {
+            MyDebug();
+            $gAction = 'Debug';
+            $gFunc = 'display';
         } else {
             UserManager('update');
             $gAction = 'Welcome';
@@ -190,11 +206,12 @@ switch ($gAction) {
 }
 
 if ($gDebug) {
-    DumpPostVars("End of Phase #2 - Begin Display:  gAction=[$gAction]");
+    DumpPostVars(sprintf( "Begin Phase #3> gAction: [%s], gFunc: [%s], gArea: [%s]", $gAction, $gFunc, $gArea ));
 }
 
 $vect = $args = array();
 
+$vect['Debug'] = 'MyDebug';
 $vect['Edit'] = 'EditManager';
 $vect['Inactive'] = 'UserManager';
 $vect['Login'] = 'UserManager';

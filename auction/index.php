@@ -3,6 +3,14 @@ require_once( 'includes/config.php' );
 
 WriteHeader();
 LocalInit();
+if( $gDebug & $gDebugWindow ) {
+    echo "<script type='text/javascript'>";
+    echo "debug_disabled=0;";
+    echo "clearDebugWindow();";
+    echo "createDebugWindow();";
+    echo "debug('---start of run ---')";
+    echo "</script>";
+}
 
 if (!$gAction)
     $gAction = "pledge";

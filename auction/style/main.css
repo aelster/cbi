@@ -76,3 +76,19 @@ td.action {
    padding: 5px;
    text-align: center;
 }
+
+td.dbg-on {
+    background-color: lightgreen;
+    text-align: center;
+
+}
+
+td.dbg-off {
+    background-color: red;
+    text-align: center;
+}
+
+td.dbg-part {
+    background-color: yellow;
+    text-align: center;
+}

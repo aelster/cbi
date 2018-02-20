@@ -1,10 +1,9 @@
 <?php
+//set timezone
+date_default_timezone_set('America/Los_Angeles');
 
 //ob_start();
 ob_implicit_flush(TRUE);
-
-//set timezone
-date_default_timezone_set('America/Los_Angeles');
 
 if( preg_match( '/cbi18.org/', $_SERVER['HTTP_HOST']) ) {
     $production = 1;
@@ -61,6 +60,4 @@ require_once( 'SiteLoader.php' );
 SiteLoad('Common');
 
 SessionStuff('start');
-
-$_SESSION['debug'] = 0;
 ?>

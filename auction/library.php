@@ -674,8 +674,7 @@ function DisplayMain() {
                 $js = sprintf("onClick=\"%s\"", join(';', $jsx));
                 echo "<input type=button $js value='Reset Bids'>";
 
-                $str = ( $gDebug ) ? 'Debug Off' : 'Debug On';
-                echo "<input type=button onclick=\"setValue('func','debug');addAction('Main');\" value=\"$str\">";
+                echo "<input type=button onclick=\"setValue('func','display');addAction('Debug');\" value=\"Debug\">";
             }
             echo "</div>";
         }
@@ -711,7 +710,13 @@ function DisplayMain() {
                 $jsx[] = "addAction('Main')";
                 $js = sprintf("onClick=\"%s\"", join(';', $jsx));
                 echo "<input type=button $js value=Items>";
-            }
+
+                $jsx = array();
+                $jsx[] = "setValue('area','bypass')";
+                $jsx[] = "addAction('Main')";
+                $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+                echo "<input type=button $js value=Bypass>";
+                }
             echo "</div>";
             echo "<br>";
         }
@@ -1599,14 +1604,15 @@ function LocalInit() {
     include( 'globals.php' );
     $open_bypass = "bjbaim";
 
-    $val = key_exists('debug', $_SESSION) ? $_SESSION['debug'] : 0;
-    $val = $val || preg_match('/bozo/', $_SERVER['QUERY_STRING']);
     $gGala = preg_match("/$open_bypass/", $_SERVER['QUERY_STRING']);
-    error_log('SERVER["QUERY_STRING"] = ' . $_SERVER['QUERY_STRING']);
-    error_log('gGala: ' . $gGala);
-    #$val = 1;
-    $gDebug = $gTrace = $val;
-    $_SESSION['debug'] = $val;
+
+    if( $gUserId > 0 ) {
+        $stmt = DoQuery("select debug from users where userid = $gUserId");
+        list($val) = $stmt->fetch(PDO::FETCH_NUM);
+    } else {
+        $val = 0;
+    }
+    $gDebug = $gTrace = $_SESSION['debug'] = $val;
 
     $force = 0;
     if($force && preg_match('/syzygy/', $_SERVER['QUERY_STRING'])) {
@@ -1690,9 +1696,9 @@ function LocalInit() {
     foreach (array('open', 'close', 'mail', 'auction') as $label) {
         $stmt = DoQuery('select date from dates where label = :label', [':label' => $label]);
         if ($stmt->rowCount() == 0) {
-            $val = ( $label == 'mail' ) ? 0 : time();
+            $val = ( $label == 'mail' ) ? 0 : time()+ 60*60*24*30; //Add one month today
             DoQuery('insert into dates set label = :label, date = :date', [':label' => $label, ':date' => $val]);
-            $gAuctionYear = time();
+            $gAuctionYear = time(); //Add one month today
         } elseif ($label == 'close') {
             list( $gAuctionYear ) = $stmt->fetch(PDO::FETCH_BOTH);
         }

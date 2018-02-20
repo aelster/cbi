@@ -116,4 +116,14 @@ $gSendTop = 1;
 $gSendOld = 2;
 $gSendBought = 3;
 $gSendOldBought = 4;
+
+global $gDebugInLine; # 0
+global $gDebugErrorLog; # 1
+global $gDebugWindow; # 2
+global $gDebugMask;
+
+$gDebugInLine = 2**0;
+$gDebugErrorLog = 2**1;
+$gDebugWindow = 2**2;
+$gDebugMask = 7;
 ?>
