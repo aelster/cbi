@@ -356,6 +356,7 @@ hh_intro   {
 .content table {
         background-color: #000000;
         border-collapse: collapse;
+        width: 98%;
 }
 
 .content tr.sched {
