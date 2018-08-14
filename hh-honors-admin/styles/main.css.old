@@ -1,0 +1,276 @@
+@charset "UTF-8";
+/* CSS Document */
+
+.bg-danger, .bg-success {
+    padding: 0 5px;
+}
+
+a {
+    color: #EF1F2F;
+    text-decoration: none;
+}
+
+.admin {
+    background-color: lightgreen;
+    text-align: center;
+}
+
+.lists table {
+    background-color: #000000;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.lists th {
+    background-color: #addfff;
+    border: 1px solid #000000;
+    padding: 0px 5px 0px 5px;
+    text-align: center;
+}
+
+.lists td {
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    padding: 0px 5px 0px 5px;
+}
+
+.lists td.c {
+    background-color: #ffffff;
+    border: 1px solid #000000;
+    padding: 0px 5px 0px 5px;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+    background-color: #cfc;
+}
+
+th {
+    border: 1px solid #000;
+    background-color: lightblue;
+    padding: 5px;
+    text-align: center;
+}
+
+th.del {
+    border: 1px solid #000;
+    background-color: red;
+    padding: 5px;
+    text-align: center;
+}
+
+td {
+    border: 1px solid #000;
+    padding: 5px;
+    background-color: #fff;
+}
+
+td.c {
+    border: 1px solid #000;
+    padding: 5px;
+    text-align: center;
+}
+
+td.r {
+    border: 1px solid #000;
+    padding: 5px;
+    text-align: right;
+}
+
+td.action {
+    border: 1px solid #000;
+    padding: 5px;
+    text-align: center;
+}
+
+td.dbg-on {
+    background-color: lightgreen;
+    text-align: center;
+
+}
+
+td.dbg-off {
+    background-color: red;
+    text-align: center;
+}
+
+td.dbg-part {
+    background-color: yellow;
+    text-align: center;
+}
+
+div.center {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table.center {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff;
+}
+table.awards {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff;
+}
+
+thead.awards, tbody.awards { display: block; }
+
+tbody.awards {
+    height: 400px;       /* Just for the demo          */
+    overflow-y: auto;    /* Trigger vertical scroll    */
+    overflow-x: hidden;  /* Hide the horizontal scroll */
+}
+
+th.awards {
+    text-align: center;
+    width: 80px;
+}
+
+th.awardsn {
+    text-align: center;
+    width: 100px;
+}
+
+th.awardsa {
+    text-align: center;
+    width: 200px;
+}
+
+td.awardsc {
+    text-align: center;
+    width: 80px;
+}
+
+td.awardscn {
+    text-align: center;
+    width: 100px;
+}
+
+td.awardsca {
+    text-align: center;
+    width: 200px;
+}
+
+td.awardscy {
+    text-align: center;
+    width: 80px;
+    background-color: yellow;
+}
+
+td.awardsr {
+    text-align: right;
+    width: 80px;
+}
+/*
+.awards td:nth-child(1), th:nth-child(1){
+    width:20px;
+}
+
+.awards td:nth-child(2), th:nth-child(2){
+    width:80px;
+}
+*/
+parents.td {
+    background-color: #fff;
+}
+
+table.stats {
+    float:left;
+    margin-left:10px;
+}
+
+table.families {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff;
+} 
+
+.families thead, tbody {
+    display: block;
+}
+
+.families tbody {
+    height: 400px;       /* Just for the demo          */
+    overflow-y: auto;    /* Trigger vertical scroll    */
+    overflow-x: hidden;  /* Hide the horizontal scroll */
+} 
+
+.families th {
+    background-color: lightblue;
+}
+
+.families td {
+    background-color: #fff;
+}
+
+.families th:nth-child(1), td:nth-child(1) {
+    width: 40px;
+}
+
+.families th:nth-child(2), td:nth-child(2) {
+    width: 100px;
+}
+
+.families th:nth-child(3), td:nth-child(3) {
+    width: 140px;
+}
+
+.families th:nth-child(4), td:nth-child(4) {
+    width: 320px;
+}
+
+.families th:nth-child(5), td:nth-child(5) {
+    width: 450px;
+}
+
+table.contracts {
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff;
+} 
+
+.contracts thead, tbody {
+    display: block;
+}
+
+.contracts tbody {
+    height: 400px;       /* Just for the demo          */
+    overflow-y: auto;    /* Trigger vertical scroll    */
+    overflow-x: hidden;  /* Hide the horizontal scroll */
+} 
+
+.contracts th {
+    background-color: lightblue;
+}
+
+.contracts td {
+    background-color: #fff;
+}
+
+.contracts th:nth-child(1), td:nth-child(1) {
+    width: 40px;
+}
+
+.contracts th:nth-child(2), td:nth-child(2) {
+    width: 100px;
+}
+
+.contracts th:nth-child(3), td:nth-child(3) {
+    width: 60px;
+    word-wrap: normal;
+    text-align: center;
+}
+
+.contracts th:nth-child(4), td:nth-child(4) {
+    width: 50px;
+    text-align: center;
+}
+
+.contracts th:nth-child(5), td:nth-child(5) {
+    width: 50px;
+    text-align: center;
+}

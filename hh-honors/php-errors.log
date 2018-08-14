@@ -1,0 +1,515 @@
+[10-Aug-2018 02:31:30 UTC] PHP Warning:  require_once(lib/swift_required.php) [<a href='/phpmanual/function.require-once'>function.require-once</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 2
+[10-Aug-2018 02:31:30 UTC] PHP Stack trace:
+[10-Aug-2018 02:31:30 UTC] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[10-Aug-2018 02:31:30 UTC] PHP Fatal error:  require_once() [<a href='/phpmanual/function.require'>function.require</a>]: Failed opening required 'lib/swift_required.php' (include_path='.:') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 2
+[10-Aug-2018 02:31:30 UTC] PHP Stack trace:
+[10-Aug-2018 02:31:30 UTC] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[10-Aug-2018 05:31:30 UTC] PHP Warning:  require_once(lib/swift_required.php) [<a href='/phpmanual/function.require-once'>function.require-once</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 2
+[10-Aug-2018 05:31:30 UTC] PHP Stack trace:
+[10-Aug-2018 05:31:30 UTC] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[10-Aug-2018 05:31:30 UTC] PHP Fatal error:  require_once() [<a href='/phpmanual/function.require'>function.require</a>]: Failed opening required 'lib/swift_required.php' (include_path='.:') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 2
+[10-Aug-2018 05:31:30 UTC] PHP Stack trace:
+[10-Aug-2018 05:31:30 UTC] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:05:02 UTC] PHP Warning:  require_once(lib/swift_required.php) [<a href='/phpmanual/function.require-once'>function.require-once</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 2
+[11-Aug-2018 22:05:02 UTC] PHP Stack trace:
+[11-Aug-2018 22:05:02 UTC] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:05:02 UTC] PHP Fatal error:  require_once() [<a href='/phpmanual/function.require'>function.require</a>]: Failed opening required 'lib/swift_required.php' (include_path='.:') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 2
+[11-Aug-2018 22:05:02 UTC] PHP Stack trace:
+[11-Aug-2018 22:05:02 UTC] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 23:21:58 UTC] PHP Warning:  require_once(lib/swift_required.php) [<a href='/phpmanual/function.require-once'>function.require-once</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 2
+[11-Aug-2018 23:21:58 UTC] PHP Stack trace:
+[11-Aug-2018 23:21:58 UTC] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 23:21:58 UTC] PHP Fatal error:  require_once() [<a href='/phpmanual/function.require'>function.require</a>]: Failed opening required 'lib/swift_required.php' (include_path='.:') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 2
+[11-Aug-2018 23:21:58 UTC] PHP Stack trace:
+[11-Aug-2018 23:21:58 UTC] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Warning:  include(includes/globals.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 28
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'includes/globals.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 28
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Warning:  include(includes/library.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 29
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'includes/library.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 29
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Warning:  include(local_hh_honors.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 30
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'local_hh_honors.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 30
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_dsn in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_user in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_pass in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Notice:  Undefined variable: gPDO_attr in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:26:21 America/Los_Angeles] PHP Fatal error:  Uncaught exception 'PDOException' with message 'invalid data source name' in /Users/andy/src/websites/cbi/hh-honors/includes/config.php:47
+Stack trace:
+#0 /Users/andy/src/websites/cbi/hh-honors/includes/config.php(47): PDO->__construct('', NULL, NULL, NULL)
+#1 /Users/andy/src/websites/cbi/hh-honors/index.php(3): require_once('/Users/andy/src...')
+#2 {main}
+  thrown in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:28:35 America/Los_Angeles] PHP Warning:  include(local_hh_honors.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 30
+[11-Aug-2018 16:28:35 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:28:35 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:28:35 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:28:35 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'local_hh_honors.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 30
+[11-Aug-2018 16:28:35 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:28:35 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:28:35 America/Los_Angeles] PHP   2. require_once() /Users/andy/src/websites/cbi/hh-honors/index.php:3
+[11-Aug-2018 16:28:35 America/Los_Angeles] PHP Fatal error:  Uncaught exception 'PDOException' with message 'invalid data source name' in /Users/andy/src/websites/cbi/hh-honors/includes/config.php:47
+Stack trace:
+#0 /Users/andy/src/websites/cbi/hh-honors/includes/config.php(47): PDO->__construct('', NULL, NULL, NULL)
+#1 /Users/andy/src/websites/cbi/hh-honors/index.php(3): require_once('/Users/andy/src...')
+#2 {main}
+  thrown in /Users/andy/src/websites/cbi/hh-honors/includes/config.php on line 47
+[11-Aug-2018 16:31:54 America/Los_Angeles] PHP Warning:  require_once(lib/swift_required.php) [<a href='/phpmanual/function.require-once'>function.require-once</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 6
+[11-Aug-2018 16:31:54 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:31:54 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:31:54 America/Los_Angeles] PHP Fatal error:  require_once() [<a href='/phpmanual/function.require'>function.require</a>]: Failed opening required 'lib/swift_required.php' (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 6
+[11-Aug-2018 16:31:54 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:31:54 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:32:12 America/Los_Angeles] PHP Warning:  require_once(lib/swift_required.php) [<a href='/phpmanual/function.require-once'>function.require-once</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 6
+[11-Aug-2018 16:32:12 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:32:12 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:32:12 America/Los_Angeles] PHP Fatal error:  require_once() [<a href='/phpmanual/function.require'>function.require</a>]: Failed opening required 'lib/swift_required.php' (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 6
+[11-Aug-2018 16:32:12 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:32:12 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:32:16 America/Los_Angeles] PHP Warning:  require_once(lib/swift_required.php) [<a href='/phpmanual/function.require-once'>function.require-once</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 6
+[11-Aug-2018 16:32:16 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:32:16 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:32:16 America/Los_Angeles] PHP Fatal error:  require_once() [<a href='/phpmanual/function.require'>function.require</a>]: Failed opening required 'lib/swift_required.php' (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 6
+[11-Aug-2018 16:32:16 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:32:16 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Notice:  Undefined index: mysql_result in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1517
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, null given in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1517
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   3. mysql_fetch_array() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1517
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Notice:  Undefined index: mysql_result in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1526
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, null given in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1526
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   3. mysql_fetch_array() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1526
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Notice:  Undefined index: mysql_result in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1528
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, null given in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1528
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   3. mysql_fetch_array() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1528
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Warning:  include(globals.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 20
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'globals.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 20
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Warning:  include(library.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 21
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'library.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 21
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 16:33:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Notice:  Undefined index: mysql_result in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1517
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, null given in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1517
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   3. mysql_fetch_array() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1517
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Notice:  Undefined index: mysql_result in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1526
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, null given in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1526
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   3. mysql_fetch_array() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1526
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Notice:  Undefined index: mysql_result in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1528
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Warning:  mysql_fetch_array() expects parameter 1 to be resource, null given in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1528
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   2. LocalInit() /Users/andy/src/websites/cbi/hh-honors/index.php:8
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   3. mysql_fetch_array() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1528
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Warning:  include(globals.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 20
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'globals.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 20
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Warning:  include(library.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 21
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'library.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 21
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Warning:  include(local_cbi_honors.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 23
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'local_cbi_honors.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 23
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:23:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Warning:  include(globals.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 20
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'globals.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 20
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Warning:  include(library.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 21
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'library.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 21
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Warning:  include(local_cbi_honors.php) [<a href='/phpmanual/function.include'>function.include</a>]: failed to open stream: No such file or directory in /Users/andy/src/websites/cbi/hh-honors/index.php on line 23
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Warning:  include() [<a href='/phpmanual/function.include'>function.include</a>]: Failed opening 'local_cbi_honors.php' for inclusion (include_path='.::/usr/local/site/php:/usr/local/site/cbi/hh-honors/php:/usr/local/PHPMailer:/usr/local/fpdf') in /Users/andy/src/websites/cbi/hh-honors/index.php on line 23
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:27:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 17:29:54 America/Los_Angeles] PHP Notice:  Undefined variable: action in /Users/andy/src/websites/cbi/hh-honors/index.php on line 34
+[11-Aug-2018 17:29:54 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 17:29:54 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[12-Aug-2018 01:42:04 UTC] PHP Fatal error:  Call to undefined function AddForm() in /Users/andy/src/websites/cbi/hh-honors/pledge.php on line 344
+[12-Aug-2018 01:42:04 UTC] PHP Stack trace:
+[12-Aug-2018 01:42:04 UTC] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/pledge.php:0
+[11-Aug-2018 18:45:37 America/Los_Angeles] PHP Notice:  Undefined variable: mysql_numrows in /Users/andy/src/websites/cbi/hh-honors/pledge.php on line 349
+[11-Aug-2018 18:45:37 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 18:45:37 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 18:45:37 America/Los_Angeles] PHP   2. include() /Users/andy/src/websites/cbi/hh-honors/index.php:32
+[11-Aug-2018 18:56:47 America/Los_Angeles] PHP Notice:  Undefined variable: mysql_numrows in /Users/andy/src/websites/cbi/hh-honors/pledge.php on line 305
+[11-Aug-2018 18:56:47 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 18:56:47 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 18:56:47 America/Los_Angeles] PHP   2. include() /Users/andy/src/websites/cbi/hh-honors/index.php:32
+[11-Aug-2018 19:02:09 America/Los_Angeles] PHP Notice:  Undefined index: mysql_result in /Users/andy/src/websites/cbi/hh-honors/pledge.php on line 314
+[11-Aug-2018 19:02:09 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 19:02:09 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 19:02:09 America/Los_Angeles] PHP   2. include() /Users/andy/src/websites/cbi/hh-honors/index.php:32
+[11-Aug-2018 19:02:09 America/Los_Angeles] PHP Warning:  mysql_fetch_assoc() expects parameter 1 to be resource, null given in /Users/andy/src/websites/cbi/hh-honors/pledge.php on line 314
+[11-Aug-2018 19:02:09 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 19:02:09 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 19:02:09 America/Los_Angeles] PHP   2. include() /Users/andy/src/websites/cbi/hh-honors/index.php:32
+[11-Aug-2018 19:02:09 America/Los_Angeles] PHP   3. mysql_fetch_assoc() /Users/andy/src/websites/cbi/hh-honors/pledge.php:314
+[11-Aug-2018 19:06:12 America/Los_Angeles] PHP Fatal error:  Class 'Swift_Message' not found in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1822
+[11-Aug-2018 19:06:12 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 19:06:12 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 19:06:12 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Notice:  Undefined variable: cid in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1826
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Deprecated:  mysql_escape_string() [<a href='/phpmanual/function.mysql-real-escape-string'>function.mysql-real-escape-string</a>]: This function is deprecated; use mysql_real_escape_string() instead. in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1895
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   3. mysql_escape_string() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1895
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1901
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1904
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Deprecated:  mysql_escape_string() [<a href='/phpmanual/function.mysql-real-escape-string'>function.mysql-real-escape-string</a>]: This function is deprecated; use mysql_real_escape_string() instead. in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1909
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   3. mysql_escape_string() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1909
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Fatal error:  Call to a member function fetch() on null in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1922
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:53:41 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Notice:  Undefined variable: preview in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1826
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1907
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1910
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Deprecated:  mysql_escape_string() [<a href='/phpmanual/function.mysql-real-escape-string'>function.mysql-real-escape-string</a>]: This function is deprecated; use mysql_real_escape_string() instead. in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1915
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   3. mysql_escape_string() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1915
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Fatal error:  Call to a member function fetch() on null in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1928
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:58:08 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1903
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1906
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP Deprecated:  mysql_escape_string() [<a href='/phpmanual/function.mysql-real-escape-string'>function.mysql-real-escape-string</a>]: This function is deprecated; use mysql_real_escape_string() instead. in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1911
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP   3. mysql_escape_string() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1911
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP Fatal error:  Call to a member function fetch() on null in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1924
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 21:59:34 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1903
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1906
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP Deprecated:  mysql_escape_string() [<a href='/phpmanual/function.mysql-real-escape-string'>function.mysql-real-escape-string</a>]: This function is deprecated; use mysql_real_escape_string() instead. in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1911
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP   3. mysql_escape_string() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1911
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP Fatal error:  Call to a member function fetch() on null in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1924
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:00:07 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1900
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1903
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP Deprecated:  mysql_escape_string() [<a href='/phpmanual/function.mysql-real-escape-string'>function.mysql-real-escape-string</a>]: This function is deprecated; use mysql_real_escape_string() instead. in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1908
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP   3. mysql_escape_string() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1908
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP Fatal error:  Call to a member function fetch() on null in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1921
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:02:44 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP Deprecated:  mysql_escape_string() [<a href='/phpmanual/function.mysql-real-escape-string'>function.mysql-real-escape-string</a>]: This function is deprecated; use mysql_real_escape_string() instead. in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1908
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP   3. mysql_escape_string() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1908
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP Notice:  Undefined variable: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1955
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP Notice:  Undefined variable: name in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1961
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP Notice:  Undefined variable: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1961
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:03:58 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP Deprecated:  mysql_escape_string() [<a href='/phpmanual/function.mysql-real-escape-string'>function.mysql-real-escape-string</a>]: This function is deprecated; use mysql_real_escape_string() instead. in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1908
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP   3. mysql_escape_string() /Users/andy/src/websites/cbi/hh-honors/includes/library.php:1908
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP Notice:  Undefined variable: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1955
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP Notice:  Undefined variable: name in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1961
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP Notice:  Undefined variable: hash in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1961
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:06:00 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[11-Aug-2018 22:06:20 America/Los_Angeles] PHP Notice:  Undefined variable: name in /Users/andy/src/websites/cbi/hh-honors/includes/library.php on line 1963
+[11-Aug-2018 22:06:20 America/Los_Angeles] PHP Stack trace:
+[11-Aug-2018 22:06:20 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[11-Aug-2018 22:06:20 America/Los_Angeles] PHP   2. SendConfirmation() /Users/andy/src/websites/cbi/hh-honors/index.php:27
+[12-Aug-2018 14:18:23 America/Los_Angeles] PHP Notice:  Undefined index: hash in /Users/andy/src/websites/cbi/hh-honors/pledge.php on line 304
+[12-Aug-2018 14:18:23 America/Los_Angeles] PHP Stack trace:
+[12-Aug-2018 14:18:23 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors/index.php:0
+[12-Aug-2018 14:18:23 America/Los_Angeles] PHP   2. include() /Users/andy/src/websites/cbi/hh-honors/index.php:32

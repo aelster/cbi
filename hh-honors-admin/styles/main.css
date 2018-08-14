@@ -1,0 +1,74 @@
+.scrollable table{
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #fff;
+} 
+
+.scrollable thead, .scrollable tbody {
+    display: block;
+}
+
+.scrollable tbody {
+    height: 600px;       /* Just for the demo          */
+    overflow-y: auto;    /* Trigger vertical scroll    */
+    overflow-x: hidden;  /* Hide the horizontal scroll */
+} 
+
+
+.msg_selectors {
+    border: 1px #000 solid;
+    margin: 10px;
+    padding: 10px;
+    display: inline-block;
+    box-sizing: border-box;
+}
+
+.msg_selectors p {
+    text-align: left;
+}
+
+.msg_clear {
+    text-align: center;
+}
+
+.msg_names {
+/*  height: 300px; */
+    margin-top: 20px;
+    margin-bottom: 20px;
+  text-align: left;
+  -webkit-columns: 3;
+     -moz-columns: 3;
+          columns: 3;
+  -moz-column-fill: balance;
+       column-fill: balance;
+       list-style-type: none;
+}
+
+.stats_outer {
+    text-align: center;
+}
+
+.stats_inner {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.message {
+    margin-left: 100px;
+    text-align: left;
+}
+
+.inner {
+    float: left;
+    margin-right: 10px;
+}
+
+.outer {
+  margin-left: auto;
+  margin-right: auto;
+  display: inline-block;
+}
+
+td.signed {
+    background-color: #B4EEB4;
+}

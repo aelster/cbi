@@ -1,0 +1,47 @@
+/*
+ Theme Name: CBI Exodus Child
+ Theme URI: http://churchthemes.com/
+ Description: Exodus Child Theme
+ Author: Matt Cohen
+ Author URI: http://iwbyte.com
+ Template: exodus
+ Version: 1.0.0
+*/
+
+/* Import the parent theme stylesheet */
+@import url("../exodus/style.css");
+
+.home #exodus-intro-heading {
+	display:none;
+	}
+	
+.exodus-home-widget .exodus-widget-entry.exodus-widget-entry-has-image header {
+	min-height: 80px;
+	}
+	
+/* .exodus-sermons-widget-entry .exodus-widget-entry-meta > li {
+	margin: 0px 10px 10px 10px;
+}
+*/
+
+.exodus-widget-entry-content p { margin-top: 38px !important;}
+
+li.exodus-entry-byline {display:none !important;}
+
+
+/* Simple Calendar List */
+
+.simcal-default-calendar-list .simcal-event-details .simcal-event-description, .simcal-default-calendar-list .simcal-event-details p {
+	line-height: 1 !important;
+	overflow: inherit !important;
+	margin: 4px 0 0px 14px !important;
+	}
+
+/* Forms */ 
+
+input, .ginput_container textarea {border: 1px grey inset;}
+input[type="radio"] {height:13px;}
+
+/* Sticky Header */
+
+.asmh-header .primary .sub-menu li > a {color:#000000 !important;}

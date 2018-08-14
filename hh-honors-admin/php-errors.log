@@ -1,0 +1,16 @@
+[12-Aug-2018 12:17:53 America/Los_Angeles] PHP Fatal error:  Class 'Swift_Validate' not found in /Users/andy/src/websites/cbi/hh-honors-admin/includes/library.php on line 2886
+[12-Aug-2018 12:17:53 America/Los_Angeles] PHP Stack trace:
+[12-Aug-2018 12:17:53 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors-admin/index.php:0
+[12-Aug-2018 12:17:53 America/Los_Angeles] PHP   2. MailValidate() /Users/andy/src/websites/cbi/hh-honors-admin/index.php:110
+[13-Aug-2018 15:40:17 America/Los_Angeles] PHP Notice:  Undefined variable: PayMethods in /Users/andy/src/websites/cbi/hh-honors-admin/includes/library.php on line 1726
+[13-Aug-2018 15:40:17 America/Los_Angeles] PHP Stack trace:
+[13-Aug-2018 15:40:17 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors-admin/index.php:0
+[13-Aug-2018 15:40:17 America/Los_Angeles] PHP   2. ExcelMoney() /Users/andy/src/websites/cbi/hh-honors-admin/index.php:35
+[13-Aug-2018 15:41:29 America/Los_Angeles] PHP Notice:  Undefined variable: PayMethods in /Users/andy/src/websites/cbi/hh-honors-admin/includes/library.php on line 1726
+[13-Aug-2018 15:41:29 America/Los_Angeles] PHP Stack trace:
+[13-Aug-2018 15:41:29 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors-admin/index.php:0
+[13-Aug-2018 15:41:29 America/Los_Angeles] PHP   2. ExcelMoney() /Users/andy/src/websites/cbi/hh-honors-admin/index.php:35
+[13-Aug-2018 16:30:18 America/Los_Angeles] PHP Notice:  Undefined variable: gProduction in /Users/andy/src/websites/cbi/hh-honors-admin/includes/library.php on line 3610
+[13-Aug-2018 16:30:18 America/Los_Angeles] PHP Stack trace:
+[13-Aug-2018 16:30:18 America/Los_Angeles] PHP   1. {main}() /Users/andy/src/websites/cbi/hh-honors-admin/index.php:0
+[13-Aug-2018 16:30:18 America/Los_Angeles] PHP   2. WriteBody() /Users/andy/src/websites/cbi/hh-honors-admin/index.php:75
