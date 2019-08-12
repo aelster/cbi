@@ -77,7 +77,7 @@ $apache_vers = getApacheVersion();
 
 echo "</ul>";
 echo "
-<h3>Software (As of 3/5/17):</h3>
+<h3>Software:</h3>
 <table>
 <tr><th class=e>PHP</th><td class=v>$php_vers</td></td></tr>
 <tr><th class=e>MySQL</th><td class=v>$mysql_vers</td></td></tr>

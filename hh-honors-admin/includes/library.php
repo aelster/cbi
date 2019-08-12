@@ -474,13 +474,25 @@ function BuildMembers() {
         $flds = $args = [];
         $i = 0;
         foreach ($row as $key => $val) {
-            if ($j == 0) {
-                if (!array_key_exists($key, $valid_cols)) {
+            if (!array_key_exists($key, $valid_cols)) {
+                if( $j == 0 ) {
                     echo "Invalid column: $key<br>";
                 }
+                continue;
             }
             $i++;
             $flds[] = sprintf("`%s` = :v$i", $key, $i);
+            if( $key == "ID" ) {
+                $id = $val;
+            }
+            if( ! empty($val) && (preg_match( "/DOB/", $key ) || preg_match( "/Anniversary/", $key ) ) ) {
+                if( $id == 211 ) echo "Key: $key, old val: $val";
+                $tmp = explode('/', $val );
+                $tmp[2] += 1900;
+                $val = implode('/', $tmp );
+                if( $id == 211 ) echo ", new val: $val<br>";
+            }
+            if( $id == 211 ) echo "loaded val: $val<br>";
             $args[":v$i"] = $val;
             if (!empty($val))
                 $num_non_empty++;
@@ -488,11 +500,18 @@ function BuildMembers() {
         if ($num_non_empty > 5) {
             $query = "insert into members set " . join(',', $flds);
             DoQuery($query, $args);
+            if( $id == 211 ) {
+                echo "$query<br>";
+                print_r($args);
+                    echo "<br>";
+            }
         }
         $num_non_empty = 0;
         $j++;
     }
 
+    echo "$j members added to database<br>";
+    
     if ($gTrace)
         array_pop($gFunction);
 }
@@ -527,8 +546,9 @@ function CompareMembers() {
 
     $year = $gJewishYear - 1;
     $old_db = "members_master_$year";
+    echo "old_db: [$old_db]<br>";
 
-    $stmt_outer = DoQuery("select * from members_master order by `Last Name`, `Female 1st Name`");
+    $stmt_outer = DoQuery("select * from members order by `Last Name`, `Female 1st Name`");
     $i = 0;
     while ($row = $stmt_outer->fetch(PDO::FETCH_ASSOC)) {
         $id = $row['ID'];
@@ -566,7 +586,7 @@ function CompareMembers() {
     $i = 0;
     while ($row = $stmt_outer->fetch(PDO::FETCH_ASSOC)) {
         $id = $row['ID'];
-        DoQuery("select * from members_master where ID = $id");
+        DoQuery("select * from members where ID = $id");
         if ($gPDO_num_rows == 0) {
             $i++;
             if ($i == 1) {
@@ -594,7 +614,7 @@ function CompareMembers() {
 
     $i = 0;
 
-    $stmt_outer = DoQuery("select * from members_master order by `Last Name`, `Female 1st Name`");
+    $stmt_outer = DoQuery("select * from members order by `Last Name`, `Female 1st Name`");
     while ($row1 = $stmt_outer->fetch(PDO::FETCH_ASSOC)) {
         $stmt_inner = DoQuery("select * from $old_db where `ID` = " . $row1['ID']);
         if ($gPDO_num_rows == 0)
@@ -1291,53 +1311,6 @@ function DisplayItems() {
         array_pop($gFunction);
 }
 
-function DisplayLogfile() {
-    include 'includes/globals.php';
-    if ($gTrace) {
-        $gFunction[] = __FUNCTION__;
-        Logger();
-    }
-
-    $members = [];
-    $stmt = DoQuery("select * from members");
-    while ($member = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $mid = $member['ID'];
-        $members[$mid] = $member;
-    }
-
-    echo "<div class=CommonV2>";
-    echo "<table>";
-    echo "<tr>";
-    echo "  <th>Date/Time</th>";
-    echo "  <th>Name</th>";
-    echo "  <th>Response</th>";
-    echo "</tr>";
-
-    $dval = date("Y-01-01");
-    $stmt = DoQuery("select * from event_log where `type` = 'rsvp' and `time` >= '$dval' order by `time` ASC");
-    while ($event = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $uid = $event['userid'];
-        $member = $members[$uid];
-        if (!empty($member['Female 1st Name']) && empty($member['Male 1st Name'])) {
-            $name = $member['Female 1st Name'];
-        } elseif (empty($member['Female 1st Name']) && !empty($memeber['Male 1st Name'])) {
-            $name = $member['Male 1st Name'];
-        } else {
-            $name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
-        }
-        $name .= sprintf(" %s", $member['Last Name']);
-        echo "<tr>";
-        echo "  <td>" . $event['time'] . "</td>";
-        echo "  <td>" . $name . "</td>";
-        echo "  <td>" . $event['item'] . "</td>";
-        echo "</tr>";
-    }
-    echo "</table>";
-    echo "</div>";
-    if ($gTrace)
-        array_pop($gFunction);
-}
-
 function DisplayMain() {
     include( 'includes/globals.php' );
     if ($gTrace) {
@@ -1807,6 +1780,143 @@ function ExcelSpiritual() {
         array_pop($gFunction);
 }
 
+function FYSelect() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger('fy select');
+    }
+
+    if (defined('DB_OPEN')) {
+        echo "FYSelect can't be called twice";
+        exit();
+    }
+    define('DB_OPEN', true);
+    /*
+     * First connect to the manager to determine the database
+     */
+    try {
+        //create PDO connection
+        if ($gProduction) {
+            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
+        } else {
+            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        }
+
+        $t = new PDO($gPDO_dsn, $gPDO_user, $gPDO_pass, $gPDO_attr);
+    } catch (PDOException $e) {
+        //show error
+        error_log($e);
+        error_log( "connection failed" );
+        echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
+        $gDbControl = NULL;
+        throw $e;
+    }
+
+    $save_db = $gDb;
+
+    $gDb = $gDbControl = $gDbVector[0] = $t;
+    
+    $stmt = DoQuery("select calendarId from sites where siteName = :a0 and active = 1", ['a0' => $gSection]);
+    list( $calId ) = $stmt->fetch(PDO::FETCH_NUM);
+
+    $stmt = DoQuery("select jewishYear from calendars where id = $calId");
+    list( $jewishYear ) = $stmt->fetch(PDO::FETCH_NUM);
+
+    $parts = explode(";", $gPDO_dsn);
+    $parts[1] = "dbname=cbi18_{$gSection}_{$jewishYear}";
+    
+    $dsn = implode(';', $parts);
+    $i = $id = $idx = 1;
+    
+    try {
+        //create PDO connection
+        if ($gProduction) {
+            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
+        } else {
+            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        }
+
+        $h = new PDO($dsn, $gPDO_user, $gPDO_pass, $gPDO_attr);
+    } catch (PDOException $e) {
+        //show error
+        error_log($e);
+        echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
+        $t = NULL;
+        throw $e;
+    }
+    $gDbVector[$id] = $h;
+
+    $local_dbName[$id] = "cbi18_{$gSection}_{$jewishYear}";
+    $local_Label[$id] = $jewishYear;
+
+    $_SESSION['dbSrc'] = $id;
+    $_SESSION['dbDst'] = $id;
+
+    if (!array_key_exists('dbId', $_SESSION) || empty($_SESSION['dbId'])) {
+        $_SESSION['dbId'] = $idx;
+    }
+    
+    if( array_key_exists( 'dbId', $_SESSION ) ) {
+        $_SESSION['dbName'] = $local_dbName[$_SESSION['dbId']];
+        $_SESSION['dbLabel'] = $local_Label[$_SESSION['dbId']];
+        $gDb = $gDbVector[$_SESSION['dbId']];
+    }
+    
+    LocalInit();
+}
+
+function FYSelectOrig() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger('fy select');
+    }
+
+    if (defined('DB_OPEN')) {
+        echo "FYSelect can't be called twice";
+        exit();
+    }
+    define('DB_OPEN', true);
+    /*
+     * First connect to the manager to determine the database
+     */
+    try {
+        //create PDO connection
+        if ($gProduction) {
+            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
+        } else {
+            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        }
+
+        $t = new PDO($gPDO_dsn, $gPDO_user, $gPDO_pass, $gPDO_attr);
+    } catch (PDOException $e) {
+        //show error
+        error_log($e);
+        error_log( "connection failed" );
+        echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
+        $gDbControl = NULL;
+        throw $e;
+    }
+
+    $dbId = 0;
+    
+    $save_db = $gDb;
+    
+    $gDb = $gDbControl = $gDbVector[0] = $t;
+    $idx = 0;
+    if (!array_key_exists('dbId', $_SESSION))
+        $_SESSION['dbId'] = $idx;
+/*
+    if( array_key_exists( 'dbId', $_SESSION ) ) {
+        $_SESSION['dbName'] = $local_dbName[$_SESSION['dbId']];
+        $_SESSION['dbLabel'] = $local_Label[$_SESSION['dbId']];
+        $gDb = $gDbVector[$_SESSION['dbId']];
+    }
+*/    
+    LocalInit();
+}
+
 function HonorsEdit() {
     include 'includes/globals.php';
     if ($gTrace) {
@@ -1835,12 +1945,13 @@ function HonorsEdit() {
     echo "  <td class=se>Shabbat<br>Exclude</td>";
     echo "  <td class=honor>Honor</td>";
     echo "  <td class=page>Page</td>";
+    echo "  <td>Mail<br>Group</td>";
     echo "</tr>\n";
     echo "</thead>";
     echo "<tbody>";
 
     $services = [];
-    $stmt = DoQuery("select distinct service from honors_master order by sort asc");
+    $stmt = DoQuery("select distinct service, sort from honors_master order by sort asc");
     while (list( $service ) = $stmt->fetch(PDO::FETCH_NUM)) {
         $services[] = $service;
     }
@@ -2105,6 +2216,78 @@ function LocalInit() {
     $gMailLive = $row['enabled'];
 }
 
+function LogfileDisplay() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+
+    $members = [];
+    $stmt = DoQuery("select * from members");
+    while ($member = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $mid = $member['ID'];
+        $members[$mid] = $member;
+    }
+    echo "<div class=center>";
+    echo "<input type=button value=Back onclick=\"setValue('from', '" . __FUNCTION__ . "');addAction('Back');\">";
+
+    if (UserManager('authorized', 'control')) {
+        $tmp = [];
+        $tmp[] = "setValue('from','" . __FUNCTION__ . "')";
+        $tmp[] = "setValue('func','log-reset')";
+        $txt = sprintf("Are you sure you want to initialize the event log?");
+        $tmp[] = sprintf("myConfirm('%s')", CVT_Str_to_Overlib($txt));
+        $js = join(';', $tmp);
+        echo "<input id=action-view type=button class=mode-view-hidden onclick=\"$js\" value=\"Reset\">";
+    }
+
+    echo "</div>";
+
+
+    echo "<div class=CommonV2>";
+    echo "<table>";
+    echo "<tr>";
+    echo "  <th>Date/Time</th>";
+    echo "  <th>Name</th>";
+    echo "  <th>Response</th>";
+    echo "</tr>";
+
+    $stmt = DoQuery("select * from event_log where `type` = 'rsvp' order by `time` ASC");
+    while ($event = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $uid = $event['userid'];
+        $member = $members[$uid];
+        if (!empty($member['Female 1st Name']) && empty($member['Male 1st Name'])) {
+            $name = $member['Female 1st Name'];
+        } elseif (empty($member['Female 1st Name']) && !empty($memeber['Male 1st Name'])) {
+            $name = $member['Male 1st Name'];
+        } else {
+            $name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+        }
+        $name .= sprintf(" %s", $member['Last Name']);
+        echo "<tr>";
+        echo "  <td>" . $event['time'] . "</td>";
+        echo "  <td>" . $name . "</td>";
+        echo "  <td>" . $event['item'] . "</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+    echo "</div>";
+    if ($gTrace)
+        array_pop($gFunction);
+}
+
+function LogfileReset() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+    DoQuery("truncate event_log");
+    if ($gTrace)
+        array_pop($gFunction);
+}
+
 function MailAssignment() {
     include 'includes/globals.php';
     if ($gTrace) {
@@ -2142,7 +2325,7 @@ function MailAssignment() {
 
     $mail_override = array_key_exists('override', $_POST ) ? $_POST['override'] : 0;
     
-    if ($mail_live == 1) {
+    if ($mail_live == 1 && ! $preview ) {
         $today = date('Y-m-d');
         DoQuery("select * from event_log where item like '%$hash%' and time >= '$today'");
         if ($gPDO_num_rows && ! $gDebug ) {
@@ -3520,12 +3703,62 @@ function SpecialCode() {
         $gFunction[] = __FUNCTION__;
         Logger();
     }
-    $stmt = DoQuery("select id, honor from honors_master where honor like \"%\'%\"");
-    while (list( $id, $honor ) = $stmt->fetch(PDO::FETCH_NUM)) {
-        echo "Id: $id, Honor: [$honor]<br>";
-        $str1 = str_replace("'", "&apos;", $honor);
-        $str2 = str_replace("\"", "&quot;", $str1);
-        DoQuery("update honors_master set honor = :v1 where id = $id", [':v1' => $str2]);
+    $key = 2;
+    
+    if( $key == 2 ) {
+        $stmt = DoQuery( "select ID, `Last Name`, Anniversary, `Female DOB`, `Male DOB` from members_master" );
+        while( list( $id, $ln, $anniv, $fdob, $mdob ) = $stmt->fetch(PDO::FETCH_NUM) ) {
+            $show = 0;
+            if( ! empty( $anniv ) ) {
+                list( $mm, $dd, $yy ) = explode('/', $anniv );
+                $range['anniv'][$yy] = 1;
+                if( $yy < 20)
+                    $show = 1;
+            }
+            if( ! empty( $fdob ) ) {
+                list( $mm, $dd, $yy ) = explode('/', $fdob );
+                $range['fdob'][$yy] = 1;
+                if( $yy < 20)
+                    $show = 1;
+            }
+            if( ! empty( $mdob ) ) {
+                list( $mm, $dd, $yy ) = explode('/', $mdob );
+                $range['mdob'][$yy] = 1;
+                if( $yy < 20)
+                    $show = 1;
+            }
+            if( $show )
+                printf( "ID: %4d, Last Name: %20s, Anniv: %8s, FDOB: %8s, MDOB: %8s<br>",
+                        $id, $ln, $anniv, $fdob, $mdob );
+
+        }
+        echo "<br>";
+        echo "Anniv:<br>";
+        $v = array_keys($range['anniv']);
+        sort($v);
+        echo join(',', $v) . "<br>";
+
+        echo "<br>";
+        echo "Fdob:<br>";
+        $v = array_keys($range['fdob']);
+        sort($v);
+        echo join(',', $v) . "<br>";
+
+        echo "<br>";
+        echo "Mdob:<br>";
+        $v = array_keys($range['mdob']);
+        sort($v);
+        echo join(',', $v) . "<br>";
+    }
+    
+    if( $key == 1 ) {
+        $stmt = DoQuery("select id, honor from honors_master where honor like \"%\'%\"");
+        while (list( $id, $honor ) = $stmt->fetch(PDO::FETCH_NUM)) {
+            echo "Id: $id, Honor: [$honor]<br>";
+            $str1 = str_replace("'", "&apos;", $honor);
+            $str2 = str_replace("\"", "&quot;", $str1);
+            DoQuery("update honors_master set honor = :v1 where id = $id", [':v1' => $str2]);
+        }
     }
     if ($gTrace)
         array_pop($gFunction);
@@ -3633,6 +3866,17 @@ p.dev {
         echo "createDebugWindow();";
         echo "</script>";
     }
+}
+
+function WriteFooter() {
+    include 'includes/globals.php';
+
+    if (defined('FORM_OPEN')) {
+        echo "</form>";
+    }
+    echo "</div>";
+    echo "</body>";
+    echo "</html>";
 }
 
 function WriteHeader() {

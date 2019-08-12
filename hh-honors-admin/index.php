@@ -5,6 +5,7 @@ require_once( 'includes/config.php');
 $gLF = "\n";
 
 LocalInit();
+
 $gArea = ( isset($_POST['area']) ? $_POST['area'] : "" );
 $gFunc = ( isset($_POST['func']) ? $_POST['func'] : "" );
 
@@ -14,7 +15,6 @@ if ($gDebug) {
 switch ($gAction) {
     case( 'Back' ):
     case( 'Logout' ):
-        continue;
         break;
 
     case( 'New' ):
@@ -60,6 +60,9 @@ switch ($gAction) {
             Logger( '** No action taken for Phase #1 **' );
         }
         break;
+}
+if($user->is_logged_in()) {
+    UserManager('load', $_SESSION['userid'] );
 }
 WriteHeader();
 
@@ -160,8 +163,8 @@ switch ($gAction) {
         }
 
         if ($gFunc == "log") {
-            DisplayLogfile();
-            $gAction = 'Main';
+            LogfileDisplay();
+            $gAction = 'Done';
         }
 
         if ($gFunc == "build-memb") {
@@ -203,6 +206,12 @@ switch ($gAction) {
             DateUpdate();
             $gAction = 'Main';
             $_POST['area'] = 'dates';
+        } elseif( $gFrom == "LogfileDisplay" ) {
+            if( $gFunc == "log-reset" ) { 
+                LogfileReset ();
+                LogfileDisplay();
+                $gAction = "Done";
+            }
         } elseif ($gFrom == "MailDisplay") {
             MailUpdate();
             $gAction = 'Main';
@@ -300,7 +309,7 @@ echo "<div class=center>";
 
 if (!empty($vect[$gAction])) {
     $fn = $vect[$gAction];
-    $arg = array_key_exists($gAction, $args) ? $args[$gAction] : NULL;
+    $arg = array_key_exists($gAction, $args) ? $args[$gAction] : [];
     switch (count($arg)) {
         case( 0 ):
             $fn();
@@ -334,7 +343,4 @@ if (!empty($vect[$gAction])) {
 
 echo "</div>";
 
-echo "</form>";
-echo "</body>";
-echo "</html>";
-?>
+WriteFooter();
