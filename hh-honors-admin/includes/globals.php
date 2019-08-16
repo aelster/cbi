@@ -9,6 +9,7 @@ global $gPDO_lastInsertID;
 global $gPDO_num_rows;
 global $gPDO_pass;
 global $gPDO_user;
+global $gPrefix;
 
 #=====================================================
 global $gDebugInLine; # 0
@@ -64,7 +65,7 @@ global $gFrom;
 global $gFunction;
 global $gJewishYear;
 global $gLF;
-global $gSection;
+global $gSiteName;
 global $gSourceCode;
 global $gSpiritIDtoDesc;
 global $gSpiritIDtoType;

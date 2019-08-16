@@ -485,6 +485,7 @@ function BuildMembers() {
             if( $key == "ID" ) {
                 $id = $val;
             }
+/*
             if( ! empty($val) && (preg_match( "/DOB/", $key ) || preg_match( "/Anniversary/", $key ) ) ) {
                 if( $id == 211 ) echo "Key: $key, old val: $val";
                 $tmp = explode('/', $val );
@@ -493,6 +494,8 @@ function BuildMembers() {
                 if( $id == 211 ) echo ", new val: $val<br>";
             }
             if( $id == 211 ) echo "loaded val: $val<br>";
+ * 
+ */
             $args[":v$i"] = $val;
             if (!empty($val))
                 $num_non_empty++;
@@ -500,7 +503,7 @@ function BuildMembers() {
         if ($num_non_empty > 5) {
             $query = "insert into members set " . join(',', $flds);
             DoQuery($query, $args);
-            if( $id == 211 ) {
+            if( $id == -211 ) {
                 echo "$query<br>";
                 print_r($args);
                     echo "<br>";
@@ -546,7 +549,6 @@ function CompareMembers() {
 
     $year = $gJewishYear - 1;
     $old_db = "members_master_$year";
-    echo "old_db: [$old_db]<br>";
 
     $stmt_outer = DoQuery("select * from members order by `Last Name`, `Female 1st Name`");
     $i = 0;
@@ -624,6 +626,7 @@ function CompareMembers() {
         foreach ($row1 as $key => $value) {
             if (empty($value) && empty($row2["$key"])) {
                 $match = 1;
+                /*
             } elseif (in_array($key, array("Anniversary", "Female DOB", "Male DOB"))) {
                 if (empty($row2["$key"])) {
                     $match = 0;
@@ -639,7 +642,7 @@ function CompareMembers() {
 #					printf( "val1: [%s], dstr: [%s]<br>", $value, $dstr );
                     $d2 = new DateTime($dstr);
                     $match = ($d1 == $d2);
-                }
+                } */
             } else {
                 $match = ( trim($value) == trim($row2["$key"]) );
             }
@@ -1813,45 +1816,14 @@ function FYSelect() {
         throw $e;
     }
 
-    $save_db = $gDb;
-
-    $gDb = $gDbControl = $gDbVector[0] = $t;
+    $id = $idx = 0;
     
-    $stmt = DoQuery("select calendarId from sites where siteName = :a0 and active = 1", ['a0' => $gSection]);
-    list( $calId ) = $stmt->fetch(PDO::FETCH_NUM);
+    preg_match( '/dbname=(.+)_(.+)_(.+);/', $gPDO_dsn, $matches );
+    list( $na, $gPrefix, $gSiteName, $jewishYear) = $matches;
 
-    $stmt = DoQuery("select jewishYear from calendars where id = $calId");
-    list( $jewishYear ) = $stmt->fetch(PDO::FETCH_NUM);
-
-    $parts = explode(";", $gPDO_dsn);
-    $parts[1] = "dbname=cbi18_{$gSection}_{$jewishYear}";
-    
-    $dsn = implode(';', $parts);
-    $i = $id = $idx = 1;
-    
-    try {
-        //create PDO connection
-        if ($gProduction) {
-            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
-        } else {
-            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-        }
-
-        $h = new PDO($dsn, $gPDO_user, $gPDO_pass, $gPDO_attr);
-    } catch (PDOException $e) {
-        //show error
-        error_log($e);
-        echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
-        $t = NULL;
-        throw $e;
-    }
-    $gDbVector[$id] = $h;
-
-    $local_dbName[$id] = "cbi18_{$gSection}_{$jewishYear}";
+    $gDb = $gDbControl = $gDbVector[$id] = $t;
+    $local_dbName[$id] = "{$gPrefix}_{$gSiteName}_{$jewishYear}";
     $local_Label[$id] = $jewishYear;
-
-    $_SESSION['dbSrc'] = $id;
-    $_SESSION['dbDst'] = $id;
 
     if (!array_key_exists('dbId', $_SESSION) || empty($_SESSION['dbId'])) {
         $_SESSION['dbId'] = $idx;
