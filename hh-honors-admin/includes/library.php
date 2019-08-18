@@ -1553,6 +1553,8 @@ function EditManager() {
         HonorsEdit();
     } elseif ($area == 'item') {
         EditItem();
+    } elseif( $area == 'members') {
+        MembersEdit();
     }
 
     if ($gTrace)
@@ -2151,28 +2153,23 @@ function LocalInit() {
 
     $stmt = DoQuery("select id, `Female Tribe`, `Male Tribe`, `Status` from members");
     while (list( $id, $ft, $mt, $status ) = $stmt->fetch(PDO::FETCH_NUM)) {
-        $stmt2 = DoQuery("select ftribe, mtribe, staff, new from member_attributes where id = $id");
+        $stmt2 = DoQuery("select ftribe, mtribe, new from member_attributes where id = $id");
         if ($gPDO_num_rows == 0) {
             $tmp = array();
             $tmp[] = "id = $id";
             $tmp[] = "ftribe = '$ft'";
             $tmp[] = "mtribe = '$mt'";
-            if ($status == "Staff")
-                $tmp[] = "staff = 1";
             if ($status == "New")
                 $tmp[] = "new = 1";
             $query = "insert into member_attributes set " . join(',', $tmp);
             DoQuery($query);
         } else {
-            list( $maf, $mam, $staff, $new ) = $stmt2->fetch(PDO::FETCH_NUM);
+            list( $maf, $mam, $new ) = $stmt2->fetch(PDO::FETCH_NUM);
             $tmp = array();
             if ($maf != $ft)
                 $tmp[] = "ftribe = '$ft'";
             if ($mam != $mt)
                 $tmp[] = "mtribe = '$mt'";
-            $expected = ( $status == 'Staff' ) ? 1 : 0;
-            if ($staff != $expected)
-                $tmp[] = "staff = $expected";
             $expected = ( $status == 'New' ) ? 1 : 0;
             if ($new != $expected)
                 $tmp[] = "new = $expected";
@@ -3083,7 +3080,7 @@ function MembersDisplay() {
 
     $tag = MakeTag('update');
     $jsx = array();
-    $jsx[] = "setValue('area','members')";
+    $jsx[] = "setValue('area','attributes')";
     $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
     $jsx[] = "setValue('func','update')";
     $jsx[] = "addAction('Update')";
@@ -3127,6 +3124,7 @@ function MembersDisplay() {
         echo "<tr>";
         $tag = MakeTag('edit');
         $jsx = array();
+        $jsx[] = "setValue('area','members')";
         $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
         $jsx[] = "setValue('id',$id)";
         $jsx[] = "addAction('Edit')";
@@ -3176,6 +3174,108 @@ function MembersDisplay() {
         array_pop($gFunction);
 }
 
+function MembersEdit() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+    echo "<div class=center>";
+
+    echo "<input type=button value=Back onclick=\"setValue('from', '" . __FUNCTION__ . "');addAction('Back');\">";
+
+    $tag = MakeTag('update');
+    $jsx = array();
+    $jsx[] = "setValue('area','members')";
+    $jsx[] = "setValue('id'," . $_POST['id'] . ")";
+    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
+    $jsx[] = "setValue('func','update')";
+    $jsx[] = "addAction('Update')";
+    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+    echo "<input type=button value=Update $tag $js>";
+
+    $tag = MakeTag('update');
+    $jsx = array();
+    $jsx[] = "setValue('area','members')";
+    $jsx[] = "setValue('id'," . $_POST['id'] . ")";
+    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
+    $jsx[] = "setValue('func','delete')";
+    $txt = sprintf("Are you sure you want to delete this record?");
+    $jsx[] = sprintf("myConfirm('%s')", CVT_Str_to_Overlib($txt));
+    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+    echo "<input type=button value=Delete $tag $js>";
+
+    $stmt = DoQuery( "select * from members where id = :id", [':id' => $_POST['id']] );
+    $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    echo "<table>";
+    
+    echo "<tr>";
+    $key = "Last Name";
+    $tag = MakeTag($key);
+    echo "<th>$key</th>";
+    $jsx = array();
+    $jsx[] = "setValue('area','members')";
+    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
+    $jsx[] = "addField('$key')";
+    $jsx[] = "toggleBgRed('update')";
+    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
+    echo "<td>" . "<input type=text $tag value='" . $rec[$key] . "' size=20 $js></td>";
+    echo "</tr>";
+    
+    echo "<tr>";
+    $key = "Female 1st Name";
+    $tag = MakeTag($key);
+    echo "<th>$key</th>";
+    $jsx = array();
+    $jsx[] = "setValue('area','members')";
+    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
+    $jsx[] = "addField('$key')";
+    $jsx[] = "toggleBgRed('update')";
+    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
+    echo "<td>" . "<input type=text $tag value='" . $rec[$key] . "' size=20 $js></td>";
+    echo "</tr>";
+    
+    echo "<tr>";
+    $key = "Male 1st Name";
+    $tag = MakeTag($key);
+    echo "<th>$key</th>";
+    $jsx = array();
+    $jsx[] = "setValue('area','members')";
+    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
+    $jsx[] = "addField('$key')";
+    $jsx[] = "toggleBgRed('update')";
+    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
+    echo "<td>" . "<input type=text $tag value='" . $rec[$key] . "' size=20 $js></td>";
+    echo "</tr>";
+    
+    $options = [ '-- Select --', 'Couple', 'Divorced', 'Married', 'Member', 'Separated', 'Single', 'Widow', 'Widowed'];
+    echo "<tr>";
+    $key = "Marital Status";
+    $tag = MakeTag($key);
+    echo "<th>$key</th>";
+    $jsx = array();
+    $jsx[] = "setValue('area','members')";
+    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
+    $jsx[] = "addField('$key')";
+    $jsx[] = "toggleBgRed('update')";
+    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
+    echo "<td>";
+    echo "<select $tag $js>";
+    foreach( $options as $opt ) {
+        $selected = ( $rec[$key] == $opt ) ? 'selected' : '';
+        echo "<option value='$opt' $selected>$opt</option>";
+    }
+    echo "</select>";
+    echo "</td>";
+    
+    echo "</tr>";
+    
+    echo "</div>";
+    if ($gTrace)
+        array_pop($gFunction);
+}
+
 function MembersUpdate() {
     include 'includes/globals.php';
     if ($gTrace) {
@@ -3183,21 +3283,43 @@ function MembersUpdate() {
         Logger();
     }
 
-    DoQuery("start transaction");
-    $tmp = array_unique(preg_split('/,/', $_POST['fields']));
-    foreach ($tmp as $field) {
-        if (empty($field))
-            continue;
-        list( $f, $id ) = preg_split('/_/', $field);
-        $new_val = array_key_exists($field, $_POST) ? 1 : 0;
-        DoQuery("select * from member_attributes where id = $id");
-        if ($gPDO_num_rows > 0) {
-            DoQuery("update member_attributes set `$f` = $new_val where id = $id");
-        } else {
-            DoQuery("insert into member_attributes set `$f` = $new_val, `id` = $id");
+    $gArea = $_POST['area'];
+    
+    if( $gArea == "attributes") {
+        DoQuery("start transaction");
+        $tmp = array_unique(preg_split('/,/', $_POST['fields']));
+        foreach ($tmp as $field) {
+            if (empty($field))
+                continue;
+            list( $f, $id ) = preg_split('/_/', $field);
+            $new_val = array_key_exists($field, $_POST) ? 1 : 0;
+            DoQuery("select * from member_attributes where id = $id");
+            if ($gPDO_num_rows > 0) {
+                DoQuery("update member_attributes set `$f` = $new_val where id = $id");
+            } else {
+                DoQuery("insert into member_attributes set `$f` = $new_val, `id` = $id");
+            }
+        }
+        DoQuery("commit");
+        
+    } elseif( $gArea == "members" ) {
+        if( $gFunc == "update" ) {
+            $tmp = preg_split('/,/', $_POST['fields']);  // This is what was touched
+            $keys = array_unique($tmp);
+            $qx = array();
+            $flds = $args = [];
+
+            foreach ($keys as $key) {
+                $i = count($args) + 1;
+                $flds[] = "`$key` = :v$i";
+                $tkey = preg_replace('/ /', '_', $key );
+                $args[":v$i"] = CleanString($_POST[$tkey]);
+            }
+            DoQuery( "update members set " . join(',', $flds ) . " where id = " . $_POST['id'], $args );
+        } elseif( $gFunc == "delete" ) {
+            DoQuery("delete from members where id = " . $_POST['id']);
         }
     }
-    DoQuery("commit");
 
     if ($gTrace)
         array_pop($gFunction);
@@ -3305,10 +3427,10 @@ function PledgeEdit() {
         $jsx[] = "addField('paymentMethod')";
         $jsx[] = "toggleBgRed('update')";
         $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-        echo "<td><select $tag $js>";
+        echo "<td><select $tag $js>\n";
         foreach ($types as $val => $label) {
             $selected = ( $val == $rec['paymentMethod'] ) ? "selected" : "";
-            echo "<option value=$val $selected>$label</option>";
+            echo "<option value=$val $selected>$label</option>\n";
         }
         echo "</select></td>";
         echo "</tr>";
@@ -3678,49 +3800,13 @@ function SpecialCode() {
     $key = 2;
     
     if( $key == 2 ) {
-        $stmt = DoQuery( "select ID, `Last Name`, Anniversary, `Female DOB`, `Male DOB` from members_master" );
-        while( list( $id, $ln, $anniv, $fdob, $mdob ) = $stmt->fetch(PDO::FETCH_NUM) ) {
-            $show = 0;
-            if( ! empty( $anniv ) ) {
-                list( $mm, $dd, $yy ) = explode('/', $anniv );
-                $range['anniv'][$yy] = 1;
-                if( $yy < 20)
-                    $show = 1;
+        $stmt = DoQuery( "select id from member_attributes" );
+        while( list($id) = $stmt->fetch( PDO::FETCH_NUM)) {
+            $stmt2 = DoQuery( "select id from members where id = $id" );
+            if( $gPDO_num_rows == 0 ) {
+                DoQuery( "delete from member_attributes where id = $id");
             }
-            if( ! empty( $fdob ) ) {
-                list( $mm, $dd, $yy ) = explode('/', $fdob );
-                $range['fdob'][$yy] = 1;
-                if( $yy < 20)
-                    $show = 1;
-            }
-            if( ! empty( $mdob ) ) {
-                list( $mm, $dd, $yy ) = explode('/', $mdob );
-                $range['mdob'][$yy] = 1;
-                if( $yy < 20)
-                    $show = 1;
-            }
-            if( $show )
-                printf( "ID: %4d, Last Name: %20s, Anniv: %8s, FDOB: %8s, MDOB: %8s<br>",
-                        $id, $ln, $anniv, $fdob, $mdob );
-
         }
-        echo "<br>";
-        echo "Anniv:<br>";
-        $v = array_keys($range['anniv']);
-        sort($v);
-        echo join(',', $v) . "<br>";
-
-        echo "<br>";
-        echo "Fdob:<br>";
-        $v = array_keys($range['fdob']);
-        sort($v);
-        echo join(',', $v) . "<br>";
-
-        echo "<br>";
-        echo "Mdob:<br>";
-        $v = array_keys($range['mdob']);
-        sort($v);
-        echo join(',', $v) . "<br>";
     }
     
     if( $key == 1 ) {

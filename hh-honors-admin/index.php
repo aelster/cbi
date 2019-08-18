@@ -87,6 +87,11 @@ switch ($gAction) {
         if ($gFrom == "EditItem") {
             $gAction = 'Main';
             $_POST['area'] = 'items';
+        } elseif( $gFrom == "MembersEdit" ) {
+            MembersDisplay();
+            exit;
+            $gAction = 'Main';
+            $gFunc = "members";
         } else {
             $gAction = 'Welcome';
             $gFunc = "";
@@ -220,6 +225,11 @@ switch ($gAction) {
             MembersUpdate();
             MembersDisplay();
             exit;
+        } elseif( $gFrom == "MembersEdit") {
+            MembersUpdate();
+            MembersEdit();
+            exit;
+    
         } elseif ($gFrom == "DisplayFinancial") {
             PledgeUpdate();
             $gAction = 'Main';
