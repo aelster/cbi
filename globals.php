@@ -1,4 +1,10 @@
 <?php
+
+global $mail_live;
+
+global $mysql_last_id;
+global $mysql_numrows;
+global $mysql_result;
 #=====================================================
 
 // This are the PDO global variables that I will use
@@ -9,69 +15,42 @@ global $gPDO_lastInsertID;
 global $gPDO_num_rows;
 global $gPDO_pass;
 global $gPDO_user;
-global $gPrefix;
 
 #=====================================================
-global $gDebugInLine; # 0
-global $gDebugErrorLog; # 1
-global $gDebugWindow; # 2
-global $gDebugHTML; # 3
-global $gDebugAll;
 
-$gDebugInLine = 2**0;
-$gDebugErrorLog = 2**1;
-$gDebugWindow = 2**2;
-$gDebugHTML = 2**3;
-$gDebugAll = 2**4 - 1;
-#=====================================================
-# Everything here is to fix a problem
-
-global $gAccessNameToId;
-global $gAccessNameToLevel;
-global $gAccessNameEnabled;
+global $gAccessLevels;
+global $gAccessLevel;
 global $gAccessLevelEnabled;
 global $gAccessLevels;
-global $gArea;
-global $gFunc;
-global $gMailAdmin;
-global $gMailAdminName;
-global $gMailLive;
-global $gMailSignature;
-global $gMailSignatureImage;
-global $gMailSignatureImageSize;
-global $gProduction;
-global $gResetKey;
-
-global $gTitle;
-global $gUserName;
-global $user;           // Object: active user
-
-#=====================================================
-
-global $mail_enabled;
-global $mail_live;
-
-#=====================================================
-
-global $gAccessLevel;
+global $gAccessNameEnabled;
+global $gAccessNameToId;
+global $gAccessNameToLevel;
 global $gAction;
 global $gActive;
+global $gArea;
+global $gAuctionYear;
 global $gDb;
-global $gDbControl;
-global $gDbVector;
 global $gDebug;
 global $gEnabled;
+global $gError;
 global $gFrom;
+global $gFunc;
 global $gFunction;
-global $gJewishYear;
+global $gGala;
 global $gLF;
-global $gSiteName;
+global $gMailAdmin;
+global $gResetKey;
 global $gSourceCode;
 global $gSpiritIDtoDesc;
 global $gSpiritIDtoType;
 global $gSpiritIDstats;
+global $gTitle;
 global $gTrace;
 global $gUserId;
+global $gUserName;
+
+global $error;
+global $user;           // Object: active user
 
 global $gSiteEnabled;
 
@@ -84,12 +63,10 @@ $gFunction = array('index.php');
 global $PaymentCredit;
 global $PaymentCheck;
 global $PaymentCall;
-global $gPayMethods;
 
 $PaymentCredit = 1;
 $PaymentCheck = 2;
 $PaymentCall = 3;
-$gPayMethods = array("", "Credit", "Check", "Call");
 
 #=====================================================
 global $PledgeTypeFinancial;
@@ -113,6 +90,7 @@ $SpiritualGemilut = 3;
 # Auction Specific
 #=====================================================
 global $gCategories;
+global $gPackages;
 global $gPreSelected; # set to item_id
 global $gPreUser;     # set to user_hash
 
@@ -139,10 +117,13 @@ $gSendOld = 2;
 $gSendBought = 3;
 $gSendOldBought = 4;
 
-$gService = [];
-$gService['rh1'] = "Rosh Hashanah Day #1";
-$gService['rh2'] = "Rosh Hashanah Day #2";
-$gService['kn'] = "Kol Nidre";
-$gService['yka'] = "Yom Kippur Morning";
-$gService['ykp'] = "Yom Kippur Afternoon";
+global $gDebugInLine; # 0
+global $gDebugErrorLog; # 1
+global $gDebugWindow; # 2
+global $gDebugMask;
+
+$gDebugInLine = 2**0;
+$gDebugErrorLog = 2**1;
+$gDebugWindow = 2**2;
+$gDebugMask = 7;
 ?>

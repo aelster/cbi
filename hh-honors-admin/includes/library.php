@@ -706,6 +706,8 @@ function CreateHonors() {
             $qx[] = "`service` = '" . $service . "'";
             $qx[] = "`page` = " . $row['page'];
             $qx[] = "`sort` = " . $row['sort'];
+            $qx[] = "`arrival_time` = '" . $row['arrival_time'] . "'";
+            $qx[] = "`mail_group` = " . $row['mail_group'];
             $qx[] = "`honor` = :v1";
             $query = "insert into honors set " . join(',', $qx);
             $add = 1;
@@ -729,6 +731,8 @@ function CreateHonors() {
             $qx[] = "`service` = '" . $service . "'";
             $qx[] = "`page` = " . $row['page'];
             $qx[] = "`sort` = " . $row['sort'];
+            $qx[] = "`arrival_time` = '" . $row['arrival_time'] . "'";
+            $qx[] = "`mail_group` = " . $row['mail_group'];
             $qx[] = "`honor` = :v1";
             $query = "insert into honors set " . join(',', $qx);
             $add = 1;
@@ -752,6 +756,8 @@ function CreateHonors() {
             $qx[] = "`service` = '" . $service . "'";
             $qx[] = "`page` = " . $row['page'];
             $qx[] = "`sort` = " . $row['sort'];
+            $qx[] = "`arrival_time` = '" . $row['arrival_time'] . "'";
+            $qx[] = "`mail_group` = " . $row['mail_group'];
             $qx[] = "`honor` = :v1";
             $query = "insert into honors set " . join(',', $qx);
             $add = 1;
@@ -775,6 +781,8 @@ function CreateHonors() {
             $qx[] = "`service` = '" . $service . "'";
             $qx[] = "`page` = " . $row['page'];
             $qx[] = "`sort` = " . $row['sort'];
+            $qx[] = "`arrival_time` = '" . $row['arrival_time'] . "'";
+            $qx[] = "`mail_group` = " . $row['mail_group'];
             $qx[] = "`honor` = :v1";
             $query = "insert into honors set " . join(',', $qx);
             $add = 1;
@@ -795,6 +803,8 @@ function CreateHonors() {
             $qx[] = "`service` = '" . $service . "'";
             $qx[] = "`page` = " . $row['page'];
             $qx[] = "`sort` = " . $row['sort'];
+            $qx[] = "`arrival_time` = '" . $row['arrival_time'] . "'";
+            $qx[] = "`mail_group` = " . $row['mail_group'];
             $qx[] = "`honor` = :v1";
             $query = "insert into honors set " . join(',', $qx);
             $add = 1;
@@ -1917,9 +1927,10 @@ function HonorsEdit() {
     echo "  <td class=sort>Sort</td>";
     echo "  <td class=si>Shabbat<br>Include</td>";
     echo "  <td class=se>Shabbat<br>Exclude</td>";
+    echo "  <td class=service>Arrival<br>Time</td>";
     echo "  <td class=honor>Honor</td>";
     echo "  <td class=page>Page</td>";
-    echo "  <td>Mail<br>Group</td>";
+    echo "  <td class=service>Mail<br>Group</td>";
     echo "</tr>\n";
     echo "</thead>";
     echo "<tbody>";
@@ -1974,6 +1985,14 @@ function HonorsEdit() {
         $checked = $row['shabbat_exclude'] ? "checked" : "";
         echo "<td class=se><input type=checkbox value=1 name=$tag $js $checked></td>";
 
+        $tag = sprintf("%03d_%s", $id, "arrival_time");
+        $jsx = array();
+        $jsx[] = "setValue('from','HonorsEdit')";
+        $jsx[] = "addField('$tag')";
+        $jsx[] = "toggleBgRed('update')";
+        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
+        printf("<td class=service><input type=text size=6 value='%s' name=$tag $js></td>", substr($row['arrival_time'],0,5));
+
         $tag = sprintf("%03d_%s", $id, "honor");
         $jsx = array();
         $jsx[] = "setValue('from','HonorsEdit')";
@@ -1989,6 +2008,14 @@ function HonorsEdit() {
         $jsx[] = "toggleBgRed('update')";
         $js = sprintf("onChange=\"%s\"", join(';', $jsx));
         printf("<td class=page><input type=text size=2 value=%d name=$tag $js></td>", $row['page']);
+
+        $tag = sprintf("%03d_%s", $id, "mail_group");
+        $jsx = array();
+        $jsx[] = "setValue('from','HonorsEdit')";
+        $jsx[] = "addField('$tag')";
+        $jsx[] = "toggleBgRed('update')";
+        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
+        printf("<td class=service><input type=text size=2 value=%d name=$tag $js></td>", $row['mail_group']);
 
         echo "</tr>";
     }

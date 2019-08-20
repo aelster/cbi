@@ -11,11 +11,16 @@ $gFunc = ( isset($_POST['func']) ? $_POST['func'] : "" );
 if ($gDebug) {
     DumpPostVars(sprintf("Begin Phase #1 (pre-html)> gAction: [%s], gFunc: [%s], gArea: [%s]", $gAction, $gFunc, $gArea));
 }
-
+#$_REQUEST['hash'] = 'f77b7c';
 #========================================================================
 WriteHeader();
 LocalInit();
 
+$hash = array_key_exists('hash', $_REQUEST) ? $_REQUEST['hash'] : 'n/a';
+$stmt = DoQuery("select * from assignments where hash = '$hash'");
+if ($gPDO_num_rows == 0) {
+    $gAction = "bye bye";
+}
 if ($gAction == "confirm") {
     if ($gDebug)
         DumpPostVars();
@@ -29,7 +34,7 @@ if ($gAction == 'honor') {
 } elseif ($gAction == "pledge") {
     include( "pledge.php" );
 } else {
-    include 'pledge.php';
+    #include 'pledge.php';
 }
 ?>
 </body>

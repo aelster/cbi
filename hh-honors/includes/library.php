@@ -707,7 +707,7 @@ function DisplayMain() {
 			echo "</div>";
 		}
 		
-		if( UserManager( 'authorized', 'admin' ) ) {
+		if( UserManager( 'authorized', 'admin' ) && 0 ) {
 			echo "<div class=admin>";
 			echo "<h3>Admin User Features</h3>";
 
@@ -733,7 +733,7 @@ function DisplayMain() {
 			echo "<br>";
 		}
 		
-		if( UserManager( 'authorized', 'office' ) ) {
+		if( UserManager( 'authorized', 'office' ) && 0 ) {
 			echo "<div class=office>";
 			echo "<h3>User Features</h3>";
 			
@@ -1445,6 +1445,61 @@ function ExcelSpiritual() {
 	if( $gTrace ) array_pop( $gFunction );	
 }
 
+function FYSelect() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger('fy select');
+    }
+
+    if (defined('DB_OPEN')) {
+        echo "FYSelect can't be called twice";
+        exit();
+    }
+    define('DB_OPEN', true);
+    /*
+     * First connect to the manager to determine the database
+     */
+    try {
+        //create PDO connection
+        if ($gProduction) {
+            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
+        } else {
+            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+        }
+
+        $t = new PDO($gPDO_dsn, $gPDO_user, $gPDO_pass, $gPDO_attr);
+    } catch (PDOException $e) {
+        //show error
+        error_log($e);
+        error_log( "connection failed" );
+        echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
+        $gDbControl = NULL;
+        throw $e;
+    }
+
+    $id = $idx = 0;
+    
+    preg_match( '/dbname=(.+)_(.+)_(.+);/', $gPDO_dsn, $matches );
+    list( $na, $gPrefix, $gSiteName, $jewishYear) = $matches;
+
+    $gDb = $gDbControl = $gDbVector[$id] = $t;
+    $local_dbName[$id] = "{$gPrefix}_{$gSiteName}_{$jewishYear}";
+    $local_Label[$id] = $jewishYear;
+
+    if (!array_key_exists('dbId', $_SESSION) || empty($_SESSION['dbId'])) {
+        $_SESSION['dbId'] = $idx;
+    }
+    
+    if( array_key_exists( 'dbId', $_SESSION ) ) {
+        $_SESSION['dbName'] = $local_dbName[$_SESSION['dbId']];
+        $_SESSION['dbLabel'] = $local_Label[$_SESSION['dbId']];
+        $gDb = $gDbVector[$_SESSION['dbId']];
+    }
+    
+    LocalInit();
+}
+
 function HashAdd() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -1521,6 +1576,31 @@ function LocalInit() {
     $proto = ( array_key_exists('HTTPS', $_SERVER) && $_SERVER['HTTPS'] == "on" ) ? "https" : "http";
     $gSourceCode = sprintf("%s://%s%s", $proto, $_SERVER['SERVER_NAME'], $_SERVER['SCRIPT_NAME']);
     $gFunction = array();
+#============
+    $gAccessNameToLevel = array();
+    $gAccessNameEnabled = array();
+    $gAccessLevels = array();
+    $gCategories = array();
+    $gPackages = array();
+
+    $gCategories[0] = '__Unassigned';
+    $gPackages[0] = '__Unassigned';
+
+    $stmt = DoQuery('select * from privileges order by level desc');
+    if ($gPDO_num_rows == 0) {
+        $query = "insert into privileges set name = :name, level = :level, enabled = :enabled";
+        DoQuery($query, [':name' => 'control', ':level' => 500, ':enabled' => 1]);
+        DoQuery($query, [':name' => 'admin', ':level' => 400, ':enabled' => 0]);
+        DoQuery($query, [':name' => 'office', ':level' => 300, ':enabled' => 0]);
+        $stmt = DoQuery('select * from privileges order by level desc');
+    }
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $gAccessNameToId[$row['name']] = $row['id'];
+        $gAccessNameToLevel[$row['name']] = $row['level'];
+        $gAccessNameEnabled[$row['name']] = $row['enabled'];
+        $gAccessLevelEnabled[$row['level']] = $row['enabled'];
+        $gAccessLevels[] = $row['name'];
+    }
 
 #============
 	DoQuery( "set transaction isolation level serializable" );
@@ -1905,8 +1985,11 @@ function SendConfirmation() {
     list( $mid ) = $stmt->fetch(PDO::FETCH_NUM);
 
     $str = join(',', $qarr);
-    $query = sprintf("insert into event_log set type='rsvp', time=now(), userid=$mid, item='%s'", addslashes($str));
-    DoQuery($query);
+    EventLog('record', [
+        'type' => 'rsvp',
+        'userid' => $mid,
+        'item' => addslashes($str )
+    ]);
 
     $html[] = "";
     $text[] = "";
@@ -1954,11 +2037,10 @@ function SendConfirmation() {
     $ret = MyMailerSend($mail);
 
     DoQuery("update assignments set sent = 1 where hash = '$hash'");
-    $userid = $GLOBALS['gUserId'];
 
     EventLog('record', [
         'type' => 'mail',
-        'userid' => $userid,
+        'userid' => $mid,
         'item' => "Sent confirmation to $firstName, has: $hash, status: $ret"
     ]);
 
@@ -2150,36 +2232,11 @@ function UpdateItem() {
 	if( $gTrace ) array_pop( $gFunction );
 }
 
-function WriteHeader() {
-    include( 'globals.php' );
+function WriteBody() {
+    include 'includes/globals.php';
+    echo "<body onload='loginSetFocus();scrollableTable();'>$gLF";
 
-    echo "<html>$gLF";
-    echo "<head>$gLF";
-
-    $styles = array();
-    $styles[] = "/css/CommonV2.css";
-    $styles[] = "admin.css";
-
-    foreach ($styles as $style) {
-        printf("<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\" />$gLF", $style);
-    }
-
-    $scripts = array();
-    $scripts[] = "/scripts/overlib/overlib.js";
-    $scripts[] = "/scripts/overlib/overlib_hideform.js";
-    $scripts[] = "/scripts/commonv2.js";
-    $scripts[] = "/scripts/sha256.js";
-    $scripts[] = "/scripts/sorttable.js";
-    $scripts[] = "hhPledges.js";
-
-    foreach ($scripts as $script) {
-        printf("<script type=\"text/javascript\" src=\"%s\"></script>$gLF", $script);
-    }
-    echo "</head>$gLF";
-
-    echo "<body>$gLF";
-
-    if ($gProduction == 0) {
+    if( $gProduction == 0 ) {
         echo "
 <style type='text/css'>
 p.dev {
@@ -2191,5 +2248,75 @@ p.dev {
 <p class=dev>Development Site</p>";
     }
 
-    AddOverlib();
+    echo "<div class=center>$gLF";
+    echo "<img src=\"assets/CBI_ner_tamid.png\">$gLF";
+    echo "<h2>$gJewishYear CBI High Holy Day Honors</h2>$gLF";
+
+    if ($user->is_logged_in()) {
+        echo "<br>User: $gUserName<br>";
+    }
+    echo "</div>$gLF";
+
+    if ($gDebug) {
+        echo "<script type='text/javascript'>";
+        echo "createDebugWindow();";
+        echo "</script>";
+    }
+}
+
+function WriteFooter() {
+    include 'includes/globals.php';
+
+    if (defined('FORM_OPEN')) {
+        echo "</form>";
+    }
+    echo "</div>";
+    echo "</body>";
+    echo "</html>";
+}
+
+function WriteHeader() {
+    include 'includes/globals.php';
+
+    $tag = 'LOADED_' . __FILE__;
+    if (defined($tag))
+        return;
+    define($tag, 1);
+
+    $styles = array();
+#    $styles[] = "styles/main.css";
+#    $styles[] = "styles/oneColFixCtr.css";
+    $styles[] = "/css/Common.css";
+
+    $scripts = array();
+#    $scripts[] = "scripts/assign.js";
+#    $scripts[] = "scripts/main.js";
+#    $scripts[] = "scripts/sorttable.js";
+    $scripts[] = "/scripts/commonv2.js";
+
+    echo "<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>\n";
+    if (isset($title)) {
+        echo "<title>$title</title>\n";
+    }
+    foreach ($styles as $style) {
+        printf("<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\" />\n", $style);
+    }
+
+    $force = 1;
+
+    if ($force) {
+        $tag = rand(0, 1000);
+        $str = "?dev=$tag";
+    } else {
+        $str = "";
+    }
+    echo "<!-- Start of scripts -->\n";
+    foreach ($scripts as $script) {
+        printf("<script type=\"text/javascript\" src=\"%s$str\"></script>\n", $script);
+    }
+    echo "<!-- End of scripts -->\n";
+    echo "</head>\n";
 }

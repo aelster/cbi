@@ -301,13 +301,14 @@
                                 <!-- InstanceBeginEditable name="Content" -->
                                 <?php
                                 AddForm();
-                                $hash = $_REQUEST['hash'];
-                                echo "<input type=hidden name=hash value='$hash'>";
+$hash = array_key_exists('hash', $_REQUEST) ? $_REQUEST['hash'] : 'n/a';
+$stmt = DoQuery("select * from assignments where hash = '$hash'");
                                 $stmt = DoQuery("select * from assignments where hash = '$hash'");
 
                                 if ($gPDO_num_rows == 0) {
                                     return;
                                 }
+                                echo "<input type=hidden name=hash value='$hash'>";
 
                                 $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
                                 $member_id = $assignment['member_id'];
