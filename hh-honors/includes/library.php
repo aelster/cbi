@@ -1899,6 +1899,10 @@ function SendConfirmation() {
     if(array_key_exists('hash', $_POST) ) {
         $hash = $_POST['hash'];
     }
+    
+    $stmt = DoQuery( "select * from assignments where active = 1 and hash = '$hash'" );
+    $orig = $stmt->fetch(PDO::FETCH_ASSOC);
+    
     $firstName = $_POST['hh-name'];
     $lastName = "";
 
@@ -1933,6 +1937,8 @@ function SendConfirmation() {
         $qarr[] = "declined = 1";
         $qarr[] = "accepted = 0";
     }
+    $query = sprintf("update assignments set updated=now(), active = 0, %s where hash = '%s'", join(',', $qarr), $_REQUEST['hash']);
+    DoQuery($query);
 
     $amount = $_POST['hh-amount'];
     if (!empty($amount)) {
@@ -1977,12 +1983,14 @@ function SendConfirmation() {
         $qarr[] = "comment = ''";
     }
 
-    $query = sprintf("update assignments set updated=now(), %s where hash = '%s'", join(',', $qarr), $_REQUEST['hash']);
+    $qarr[] = "jyear = $gJewishYear";
+    $qarr[] = "honor_id = " . $orig['honor_id'];
+    $qarr[] = "member_id = " . $orig['member_id'];
+    
+    $query = sprintf("insert into replies set updated=now(), %s", join(',', $qarr));
     DoQuery($query);
 
-    $query = sprintf("select member_id from assignments where hash = '%s'", $_REQUEST['hash']);
-    $stmt = DoQuery($query);
-    list( $mid ) = $stmt->fetch(PDO::FETCH_NUM);
+    $mid = $orig['member_id'];
 
     $str = join(',', $qarr);
     EventLog('record', [
@@ -2036,7 +2044,7 @@ function SendConfirmation() {
 
     $ret = MyMailerSend($mail);
 
-    DoQuery("update assignments set sent = 1 where hash = '$hash'");
+    DoQuery("update assignments set sent = 1, active = 0 where hash = '$hash'");
 
     EventLog('record', [
         'type' => 'mail',

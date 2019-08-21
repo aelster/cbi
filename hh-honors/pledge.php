@@ -301,8 +301,7 @@
                                 <!-- InstanceBeginEditable name="Content" -->
                                 <?php
                                 AddForm();
-$hash = array_key_exists('hash', $_REQUEST) ? $_REQUEST['hash'] : 'n/a';
-$stmt = DoQuery("select * from assignments where hash = '$hash'");
+                                $hash = array_key_exists('hash', $_REQUEST) ? $_REQUEST['hash'] : 'n/a';
                                 $stmt = DoQuery("select * from assignments where hash = '$hash'");
 
                                 if ($gPDO_num_rows == 0) {

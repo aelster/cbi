@@ -15,11 +15,20 @@ if ($gDebug) {
 #========================================================================
 WriteHeader();
 LocalInit();
+$gDebug = 1;
 
-$hash = array_key_exists('hash', $_REQUEST) ? $_REQUEST['hash'] : 'n/a';
-$stmt = DoQuery("select * from assignments where hash = '$hash'");
+
+if( array_key_exists('hash', $_REQUEST) ) {
+    $hash = $_REQUEST['hash'];
+    if( empty($gAction) ) $gAction = "pledge";
+} else {
+    $gAction = "exit";
+}
+echo "gAction = $gAction<br>";
+        
+$stmt = DoQuery("select * from assignments where hash = '$hash' and active = 1");
 if ($gPDO_num_rows == 0) {
-    $gAction = "bye bye";
+    $gAction = "pledge";
 }
 if ($gAction == "confirm") {
     if ($gDebug)

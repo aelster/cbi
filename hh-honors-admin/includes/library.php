@@ -332,7 +332,7 @@ function AssignAdd() {
     $bypass = $_POST['bypass'];
     DoQuery("start transaction");
 
-    $stmt = DoQuery("select honor_id from assignments where member_id = $member_id and jyear = $gJewishYear");
+    $stmt = DoQuery("select honor_id from assignments where member_id = $member_id and jyear = $gJewishYear and active = 1");
     if ($gPDO_num_rows && !$bypass) {
         list( $hid ) = $stmt->fetch(PDO::FETCH_NUM);
         $stmt = DoQuery("select honor from honors where id = $hid");
@@ -1596,7 +1596,7 @@ function ExcelGabbai() {
 
         $query = "select a.accepted, a.updated,";
         $query .= " b.`female 1st name`, b.`male 1st name`, b.`last name`";
-        $query .= " from assignments a";
+        $query .= " from replies a";
         $query .= " join members b on b.id = a.member_id";
         $query .= " where a.honor_id = " . $orow['id'];
         $query .= " and a.declined = 0 and a.jyear = $gJewishYear";
@@ -1694,7 +1694,7 @@ function ExcelMoney() {
     $body[] = '"Last Name","First Name(s)","Date","Amount","Method"';
 
     $query = "SELECT a.`female 1st name`, a.`male 1st name`, a.`last name`, b.updated, b.donation, b.payby";
-    $query .= " from members a join assignments b on a.id = b.member_id";
+    $query .= " from members a join replies b on a.id = b.member_id";
     $query .= " where b.donation > 0 and b.jyear = $gJewishYear";
     $query .= " order by a.`last name` asc";
     $stmt_outer = DoQuery($query);
@@ -2315,7 +2315,13 @@ function MailAssignment() {
     $stmt = DoQuery("select * from honors where id = $honor_id");
     $honor = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    $stmt = DoQuery("select * from assignments where honor_id = $honor_id and member_id = $member_id and jyear = $gJewishYear");
+    $tmp = [];
+    $tmp[] = "honor_id = $honor_id";
+    $tmp[] = "member_id = $member_id";
+    $tmp[] = "jyear = $gJewishYear";
+    $tmp[] = "active = 1";
+            
+    $stmt = DoQuery("select * from assignments where " . join(' and ', $tmp ) );
     $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
     $hash = $assignment['hash'];
 
@@ -3601,7 +3607,7 @@ function Responses() {
     echo "<br><br>";
 
     $query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
-    $query .= " from assignments a";
+    $query .= " from replies a";
     $query .= " join members c on a.member_id=c.id";
     $query .= " where a.accepted = 1 and a.jyear = $gJewishYear";
     $query .= " order by a.updated desc";
@@ -3609,14 +3615,14 @@ function Responses() {
     $banner = sprintf("<a href=#accepts>Acceptances</a>: %d", $gPDO_num_rows);
 
     $query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
-    $query .= " from assignments a";
+    $query .= " from replies a";
     $query .= " join members c on a.member_id=c.id";
     $query .= " where a.declined = 1 and a.jyear = $gJewishYear";
     $query .= " order by a.updated desc";
     $declines = DoQuery($query);
     $banner .= sprintf(", <a href=#declines>Declines</a>: %d", $gPDO_num_rows);
 
-    $stmt = DoQuery("select sum(donation) from assignments where jyear = $gJewishYear");
+    $stmt = DoQuery("select sum(donation) from replies where jyear = $gJewishYear");
     list( $amount ) = $stmt->fetch(PDO::FETCH_NUM);
     $banner .= sprintf(", Amount Raised: \$ %s", number_format($amount));
     $banner .= "&nbsp;&nbsp;&nbsp;";
@@ -3824,7 +3830,25 @@ function SpecialCode() {
         $gFunction[] = __FUNCTION__;
         Logger();
     }
-    $key = 2;
+    $key = 3;
+    
+    if ($key == 3) {
+        $stmt = DoQuery("select * from assignments order by jyear asc");
+        while ($arec = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $i = 0;
+            $data = $flds = $vals = [];
+            foreach ($arec as $key => $val) {
+                if (preg_match("/$key/", "id,hash,sent") == 0) {
+
+                    $data[$key] = $val;
+                    $flds[] = "`$key`";
+                    $vals[] = ":$key";
+                }
+            }
+            $query = sprintf("insert into replies (%s) values (%s)", join(",", $flds), join(",", $vals));
+            DoQuery($query, $data);
+        }
+    }
     
     if( $key == 2 ) {
         $stmt = DoQuery( "select id from member_attributes" );
