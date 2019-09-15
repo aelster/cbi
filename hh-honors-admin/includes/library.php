@@ -362,10 +362,10 @@ function AssignAdd() {
         $unique = 0;
         while (!$unique) {
             $random_hash = substr(md5(uniqid(rand(), true)), 8, 6); // 6 characters long
-            DoQuery("select * from assignments where hash = '$random_hash' and jyear = $gJewishYear");
+            DoQuery("select * from assignments where `hash` like '$random_hash' and jyear = $gJewishYear");
             $unique = $gPDO_num_rows == 0 ? 1 : 0;
         }
-        DoQuery("insert into assignments set jyear = $gJewishYear, honor_id = $honor_id, member_id = $member_id, hash = '$random_hash'");
+        DoQuery("insert into assignments set jyear = $gJewishYear, honor_id = $honor_id, member_id = $member_id, `hash` = '$random_hash'");
         DoQuery("commit");
     }
 
@@ -402,7 +402,6 @@ function AssignRSVP() {
     }
 
     $vx = [];
-    $vx[] = "sent=1";
     $area = $_POST['area'];
     if ($area == 'accept') {
         $vx[] = "accepted=1";
@@ -411,12 +410,6 @@ function AssignRSVP() {
         $vx[] = "accepted=0";
         $vx[] = "declined=1";
     }
-
-    $donation = $_POST['reply-amount'];
-    $vx[] = "donation = $donation";
-
-    $method = $_POST['reply-method'];
-    $vx[] = "payby = $method";
 
     $tmp = preg_split("/,/", $_POST['fields']);
     foreach ($tmp as $field) {
@@ -427,15 +420,32 @@ function AssignRSVP() {
             $member_id = $tmp2[1];
         }
     }
-    $vx[] = "updated = now()";
 
-    $query = sprintf("update assignments set %s where honor_id = %d and member_id = %d", join(',', $vx), $honor_id, $member_id);
+    # sent=1 is artificial. If admin is accepting, 
+    $query = sprintf("update assignments set updated=now(), active=0, sent=1, %s where honor_id = %d and member_id = %d",
+            join(',', $vx), $honor_id, $member_id);
     DoQuery($query);
+    
+    $donation = $_POST['reply-amount'];
+    $vx[] = "donation = $donation";
+
+    $method = $_POST['reply-method'];
+    $vx[] = "payby = $method";
+    $vx[] = "jyear = " . $_SESSION['dbLabel'];
+    $vx[] = "honor_id = $honor_id";
+    $vx[] = "member_id = $member_id";
+    $query = sprintf("insert into replies set updated=now(), %s", join(',', $vx));
+    DoQuery($query);
+
+
 
     $str = join(',', $vx);
     $mid = $GLOBALS['gUserId'];
-    $query = "insert into event_log set type='rsvp', time=now(), userid=$mid, item=:v1";
-    DoQuery($query, [':v1' => $str]);
+    EventLog('record', [
+        'type' => 'rsvp',
+        'userid' => $mid,
+        'item' => addslashes($str) 
+    ]);
 
     if ($gTrace)
         array_pop($gFunction);
@@ -2081,6 +2091,7 @@ function LocalInit() {
 /*
 * This function should not generate any output so Excel downloads can be sent to the local browser
 */
+    $gUserId = 1;
     include( 'includes/globals.php' );
     if ($gUserId > 0) {
         $stmt = DoQuery("select debug from users where userid = $gUserId");
@@ -2409,11 +2420,17 @@ function MailAssignment() {
 
     $html[] = "";
     $text[] = "";
+    
+    $str = "For this honor we ask that you be in the sanctuary by " . $honor['arrival_time'] . "and check";
+    $str .= " in with the Shamash, the person in charge of making sure that everytone who has an honor is in the right";
+    $str .= " place at the right time.";
 
+/* old wording    
     $str = "We ask that you be in the sanctuary at least 30 minutes prior to your honor";
     $str .= " (15 minutes prior if it occurs at the beginning of the service,) and check in with";
     $str .= " the Shamash, the person in charge of making sure that everyone who has an honor";
     $str .= " is in the right place at the right time.";
+ */
 /*
     if (!$remind) {
         $str .= " We will send you additional detailed information about your honor closer to the date.";
@@ -2517,7 +2534,7 @@ function MailAssignment() {
 
         $ret = MyMailerSend($mail);
 
-        DoQuery("update assignments set sent = 1 where hash = '$hash'");
+        DoQuery("update assignments set sent = 1 where `hash` like '$hash'");
         $userid = $GLOBALS['gUserId'];
 
         EventLog('record', [
@@ -2743,7 +2760,7 @@ function MailAssignmentByID() {
 
         $ret = MyMailerSend($mail);
 
-        DoQuery("update assignments set sent = 1 where hash = '$hash'");
+        DoQuery("update assignments set sent = 1 where `hash` = '$hash'");
         $userid = $GLOBALS['gUserId'];
 
         EventLog('record', [
@@ -3726,8 +3743,198 @@ function Responses() {
     if ($gTrace)
         array_pop($gFunction);
 }
-
 function SendConfirmation() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+    $vx = [];
+    $area = $_POST['area'];
+    if ($area == 'accept') {
+        $vx[] = "accepted=1";
+        $vx[] = "declined=0";
+    } elseif ($area == "decline") {
+        $vx[] = "accepted=0";
+        $vx[] = "declined=1";
+    }
+
+    $tmp = preg_split("/,/", $_POST['fields']);
+    foreach ($tmp as $field) {
+        $tmp2 = preg_split("/_/", $field);
+        if ($tmp2[0] == "honor") {
+            $honor_id = $tmp2[1];
+        } elseif ($tmp2[0] == "member") {
+            $member_id = $tmp2[1];
+        }
+    }
+    
+    # sent=1 is artificial. If admin is accepting, 
+    $query = sprintf("update assignments set updated=now(), active=0, sent=1, %s where honor_id = %d and member_id = %d",
+            join(',', $vx), $honor_id, $member_id);
+    DoQuery($query);
+
+    $donation = $_POST['reply-amount'];
+    $vx[] = "donation = $donation";
+
+    $method = $_POST['reply-method'];
+    $vx[] = "payby = $method";
+    $vx[] = "jyear = " . $_SESSION['dbLabel'];
+    $vx[] = "honor_id = $honor_id";
+    $vx[] = "member_id = $member_id";
+    $query = sprintf("insert into replies set updated=now(), %s", join(',', $vx));
+    DoQuery($query);
+
+    $str = join(',', $vx);
+    $mid = $GLOBALS['gUserId'];
+    EventLog('record', [
+        'type' => 'rsvp',
+        'userid' => $member_id,
+        'item' => addslashes($str) 
+    ]);
+
+    $stmt = DoQuery("select * from members where id = $member_id");
+    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!empty($member['Female 1st Name']) && empty($member['Male 1st Name'])) {
+        $name = $member['Female 1st Name'];
+    } elseif (empty($member['Female 1st Name']) && !empty($memeber['Male 1st Name'])) {
+        $name = $member['Male 1st Name'];
+    } else {
+        $name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+    }
+    $firstName = $name . sprintf(" %s", $member['Last Name']);
+
+
+    $lastName = "";
+
+    $html = $text = array();
+
+    $html[] = "<html><head></head><body>";
+    $html[] = sprintf("<img src=\"cid:sigimg\" width=\"%d\" height=\"%d\"/>", $GLOBALS['gMailSignatureImageSize']['width'], $GLOBALS['gMailSignatureImageSize']['height']);
+
+    $html[] = "Congregation B'nai Israel";
+    $text[] = "Congregation B'nai Israel";
+
+    $html[] = "";
+    $text[] = "";
+
+    $html[] = sprintf("Dear %s,", $firstName);
+    $text[] = sprintf("Dear %s,", $firstName);
+
+    $html[] = "";
+    $text[] = "";
+
+    $qarr = [];
+
+    $button = $_POST['area'];
+    if ($button == 'accept') {
+        $str_html = sprintf("Thank you for allowing us to honor you.");
+        $str_text = sprintf("Thank you for allowing us to honor you.");
+        $qarr[] = "accepted = 1";
+        $qarr[] = "declined = 0";
+    } elseif ($button == 'decline') {
+        $str_html = sprintf("Thank you for letting us know you are declining your honor.");
+        $str_text = sprintf("Thank you for letting us know you are declining your honor.");
+        $qarr[] = "declined = 1";
+        $qarr[] = "accepted = 0";
+    }
+
+    $amount = $_POST['reply-amount'];
+    if (!empty($amount)) {
+        $str_html .= sprintf(" We also thank you for your generous donation of \$ %s.", number_format($amount, 2));
+        $str_text .= sprintf(" We also, thank you for your generous donation of \$ %s.", number_format($amount, 2));
+        $qarr[] = "donation = $amount";
+
+        $payMethod = $_POST['reply-method'];
+        if ($payMethod == 1) {
+            $str_html .= sprintf(" We will be charging your credit card on file.");
+            $str_text .= sprintf(" We will be charging your credit card on file.");
+            $qarr[] = "payby = $payMethod";
+        } elseif ($payMethod == 2) {
+            $str_html .= sprintf(" We will be expecting your check in the next few days.");
+            $str_text .= sprintf(" We will be expecting your check in the next few days.");
+            $qarr[] = "payby = $payMethod";
+        } elseif ($payMethod == 3) {
+            $str_html .= sprintf(" We will be contacting you to arrange for payment.");
+            $str_text .= sprintf(" We will be contacting you to arrange for payment.");
+            $qarr[] = "payby = $payMethod";
+        }
+    } else {
+        $qarr[] = "donation = $amount";
+    }
+
+    $html[] = $str_html;
+    $text[] = $str_text;
+
+    $html[] = "";
+    $text[] = "";
+
+
+        $qarr[] = "comment = ''";
+
+    $qarr[] = "jyear = $gJewishYear";
+    $qarr[] = "honor_id = " . $honor_id;
+    $qarr[] = "member_id = " . $member_id;
+    
+    $mid = $member_id;
+
+    $html[] = "";
+    $text[] = "";
+
+    $html[] = "Sincerely,";
+    $text[] = "Sincerely";
+
+    $html[] = "The CBI HH Honors Committee";
+    $text[] = "The CBI HH Honors Committee";
+
+    $stmt = DoQuery("select * from members where id = $mid");
+    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+    $str = preg_replace("/\s+/", " ", $member['E-Mail Address']);
+    if (preg_match("/,/", $str)) {
+        $email = preg_split("/,/", $str, NULL, PREG_SPLIT_NO_EMPTY);
+    } elseif (preg_match("/;/", $str)) {
+        $email = preg_split("/;/", $str, NULL, PREG_SPLIT_NO_EMPTY);
+    } elseif (preg_match("/ /", $str)) {
+        $email = preg_split("/ /", $str, NULL, PREG_SPLIT_NO_EMPTY);
+    } else {
+        if (empty($str)) {
+            return;
+        }
+        $email = [$str];
+    }
+    $html[] = "</body></html>";
+
+    $mail = NULL;
+    $mail = MyMailerNew();
+
+    //Recipients
+    foreach ($email as $addr) {
+        $mail->AddAddress($addr);
+    }
+    $mail->setFrom('cbi18@cbi18.org', 'CBI');
+
+    //Attachments
+    $mail->AddEmbeddedImage($gMailSignatureImage, 'sigimg', $gMailSignatureImage);
+
+    //Content
+    $mail->Subject = "$gJewishYear CBI High Holy Day Honor Confirmation";
+
+    $mail->msgHTML(join('<br>', $html), DIR);
+
+    $ret = MyMailerSend($mail);
+
+    EventLog('record', [
+        'type' => 'mail',
+        'userid' => $member_id,
+        'item' => "Sent confirmation to $firstName, status: $ret"
+    ]);
+
+    if ($gTrace)
+        array_pop($gFunction);
+}
+
+function SendConfirmationOrig() {
     include 'includes/globals.php';
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
@@ -3804,9 +4011,7 @@ function SendConfirmation() {
 
     $message->setTo(array('bethelster1@gmail.com' => 'Beth Elster'));
     $message->setFrom(array('cbi18@cbi18.org' => 'CBI'));
-    $message->setBcc(array(
-        'cbi18@cbi18.org' => 'Ana Cottle',
-    ));
+    $message->setBcc(array('cbi18@cbi18.org' => 'Ana Cottle'));
 
     $message
             ->setBody(join('<br>', $html), 'text/html')
@@ -3830,7 +4035,13 @@ function SpecialCode() {
         $gFunction[] = __FUNCTION__;
         Logger();
     }
-    $key = 3;
+    Logger( "Made it to " . __FUNCTION__ );
+    $key = 4;
+    
+    if( $key == 4 ) {
+        DoQuery( "update assignments set active = 1, accepted = 0, declined = 0 where `hash` like '8a34ce'" );
+        DoQuery( "delete from replies where jyear = 5780 and member_id = 259" );
+    }
     
     if ($key == 3) {
         $stmt = DoQuery("select * from assignments order by jyear asc");

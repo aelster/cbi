@@ -6,8 +6,35 @@ $gLF = "\n";
 
 LocalInit();
 
+$sa=0;
+$saveAction[$sa++] = $gAction . "[$gDebug]";
+
 $gArea = ( isset($_POST['area']) ? $_POST['area'] : "" );
 $gFunc = ( isset($_POST['func']) ? $_POST['func'] : "" );
+
+if( $gAction == 'Download') {
+    $area = $_POST['area'];
+    if ($area == "spiritual") {
+        ExcelSpiritual();
+    } elseif ($area == "items") {
+        ExcelItems();
+    } elseif ($area == "gabbai") {
+        ExcelGabbai();
+    } elseif ($area == "donations") {
+        ExcelMoney();
+    }
+}
+if($user->is_logged_in()) {
+    UserManager('load', $_SESSION['userid'] );
+}
+
+$saveAction[$sa++] = $gAction . "[$gDebug]";
+WriteHeader();
+$saveAction[$sa++] = $gAction . "[$gDebug]";
+WriteBody();
+$saveAction[$sa++] = $gAction . "[$gDebug]";
+AddForm();
+$saveAction[$sa++] = $gAction . "[$gDebug]";
 
 if ($gDebug) {
     DumpPostVars(sprintf("Begin Phase #1 (pre-html)> gAction: [%s], gFunc: [%s], gArea: [%s]", $gAction, $gFunc, $gArea));
@@ -22,20 +49,7 @@ switch ($gAction) {
             $gAction = "Update";
         }
         break;
-
-    case( 'Download'):
-        $area = $_POST['area'];
-        if ($area == "spiritual") {
-            ExcelSpiritual();
-        } elseif ($area == "items") {
-            ExcelItems();
-        } elseif ($area == "gabbai") {
-            ExcelGabbai();
-        } elseif ($area == "donations") {
-            ExcelMoney();
-        }
-        break;
-        
+  
     case 'Reset':
         if( array_key_exists('password',$_POST) ) {
             UserManager('reset');
@@ -61,10 +75,6 @@ switch ($gAction) {
         }
         break;
 }
-if($user->is_logged_in()) {
-    UserManager('load', $_SESSION['userid'] );
-}
-WriteHeader();
 
 if( $gDebug & $gDebugWindow ) {
     echo "<script type='text/javascript'>";
@@ -75,11 +85,11 @@ if( $gDebug & $gDebugWindow ) {
     echo "</script>";
 }
 
-WriteBody();
-AddForm();
-
 if ($gDebug) {
-    DumpPostVars(sprintf( "Begin Phase #2 (perform updates)> gAction: [%s], gFunc: [%s], gArea: [%s]", $gAction, $gFunc, $gArea ));
+   for( $i = 0; $i < $sa; $i++ ) {
+       Logger( "gAction[$i]: " . $saveAction[$i] );
+   }
+   DumpPostVars(sprintf( "Begin Phase #2 (perform updates)> gAction: [%s], gFunc: [%s], gArea: [%s]", $gAction, $gFunc, $gArea ));
 }
 
 switch ($gAction) {
@@ -204,7 +214,7 @@ switch ($gAction) {
                 MailAssignments();
                 $gAction = "Assign";
             } elseif ($gFunc == "manual") {
-                AssignRSVP();
+                SendConfirmation();
                 $gAction = "Assign";
             }
         } elseif ($gFrom == "DisplayDates") {
