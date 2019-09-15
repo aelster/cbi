@@ -2421,9 +2421,10 @@ function MailAssignment() {
     $html[] = "";
     $text[] = "";
     
-    $str = "For this honor we ask that you be in the sanctuary by " . $honor['arrival_time'] . "and check";
-    $str .= " in with the Shamash, the person in charge of making sure that everytone who has an honor is in the right";
-    $str .= " place at the right time.";
+    $t = strtotime( $honor['arrival_time'] );
+    $str = "For this honor we ask that you be in the sanctuary by " . date("g:i A", $t);
+    $str .= " and check in with the Shamash, the person in charge of making sure that everyone";
+    $str .= " who has an honor is in the right place at the right time.";
 
 /* old wording    
     $str = "We ask that you be in the sanctuary at least 30 minutes prior to your honor";

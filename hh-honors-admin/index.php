@@ -160,7 +160,7 @@ switch ($gAction) {
         if ($gFunc == "backup") {
             Logger( "About to perform backup ...");
             exec("perl /home/cbi18/bin/hh_honors_backup.pl", $out);
-            print_r( $out );
+            Logger( $out );
         }
 
         if ($gFunc == "members") {
