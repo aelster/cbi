@@ -11,28 +11,43 @@ ini_set('zlib.output_compression', false);
 //ob_start();
 ob_implicit_flush(TRUE);
 
-if (preg_match('/dev.cbi18.org/', $_SERVER['HTTP_HOST'])) {
+$prefix = "NoPrefixFound";
+    
+$http_host = $_SERVER['HTTP_HOST'];
+    
+if (preg_match('/^dev.cbi18.org/', $http_host) || $http_host == "192.168.86.7" ) {
     $gProduction = 0;
-    $parts[] = '/usr/local/site/php'; # This is for Common
-    $parts[] = '/usr/local/site/cbi/hh-honors-admin'; # local customization
-    $parts[] = '/usr/local/PHPMailer';
-    $parts[] = '/usr/local/fpdf';
-    define('DIR', 'https://dev.cbi18.org/');
+    $gSiteDir = "/usr/local/site";
+    $gSiteName = "Dev";
+    $prefix = "";
+
+//} elseif (preg_match('/dev.cbi18.org/', $_SERVER['HTTP_HOST'])) {
+//    $gProduction = 0;
+//    $parts[] = '/usr/local/site/php'; # This is for Common
+//    $parts[] = '/usr/local/site/cbi/hh-honors-admin'; # local customization
+//    $parts[] = '/usr/local/PHPMailer';
+//    $parts[] = '/usr/local/fpdf';
+//    define('DIR', 'https://dev.cbi18.org/');
 
 } elseif ( preg_match( '/cbi18.org/', $_SERVER['HTTP_HOST']) ) {
     $gProduction = 1;
-    $parts[] = '/home/cbi18/site/php/';
-    $parts[] = '/home/cbi18/site/hh-honors-admin/';
-    $parts[] = '/home/cbi18/site/PHPMailer';
-    $parts[] = '/home/cbi18/site/fpdf';
-    define('DIR', 'https://cbi18.org/');
+    $gSiteDir = '/home/cbi18/site';
+    $gSiteName = 'CBI-Live';
 }
+$gSiteSubPath = "cbi";
 
+$parts[] = $gSiteDir . "/$gSiteSubPath/php";
+$parts[] = $gSiteDir . "/bin";
+$parts[] = $gSiteDir . "/php";
+$parts[] = $gSiteDir . "/PHPMailer";
+$parts[] = $gSiteDir . "/fpdf";
 $path = join(PATH_SEPARATOR, $parts);
-set_include_path(get_include_path() . PATH_SEPARATOR . $path);
+
+set_include_path(get_include_path() . PATH_SEPARATOR . $path );
 
 include 'includes/globals.php';
 include 'includes/library.php';
+
 include 'local-hh-honors.php';
 
 //application address
@@ -54,8 +69,6 @@ require_once 'src/Exception.php';
 
 session_start();
 
-FYSelect();
+selectDb();
 
-$user = new User($gDbControl);
-
-$gDb = $gDbVector[$_SESSION['dbId']];
+$user = new User($gPDO[$gDbControlId]['inst']);

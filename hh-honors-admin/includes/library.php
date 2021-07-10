@@ -1,24 +1,5 @@
 <?php
 
-function AddForm() {
-    include 'includes/globals.php';
-    if ($gTrace) {
-        $gFunction[] = __FUNCTION__;
-        Logger();
-    }
-
-    echo "<form name=fMain id=fMain method=post action=\"$gSourceCode\">$gLF";
-
-    $hidden = array('action', 'area', 'fields', 'func', 'from', 'id', 'key', 'listID', 'eventID', 'bypass');
-    foreach ($hidden as $var) {
-        $tag = MakeTag($var);
-        echo "<input type=hidden $tag>$gLF";
-    }
-    define('FORM_OPEN', 1);
-    if ($gTrace) {
-        array_pop($gFunction);
-    }
-}
 
 function Assign() {
     include 'includes/globals.php';
@@ -1373,7 +1354,7 @@ function DisplayMain() {
             echo "<h3>Control User Features</h3>";
             echo "
 <input type=button onclick=\"setValue('func','source');addAction('Main');\" value=\"Source\">
-<input type=button onclick=\"setValue('func','backup');addAction('Main');\" value=\"Backup\">
+<input type=button onclick=\"setValue('func','backup');addAction('backup');\" value=\"Backup\">
 <input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>
 <input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>
 <input type=button onclick=\"setValue('func','build-memb');addAction('Main');\" value=\"Build Members\">
@@ -1585,7 +1566,6 @@ function ExcelGabbai() {
     include 'includes/globals.php';
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
-        Logger();
     }
     $ts = time() + $time_offset;
     $str = date('Ymj', $ts);
@@ -1606,7 +1586,7 @@ function ExcelGabbai() {
 
         $query = "select a.accepted, a.updated,";
         $query .= " b.`female 1st name`, b.`male 1st name`, b.`last name`";
-        $query .= " from replies a";
+        $query .= " from assignments a";
         $query .= " join members b on b.id = a.member_id";
         $query .= " where a.honor_id = " . $orow['id'];
         $query .= " and a.declined = 0 and a.jyear = $gJewishYear";
@@ -1638,7 +1618,6 @@ function ExcelItems() {
     include 'includes/globals.php';
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
-        Logger();
     }
     $ts = time() + $time_offset;
     $str = date('Ymj', $ts);
@@ -1693,7 +1672,6 @@ function ExcelMoney() {
     include 'includes/globals.php';
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
-        Logger();
     }
     $ts = time() + $time_offset;
     $str = date('Ymj', $ts);
@@ -1737,7 +1715,6 @@ function ExcelSpiritual() {
     include 'includes/globals.php';
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
-        Logger();
     }
     $ts = time() + $time_offset;
     $str = date('Ymj', $ts);
@@ -2088,40 +2065,42 @@ function HonorsUpdate() {
 }
 
 function LocalInit() {
+    include 'includes/globals.php';
 /*
 * This function should not generate any output so Excel downloads can be sent to the local browser
 */
-    $gUserId = 1;
-    include( 'includes/globals.php' );
-    if ($gUserId > 0) {
-        $stmt = DoQuery("select debug from users where userid = $gUserId");
-        list($val) = $stmt->fetch(PDO::FETCH_NUM);
-    } else {
-        $val = 0;
-    }
-    $gDebug = $gTrace = $_SESSION['debug'] = $val;
-
-    if (array_key_exists('action', $_POST)) {
-        $gAction = $_POST['action'];
-    } else {
-        $tmp = preg_split("/&/", $_SERVER['QUERY_STRING'], NULL, PREG_SPLIT_NO_EMPTY);
-        foreach ($tmp as $str) {
-            if (preg_match('/=/', $str)) {
-                list( $key, $val ) = preg_split("/=/", $str, NULL, PREG_SPLIT_NO_EMPTY);
-                if ($key == 'action') {
-                    $gAction = $val;
-                } elseif ($key == 'key') {
-                    $gResetKey = $val;
-                }
-            } else {
-                if ($tmp == 'bozo') {
-                    $gDebug = 1;
-                    $_SESSION['debug'] = 1;
-                }
-            }
+    $gDb = $gPDO[0]['inst'];
+    
+    $req = $_SERVER['QUERY_STRING'];
+    if (!empty($req)) {
+        $tmp = parse_str($req, $qs);
+        if (array_key_exists('action', $qs) && $qs['action'] == 'password' &&
+                array_key_exists('func', $qs) && $qs['func'] == 'reset') {
+            $gAction = 'password';
+            $gFunc = 'reset';
+            $gFrom = 'email';
+            $gResetKey = $qs['key'];
+        } elseif (!array_key_exists('XDEBUG_SESSION_START', $qs)) {
+            UserManager('logout');
+            exit;
         }
     }
+    $noAction = empty($gAction) && !array_key_exists('action', $_POST);
 
+    if ($noAction) {
+        $gAction = 'password';
+        $gFunc = 'welcome';
+    }
+    $tmp = ['action', 'area', 'from', 'func', 'mode', 'where'];
+    foreach ($tmp as $name) {
+        $gn = 'g' . ucfirst($name);
+        if (!isset($$gn)) {
+            $$gn = array_key_exists($name, $_POST) ? $_POST[$name] : "";
+        }
+    }
+    if (empty($gMode)) {
+        $gMode = "office";
+    }
     $dump = 0;
     if ($dump) {
         $v = array_keys($_SERVER);
@@ -2130,12 +2109,15 @@ function LocalInit() {
             printf("_SERVER['%s'] = %s<br>", $key, $_SERVER[$key]);
         }
     }
+    $gLF = "\n";
 
-    $gFrom = array_key_exists('from', $_POST) ? $_POST['from'] : '';
-    $gArea = array_key_exists('area', $_POST) ? $_POST['area'] : '';
     $proto = ( array_key_exists('HTTPS', $_SERVER) && $_SERVER['HTTPS'] == "on" ) ? "https" : "http";
     $gSourceCode = sprintf("%s://%s%s", $proto, $_SERVER['SERVER_NAME'], $_SERVER['SCRIPT_NAME']);
     $gFunction = array();
+
+    $date_server = new DateTime('2000-01-01');
+    $date_calif = new DateTime('2000-01-01', new DateTimeZone('America/Los_Angeles'));
+    $time_offset = $date_server->format('U') - $date_calif->format('U');
 
     $gPreSelected = ( preg_match('/id=(\d+)/', $gSourceCode, $matches) ) ? $matches[1] : 0;
     if ($gPreSelected > 0) {
@@ -2548,7 +2530,7 @@ function MailAssignment() {
         array_pop($gFunction);
 }
 
-function MailAssignmentByID() {
+function MailAssignmentByID_notYetUsed() {
     include 'includes/globals.php';
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
@@ -3194,11 +3176,11 @@ function MembersDisplay() {
         printf("<td class=$class>%s</td>", $attributes[$id]['mtribe']);
         $class = ( (!empty($row['Female 1st Name']) ) && empty($attributes[$id]['ftribe']) ) ? "tribew" : "tribe";
         printf("<td class=$class>%s</td>", $attributes[$id]['ftribe']);
-        $checked = ( $attributes[$id]['new'] ) ? "checked" : "";
-        $sort_key = ( $attributes[$id]['new'] ) ? 1 : 0;
-        printf("<td class=box sorttable_customkey=$sort_key><input type=checkbox $checked disabled></td>\n");
+//        $checked = ( $attributes[$id]['new'] ) ? "checked" : "";
+//        $sort_key = ( $attributes[$id]['new'] ) ? 1 : 0;
+//        printf("<td class=box sorttable_customkey=$sort_key><input type=checkbox $checked ></td>\n");
 
-        foreach (array("board", "pastpres", "staff", "donor", "vola", "volb", "volc") as $cat) {
+        foreach (array("new", "board", "pastpres", "staff", "donor", "vola", "volb", "volc") as $cat) {
             $itag = sprintf("%s_%s", $cat, $id);
             $tag = MakeTag($itag);
             $checked = "";
@@ -3411,7 +3393,439 @@ END;
     if ($gTrace)
         array_pop($gFunction);
 }
+function Phase1() {     # Phase1 is for pre-output actions that would interfere with PDF production
+    include 'includes/globals.php';
+    $gFunction[] = __FUNCTION__;
+    
+    $dpv_pre = "Begin";
+    $dpv_phase = 1;
+    $dpv_tag = "pre-html";
 
+    if ($gDebug) {
+        DumpPostVars(sprintf("++ %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+
+    addForm();
+
+    if ($gAction == 'password' && $gFunc == 'verify') {
+        Logger("user NOT logged in, verifying password");
+        UserManager('verify');
+        if( $gAction == 'home' ) $gAction = 'Main';
+    }
+
+    $val = 0;
+    if ($user->is_logged_in()) {
+        Logger("user logged in");
+        UserManager('load', $_SESSION['userid']);
+        $saveDb = $gDb;
+        $gDb = $gPDO[0]['inst'];
+        $stmt = DoQuery("select debug from users where userid = $gUserId");
+        list($val) = $stmt->fetch(PDO::FETCH_NUM);
+        $gDb = $saveDb;
+    }
+
+
+    logger("Phase1: gUserId: [$gUserId]");
+    logger("Phase1: val : [$val]");
+    
+    switch ($gAction) {
+        case( 'Back' ):
+            break;
+        
+        case 'backup':
+            BackupMySql();
+            break;
+        
+        case( 'Logout' ):
+            break;
+
+        case( 'New' ):
+            if ($gFrom == "UserReleaseNotes") {
+                $gAction = "Update";
+            }
+            break;
+
+        case 'Reset':
+            if (array_key_exists('password', $_POST)) {
+                UserManager('reset');
+            }
+            break;
+
+        case 'Special':
+            SpecialCode();
+            $gAction = "Main";
+            break;
+
+        default:
+            if ($gFrom == "UserFeatures") {
+                $gAction = "Update";
+            } elseif ($gFrom == "UserManager") {
+                $gAction = "Update";
+            } elseif ($gFrom == "UserReleaseNotes") {
+                $gAction = "Update";
+            } elseif (empty($gAction)) {
+                $gAction = "Start";
+            } else {
+                Logger('** No action taken for Phase #1 **');
+            }
+            break;
+    }
+    if ($gDebug) {
+        $dpv_pre = "End";
+        DumpPostVars(sprintf("-- %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+    array_pop($gFunction);
+}
+
+function Phase2() {
+    include 'includes/globals.php';
+    $gFunction[] = __FUNCTION__;
+
+    $dpv_pre = "Begin";
+    $dpv_phase = 2;
+    $dpv_tag = "perform actions/updates";
+
+    if ($gDebug) {
+        DumpPostVars(sprintf("++ %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+
+    switch ($gAction) {
+        case 'Back':
+            if ($gFrom == "EditItem") {
+                $gAction = 'Main';
+                $_POST['area'] = 'items';
+            } elseif ($gFrom == "MembersEdit") {
+                MembersDisplay();
+                exit;
+                $gAction = 'Main';
+                $gFunc = "members";
+            } else {
+                $gAction = 'Welcome';
+                $gFunc = "";
+            }
+            break;
+
+        case( 'Continue' ):
+            $gAction = "Start";
+            break;
+
+        case( 'forgot' ):
+            if ($gArea == 'check') {
+                UserManager('forgot');
+                $gAction = 'Start';
+            }
+            break;
+
+        case( 'Login' ):
+            UserManager('verify');
+            break;
+
+        case( 'Mail'):
+            if ($gFunc == "validate") {
+                MailValidate();
+                $gAction = "Mail";
+            }
+
+            if ($gFunc == "all") {
+                MailAssignments($gFunc);
+                $gAction = "Mail";
+            }
+
+            if ($gFunc == "unsent") {
+                MailAssignments($gFunc);
+                $gAction = "Mail";
+            }
+
+            if ($gFunc == "noresponse") {
+                MailAssignments($gFunc);
+                $gAction = "Mail";
+            }
+
+            if ($gFunc == "remind-rosh") {
+                MailAssignments($gFunc);
+                $gAction = "Mail";
+            }
+
+            if ($gFunc == "remind-yom") {
+                MailAssignments($gFunc);
+                $gAction = "Mail";
+            }
+
+            break;
+
+        case( 'Main' ):
+        case( 'main' ):
+            if ($gFunc == "backup") {
+                Logger("About to perform backup ...");
+                exec("perl /home/cbi18/bin/hh_honors_backup.pl", $out);
+                Logger($out);
+            }
+
+            if ($gFunc == "members") {
+                MembersDisplay();
+                exit;
+            }
+
+            if ($gFunc == "bozo-mode") {
+                $stmt = DoQuery("select `ival` from dates where `label` = 'bozo'");
+                list( $val ) = $stmt->fetch(PDO::FETCH_NUM);
+                $val = 1 - $val;
+                DoQuery("update dates set ival = $val where label = 'bozo'");
+                $gTrace = $val;
+                $gDebug = $val;
+            }
+
+            if ($gFunc == "log") {
+                LogfileDisplay();
+                $gAction = 'Done';
+            }
+
+            if ($gFunc == "build-memb") {
+                BuildMembers();
+                $gAction = 'Main';
+            }
+
+            if ($gFunc == "comp-memb") {
+                CompareMembers();
+                $gAction = 'Done';
+            }
+
+            if ($gFunc == "responses") {
+                Responses();
+                $gAction = "Mail";
+            }
+
+            break;
+
+        case( 'Update' ):
+        case( 'update' ):
+            if ($gFrom == "Assign") {
+                if ($gFunc == "add") {
+                    AssignAdd();
+                    $gAction = "Assign";
+                } elseif ($gFunc == "del") {
+                    AssignDel();
+                    $gAction = "Assign";
+                } elseif ($gFunc == "mail") {
+                    MailAssignment();
+                    $gAction = "Assign";
+                } elseif ($gFunc == "mails") {
+                    MailAssignments();
+                    $gAction = "Assign";
+                } elseif ($gFunc == "manual") {
+                    SendConfirmation();
+                    $gAction = "Assign";
+                }
+            } elseif ($gFrom == "DisplayDates") {
+                DateUpdate();
+                $gAction = 'Main';
+                $_POST['area'] = 'dates';
+            } elseif ($gFrom == "LogfileDisplay") {
+                if ($gFunc == "log-reset") {
+                    LogfileReset();
+                    LogfileDisplay();
+                    $gAction = "Done";
+                }
+            } elseif ($gFrom == "MailDisplay") {
+                MailUpdate();
+                $gAction = 'Main';
+                $_POST['area'] = 'mail';
+            } elseif ($gFrom == "MembersDisplay") {
+                MembersUpdate();
+                MembersDisplay();
+                exit;
+            } elseif ($gFrom == "MembersEdit") {
+                MembersUpdate();
+                MembersEdit();
+                exit;
+            } elseif ($gFrom == "DisplayFinancial") {
+                PledgeUpdate();
+                $gAction = 'Main';
+            } elseif ($gFrom == "DisplaySpiritual") {
+                PledgeUpdate();
+                $gAction = 'Main';
+            } elseif ($gFrom == 'DisplayMain') {
+                if ($area == 'reset') {
+                    DoQuery("start transaction");
+                    DoQuery("update items set status = 0 where status = 1");
+                    DoQuery("commit");
+                }
+                $gAction = 'Main';
+            } elseif ($gFrom == "HonorsEdit") {
+                HonorsUpdate();
+                $gAction = "Edit";
+                $area = "honors";
+            } elseif ($gFrom == "UserManagerPassword") {
+                UserManager('update');
+                $gAction = 'Start';
+            } elseif ($gFrom == "UserManagerPrivileges") {
+                UserManager('update');
+                $gAction = 'Main';
+                $gFunc = 'privileges';
+            } elseif ($gFrom == 'Users') {
+                UserManager('update');
+                $gAction = "Main";
+                $gFunc = 'users';
+            } elseif ($gFrom == 'PledgeEdit') {
+                PledgeUpdate();
+                $gAction = 'Main';
+            } elseif ($gFrom == "EditItem") {
+                UpdateItem();
+                $gAction = 'Main';
+                $_POST['area'] = 'items';
+            } elseif ($gFrom == "DisplayItems") {
+                UpdateItem();
+                $gAction = 'Main';
+                $_POST['area'] = 'items';
+            } elseif ($gFrom == "DisplayCategories") {
+                UpdateCategories();
+                $gAction = 'Main';
+                $_POST['area'] = 'categories';
+            } elseif ($gFrom == "MyDebug") {
+                MyDebug();
+                $gAction = 'Debug';
+                $gFunc = 'display';
+            } else {
+                UserManager('update');
+                $gAction = 'Welcome';
+            }
+            break;
+    }
+    if ($gDebug) {
+        $dpv_pre = "End";
+        DumpPostVars(sprintf("-- %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+    array_pop($gFunction);
+}
+
+function Phase3() { # Display
+    include 'includes/globals.php';
+    $gFunction[] = __FUNCTION__;
+
+    $dpv_pre = "Begin";
+    $dpv_phase = 3;
+    $dpv_tag = "Display";
+
+    if ($gDebug) {
+        DumpPostVars(sprintf("++ %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+    ////    
+//<?php
+//
+//$gDebug = $gDebugWindow;
+//
+//$sa=0;
+//$saveAction[$sa++] = $gAction . "[$gDebug]";
+//
+//$gArea = ( isset($_POST['area']) ? $_POST['area'] : "" );
+//$gFunc = ( isset($_POST['func']) ? $_POST['func'] : "" );
+//
+//if($user->is_logged_in()) {
+//    UserManager('load', $_SESSION['userid'] );
+//}
+//
+//$saveAction[$sa++] = $gAction . "[$gDebug]";
+//WriteHeader();
+//$saveAction[$sa++] = $gAction . "[$gDebug]";
+//WriteBody();
+//$saveAction[$sa++] = $gAction . "[$gDebug]";
+//AddForm();
+//$saveAction[$sa++] = $gAction . "[$gDebug]";
+//
+//
+//
+//
+//WriteFooter();
+
+$vect = $args = array();
+
+$vect['Assign'] = 'Assign';
+$vect['Debug'] = 'MyDebug';
+$vect['Edit'] = 'EditManager';
+$vect['Honors'] = 'HonorsEdit';
+$vect['Inactive'] = 'UserManager';
+$vect['Login'] = 'UserManager';
+$vect['Logout'] = 'UserManager';
+$vect['Mail'] = 'MailDisplay';
+$vect['Main'] = 'DisplayMain';
+$vect['New'] = 'UserManager';
+$vect['Resend'] = 'UserManager';
+$vect['Reset'] = 'UserManager';
+$vect['Start'] = 'UserManager';
+$vect['Welcome'] = 'DisplayMain';
+$vect['backup'] = 'DisplayMain';
+$vect['forgot'] = 'UserManager';
+
+$args['Inactive'] = array('inactive');
+$args['Login'] = array('verify');
+$args['Logout'] = array('logout');
+$args['New'] = ['new'];
+$args['Resend'] = array('resend');
+$args['Reset'] = array('reset');
+$args['Start'] = array('login');
+$args['forgot'] = array('forgot');
+
+echo "<div class=center>";
+
+if (!empty($vect[$gAction])) {
+    $fn = $vect[$gAction];
+    $arg = array_key_exists($gAction, $args) ? $args[$gAction] : [];
+    switch (count($arg)) {
+        case( 0 ):
+            $fn();
+            break;
+
+        case( 1 ):
+            $fn($arg[0]);
+            break;
+
+        case( 2 ):
+            $fn($arg[0], $arg[1]);
+            break;
+    }
+} else {
+    switch ($gAction) {
+        case( 'Done' ):
+            break;
+
+        case 'password';
+            if ($gFunc == 'getemail') {
+                UserManager('forgot');
+            } elseif ($gFunc == 'send') {
+                UserManager('welcome');
+            } elseif ($gFunc == 'welcome') {
+                UserManager('welcome');
+            } elseif ($gFunc == "reset") {
+                UserManager('reset');
+            }
+            break;
+
+        case( 'Reset Password' ):
+            UserManager('reset');
+            SessionStuff('logout');
+            break;
+
+        default:
+            echo "action: $gAction<br>";
+            echo "I'm sorry but something unexpected occurred.  Please send all details<br>";
+            echo "of what you were doing and any error messages to $gSupport<br>";
+            echo "<input type=submit name=action value=Back>";
+    }
+}
+
+echo "</div>";
+    if ($gDebug) {
+        $dpv_pre = "End";
+        DumpPostVars(sprintf("-- %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+    array_pop($gFunction);
+}
 function PledgeEdit() {
     include 'includes/globals.php';
     if ($gTrace) {
@@ -4037,7 +4451,22 @@ function SpecialCode() {
         Logger();
     }
     Logger( "Made it to " . __FUNCTION__ );
-    $key = 4;
+    $key = 5;
+    
+    if( $key == 5 ) {
+        $stmt1 = DoQuery( "select id, service, honor from honors order by id asc" );
+        while( list( $id, $service, $honor ) = $stmt1->fetch(PDO::FETCH_NUM ) ) {
+            $stmt2 = DoQuery( "select member_id from replies where honor_id = $id and jyear = 5780 and accepted = 1" );
+            if( $gPDO_num_rows > 1 ) {
+                echo "$id (# accpt - $gPDO_num_rows): $service -> $honor<br>";
+                while( list( $mid ) = $stmt2->fetch(PDO::FETCH_NUM )) {
+                    $stmt3 = DoQuery( "select * from members where id = $mid" );
+                    $rec = $stmt3->fetch(PDO::FETCH_ASSOC);
+                    printf( "&nbsp;&nbsp;%s (%d)<br>", $rec['Last Name'], $rec['ID'] );
+                }                   
+            }
+        }
+    }
     
     if( $key == 4 ) {
         DoQuery( "update assignments set active = 1, accepted = 0, declined = 0 where `hash` like '8a34ce'" );
@@ -4200,7 +4629,65 @@ function WriteFooter() {
     echo "</html>";
 }
 
-function WriteHeader() {
+function addDebuggerWindow() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+    }
+    if ($gDebug & $gDebugWindow) {
+        echo "<script type='text/javascript'>\n";
+        $tag = ($gDreamweaver) ? "Dreamweaver" : "";
+        echo "createDebugWindow('$tag');\n";
+        echo "var d = new Date();\n";
+        echo "debug('--- Non-Production. Start of run @ ' + d + ' ---')\n";
+        echo "</script>\n";
+    }    
+}
+function addForm() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+
+    echo "<form name=fMain id=fMain method=post action=\"$gSourceCode\">$gLF";
+
+    $hidden = array();
+    $hidden[] = 'action';   # what needs to be done or what was pressed
+    $hidden[] = 'mode';     # top banner modes, i.e. logout, control, admin, office
+    $hidden[] = 'area';     # sidebar area
+    $hidden[] = 'bypass';
+    $hidden[] = 'crumbs';
+    $hidden[] = 'eventID';
+    $hidden[] = 'familyId';
+    $hidden[] = 'fields';   # what fields were touched: using js(addField)
+    $hidden[] = 'filter';
+    $hidden[] = 'filter_fy';
+    $hidden[] = 'fiscalYear';
+    $hidden[] = 'from';     # name of function
+    $hidden[] = 'func';     # more detailed description of action
+    $hidden[] = 'id';       # overloaded variable
+    $hidden[] = 'id2';      # overloaded variable
+    $hidden[] = 'key';
+    $hidden[] = 'listID';
+    $hidden[] = 'parentId';
+    $hidden[] = 'reset';
+    $hidden[] = 'studentId';
+    $hidden[] = 'userId';
+    $hidden[] = 'vars';
+    $hidden[] = 'where';    # where the action took place
+
+    foreach ($hidden as $var) {
+        $tag = MakeTag($var);
+        echo "<input type=hidden $tag>$gLF";
+    }
+    define('FORM_OPEN', 1);
+    if ($gTrace) {
+        array_pop($gFunction);
+    }
+}
+
+function addHtmlHeader() {
     include 'includes/globals.php';
 
     $tag = 'LOADED_' . __FILE__;
@@ -4209,26 +4696,21 @@ function WriteHeader() {
     define($tag, 1);
 
     $styles = array();
-    $styles[] = "styles/main.css";
-    $styles[] = "styles/oneColFixCtr.css";
-    $styles[] = "/css/Common.css";
+    $styles[] = "css/main.css";
+    $styles[] = "css/oneColFixCtr.css";
+    $styles[] = "css/Common.css";
 
     $scripts = array();
+    $scripts[] = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js";    
     $scripts[] = "scripts/assign.js";
     $scripts[] = "scripts/main.js";
     $scripts[] = "scripts/sorttable.js";
-    $scripts[] = "/scripts/commonv2.js";
+    $scripts[] = "scripts/commonv2.js";
 
-    echo "<!DOCTYPE html>
-<html lang='en'>
-<head>
-    <meta charset='utf-8'>\n";
-    if (isset($title)) {
-        echo "<title>$title</title>\n";
-    }
     foreach ($styles as $style) {
         printf("<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\" />\n", $style);
     }
+    echo "<link rel='shortcut icon' type='image/x-icon' href='assets/favicon.ico' />";
 
     $force = 1;
 
@@ -4238,10 +4720,79 @@ function WriteHeader() {
     } else {
         $str = "";
     }
-    echo "<!-- Start of scripts -->\n";
+    foreach ($styles as $style) {
+        printf("<link href=\"%s$str\" rel=\"stylesheet\" type=\"text/css\" />\n", $style);
+    }
+
     foreach ($scripts as $script) {
         printf("<script type=\"text/javascript\" src=\"%s$str\"></script>\n", $script);
     }
-    echo "<!-- End of scripts -->\n";
-    echo "</head>\n";
+        
+    if ($gDebug & $gDebugWindow) {
+        echo "<script type='text/javascript'>\n";
+        $tag = ($gDreamweaver) ? "Dreamweaver" : "";
+        echo "createDebugWindow('$tag');\n";
+        echo "var d = new Date();\n";
+        echo "debug('--- Non-Production. Start of run @ ' + d + ' ---')\n";
+        echo "</script>\n";
+    }
+}
+function checkForDownloads() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+    }
+    if ($gAction == 'Download') {
+        $area = $_POST['area'];
+        if ($area == "spiritual") {
+            ExcelSpiritual();
+        } elseif ($area == "items") {
+            ExcelItems();
+        } elseif ($area == "gabbai") {
+            ExcelGabbai();
+        } elseif ($area == "donations") {
+            ExcelMoney();
+        }
+    }
+}
+function selectDB() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+    }
+
+    $openType = ( func_num_args() == 0 ) ? 'local' : 'remote';
+    for ($i = 0; $i < count($gPDO); $i++) {
+        $gPDO[$i]['open'] = false;
+        if( $gPDO[$i]['mode'] != $openType ) continue;
+        $tmp = [];
+        $tmp[] = $gPDO[$i]['host'];
+        $tmp[] = 'dbname=' . $gPDO[$i]['dbname'];
+        $tmp[] = 'charset=' . $gPDO[$i]['charset'];
+        $dsn = implode(';', $tmp);
+        $user = $gPDO[$i]['user'];
+        $pass = $gPDO[$i]['pass'];
+        $attr = $gPDO[$i]['attr'];
+        try {
+            error_log("Trying to open: $dsn");
+            //create PDO connection
+            if ($gProduction) {
+                $attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
+            } else {
+                $attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+            }
+            $inst = new PDO($dsn, $user, $pass, $attr);
+            $gPDO[$i]['inst'] = $inst;
+            $gPDO[$i]['open'] = true;
+            error_log("opened DB #$i: " . $gPDO[$i]['dbname']);
+        } catch (PDOException $e) {
+            //show error
+            echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
+            $gDbControl = NULL;
+            throw $e;
+        }
+    }
+    $gDb = $gPDO[0]['inst'];
+
+    LocalInit();
 }

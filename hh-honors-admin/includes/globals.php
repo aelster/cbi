@@ -3,13 +3,9 @@
 
 // This are the PDO global variables that I will use
 
-global $gPDO_attr;
-global $gPDO_dsn;
+global $gPDO;
 global $gPDO_lastInsertID;
 global $gPDO_num_rows;
-global $gPDO_pass;
-global $gPDO_user;
-global $gPrefix;
 
 #=====================================================
 global $gDebugInLine; # 0
@@ -32,6 +28,7 @@ global $gAccessNameEnabled;
 global $gAccessLevelEnabled;
 global $gAccessLevels;
 global $gArea;
+global $gDreamweaver;
 global $gFunc;
 global $gMailAdmin;
 global $gMailAdminName;
@@ -39,8 +36,10 @@ global $gMailLive;
 global $gMailSignature;
 global $gMailSignatureImage;
 global $gMailSignatureImageSize;
+global $gMode;
 global $gProduction;
 global $gResetKey;
+global $gSupport;
 
 global $gTitle;
 global $gUserName;
@@ -65,7 +64,9 @@ global $gFrom;
 global $gFunction;
 global $gJewishYear;
 global $gLF;
+global $gSiteDir;
 global $gSiteName;
+global $gSiteSubPath;
 global $gSourceCode;
 global $gSpiritIDtoDesc;
 global $gSpiritIDtoType;

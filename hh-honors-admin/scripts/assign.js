@@ -1,5 +1,3 @@
-var debug_disabled = 1;
-
 var honor_buttons = [];
 var honor_buttons_live = [];
 var honor_refresh = 0;
