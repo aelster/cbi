@@ -70,7 +70,6 @@ function closeDebugWindow() {
     }
 }
 function createDebugWindow(tag = 'xx') {
-    debugger;
     if (debug_disabled) {
         return;
     }
@@ -102,8 +101,12 @@ function createDebugWindow(tag = 'xx') {
 }
 function debug(text) {
     var str;
-    if (!debugWindow) {
+    if (text == "_init" ) {
         _init();
+    }
+    
+    if( !debugWindow) {
+        createDebugWindow();
     }
 
     if (debugWindow && !debugWindow.closed) {

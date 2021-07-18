@@ -78,10 +78,12 @@ function Assign() {
     }
     echo "</script>\n";
     $stmt_honors = DoQuery("select id, service, honor from honors order by sort");
+//                while (list( $id, $last, $ff, $mf, $ft, $mt ) = $stmt_member->fetch(PDO::FETCH_NUM)) {
 
-    $query = "select id, `Last Name`, `Female 1st Name`, `Male 1st Name`, `Female Tribe`, `Male Tribe` from members";
-    $query .= " where Status not like \"Non-Member\"";
-    $query .= " order by `Last Name` asc";
+    $query = "select m.id, m.`Last Name`, m.`Female 1st Name`, m.`Male 1st Name`, a.ftribe, a.mtribe";
+    $query .=  " from members m join member_attributes a on m.ID = a.id";
+    $query .= " where m.Status not like \"Non-Member\"";
+    $query .= " order by m.`Last Name` asc";
     $stmt_member = DoQuery($query);
     ?>
     <div class="container">
@@ -104,19 +106,24 @@ function Assign() {
 
             <div class="category-buttons">
                 <input type="button" value="All" onclick="myClickCategory('opt-all');myDisplayRefresh();"/>      
-                <input type="button" id="opt-cohen" value="Cohen" onclick="myClickCategory('opt-cohen');myDisplayRefresh();"/>
-                <input type="button" id="opt-board" value="Board" onclick="myClickCategory('opt-board');myDisplayRefresh();"/>
-                <input type="button" id="opt-staff" value="Staff" onclick="myClickCategory('opt-staff');myDisplayRefresh();"/>
-                <input type="button" id="opt-vola" value="Vol A" onclick="myClickCategory('opt-vola');myDisplayRefresh();"/>
-                <input type="button" id="opt-volc" value="Vol C" onclick="myClickCategory('opt-volc');myDisplayRefresh();"/>
-                <br />
                 <input type="button" value="None" onclick="myClickCategory('opt-none');myDisplayRefresh();"/>
+                <input type="button" id="opt-cohen" value="Cohen" onclick="myClickCategory('opt-cohen');myDisplayRefresh();"/>
                 <input type="button" id="opt-levi" value="Levi" onclick="myClickCategory('opt-levi');myDisplayRefresh();"/>
+                <input type="button" id="opt-pastpres" value="Past Pres" onclick="myClickCategory('opt-pastpres');myDisplayRefresh();"/>      
+                <input type="button" id="opt-board" value="Board" onclick="myClickCategory('opt-board');myDisplayRefresh();"/>
+                <input type="button" id="opt-vola" value="Vol A" onclick="myClickCategory('opt-vola');myDisplayRefresh();"/>
+                <input type="button" id="opt-volb" value="Vol B" onclick="myClickCategory('opt-volb');myDisplayRefresh();"/> 
+                <br />
+                <input type="button" id="opt-staff" value="Staff" onclick="myClickCategory('opt-staff');myDisplayRefresh();"/>
+               
+                <input type="button" id="opt-memb" value="Member" onclick="myClickCategory('opt-memb');myDisplayRefresh();"/>
+                <input type="button" id="opt-sharon" value="Sharon" onclick="myClickCategory('opt-sharon');myDisplayRefresh();"/>
+                <input type="button" id="opt-associate" value="Assoc" onclick="myClickCategory('opt-associate');myDisplayRefresh();"/>
+               
                 <input type="button" id="opt-donor" value="Donor" onclick="myClickCategory('opt-donor');myDisplayRefresh();"/>
                 <input type="button" id="opt-new" value="New Member" onclick="myClickCategory('opt-new');myDisplayRefresh();"/>      
-                <input type="button" id="opt-volb" value="Vol B" onclick="myClickCategory('opt-volb');myDisplayRefresh();"/>      
-                <input type="button" id="opt-pastpres" value="Past Pres" onclick="myClickCategory('opt-pastpres');myDisplayRefresh();"/>      
                 <input type="button" id="opt-other" value="Other" onclick="myClickCategory('opt-other');myDisplayRefresh();"/>      
+                <input type="button" id="opt-volc" value="Vol C" onclick="myClickCategory('opt-volc');myDisplayRefresh();"/>
             </div>
             <div style="clear:both"></div>
         </div>
@@ -476,17 +483,6 @@ function BuildMembers() {
             if( $key == "ID" ) {
                 $id = $val;
             }
-/*
-            if( ! empty($val) && (preg_match( "/DOB/", $key ) || preg_match( "/Anniversary/", $key ) ) ) {
-                if( $id == 211 ) echo "Key: $key, old val: $val";
-                $tmp = explode('/', $val );
-                $tmp[2] += 1900;
-                $val = implode('/', $tmp );
-                if( $id == 211 ) echo ", new val: $val<br>";
-            }
-            if( $id == 211 ) echo "loaded val: $val<br>";
- * 
- */
             $args[":v$i"] = $val;
             if (!empty($val))
                 $num_non_empty++;
@@ -617,23 +613,6 @@ function CompareMembers() {
         foreach ($row1 as $key => $value) {
             if (empty($value) && empty($row2["$key"])) {
                 $match = 1;
-                /*
-            } elseif (in_array($key, array("Anniversary", "Female DOB", "Male DOB"))) {
-                if (empty($row2["$key"])) {
-                    $match = 0;
-                } else {
-                    $d1 = new DateTime($value);
-                    $arr = explode("/", $row2["$key"]);
-                    if ($arr[2] < 16) {
-                        $arr[2] += 2000;
-                    } elseif ($arr[2] < 100) {
-                        $arr[2] += 1900;
-                    }
-                    $dstr = sprintf("%4d-%02d-%02d", $arr[2], $arr[0], $arr[1]);
-#					printf( "val1: [%s], dstr: [%s]<br>", $value, $dstr );
-                    $d2 = new DateTime($dstr);
-                    $match = ($d1 == $d2);
-                } */
             } else {
                 $match = ( trim($value) == trim($row2["$key"]) );
             }
@@ -2183,20 +2162,6 @@ function LocalInit() {
                 $tmp[] = "new = 1";
             $query = "insert into member_attributes set " . join(',', $tmp);
             DoQuery($query);
-        } else {
-            list( $maf, $mam, $new ) = $stmt2->fetch(PDO::FETCH_NUM);
-            $tmp = array();
-            if ($maf != $ft)
-                $tmp[] = "ftribe = '$ft'";
-            if ($mam != $mt)
-                $tmp[] = "mtribe = '$mt'";
-            $expected = ( $status == 'New' ) ? 1 : 0;
-            if ($new != $expected)
-                $tmp[] = "new = $expected";
-            if (count($tmp)) {
-                $query = "update member_attributes set " . join(',', $tmp) . " where id = $id";
-                DoQuery($query);
-            }
         }
     }
     $stmt = DoQuery("select * from misc where label = \"email_admin\"");
@@ -2392,7 +2357,8 @@ function MailAssignment() {
         $str = sprintf("You have the honor of %s during the %s service on %s.", $honor['honor'],
                 $gService[$honor['service']], $date->format("l, M jS, Y"));
     } else {
-        $str = "Thank you for the support you have given to Congregation B'nai Israel during the past year.";
+        $str = "We look forward to our congregation gathering in person for High Holy Days once again, and";
+        $str .= " thank you for the support you have given to Congregation B'nail Israel during the past year.";
         $str .= sprintf(" In an effort to show our appreciation, we would like to offer you the honor of %s during the %s service on %s.",
                 $honor['honor'], $gService[$honor['service']], $date->format("l, M jS, Y"));
     }
@@ -2404,7 +2370,7 @@ function MailAssignment() {
     $text[] = "";
     
     $t = strtotime( $honor['arrival_time'] );
-    $str = "For this honor we ask that you be in the sanctuary by " . date("g:i A", $t);
+    $str = "We ask that you be in the sanctuary by " . date("g:i A", $t);
     $str .= " and check in with the Shamash, the person in charge of making sure that everyone";
     $str .= " who has an honor is in the right place at the right time.";
 
@@ -3110,15 +3076,16 @@ function MembersDisplay() {
     echo "<div class=center>";
 
     echo "<input type=button value=Back onclick=\"setValue('from', '$gFunc');addAction('Back');\">";
-
-    $tag = MakeTag('update');
-    $jsx = array();
-    $jsx[] = "setValue('area','attributes')";
-    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
-    $jsx[] = "setValue('func','update')";
-    $jsx[] = "addAction('Update')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value=Update $tag $js>";
+    
+        $tag = MakeTag('edit');
+        $jsx = array();
+        $jsx[] = "setValue('area','members')";
+        $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
+        $jsx[] = "setValue('func','new')";
+        $jsx[] = "setValue('id',0)";
+        $jsx[] = "addAction('Edit')";
+        $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+        echo "<td class=box><input type=button $tag $js value=New></td>";
 
     $stmt = DoQuery("select * from members order by `Last Name` asc");
     $members = array();
@@ -3133,6 +3100,7 @@ function MembersDisplay() {
         $attributes[$row['id']] = $row;
     }
 
+    echo "<br><br>";
     echo "<div class=CommonV2>";
     echo "<table class=members>";
     echo "<thead>";
@@ -3144,7 +3112,10 @@ function MembersDisplay() {
     echo "  <td class=box>New</td>";
     echo "  <td class=box>Board</td>";
     echo "  <td class=box>Past Pres</td>";
+    echo "  <td class=box>Memb</td>";
+    echo "  <td class=box>Sha-<br>ron</td>";
     echo "  <td class=box>Staff</td>";
+    echo "  <td class=box>Assoc</td>";
     echo "  <td class=box>Donor</td>";
     echo "  <td class=box>Vol A</td>";
     echo "  <td class=box>Vol B</td>";
@@ -3163,37 +3134,40 @@ function MembersDisplay() {
         $jsx[] = "addAction('Edit')";
         $js = sprintf("onClick=\"%s\"", join(';', $jsx));
         echo "<td class=box><input type=button $tag $js value=Edit></td>";
+        
         $class = 'name';
-        if ((!empty($row['Female 1st Name']) ) &&
-                (!empty($row['Male 1st Name']) ) &&
-                (!preg_match('/ and/', $row['Female 1st Name']) )) {
-            $class = 'namew';
-            printf("<!-- male: %s, test: %d, female: %s, test: %d -->\n", $row['Male 1st Name'], empty($row['Male 1st Name']), $row['Female 1st Name'], preg_match('/ and/', $row['Female 1st Name']));
+        if( empty($row['Male 1st Name'] ) ) {
+            $label = "{$row['Last Name']}, {$row['Female 1st Name']}";
+        } else if( empty( $row['Female 1st Name'] ) ) {
+            $label = "{$row['Last Name']}, {$row['Male 1st Name']}";
+        } else {
+            $label = "{$row['Last Name']}, {$row['Female 1st Name']} and {$row['Male 1st Name']}";
         }
-        echo "<td class=$class>" . sprintf("%s, %s %s", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name']) . "</td>\n";
+        echo "<td class=$class>$label</td>\n";
 
-        $class = ( (!empty($row['Male 1st Name']) ) && empty($attributes[$id]['mtribe']) ) ? "tribew" : "tribe";
+        $class = "tribe";
         printf("<td class=$class>%s</td>", $attributes[$id]['mtribe']);
-        $class = ( (!empty($row['Female 1st Name']) ) && empty($attributes[$id]['ftribe']) ) ? "tribew" : "tribe";
         printf("<td class=$class>%s</td>", $attributes[$id]['ftribe']);
-//        $checked = ( $attributes[$id]['new'] ) ? "checked" : "";
-//        $sort_key = ( $attributes[$id]['new'] ) ? 1 : 0;
-//        printf("<td class=box sorttable_customkey=$sort_key><input type=checkbox $checked ></td>\n");
 
-        foreach (array("new", "board", "pastpres", "staff", "donor", "vola", "volb", "volc") as $cat) {
+        foreach (array("new", "board", "pastpres", "member", "sharon", "staff", "associate", "donor", "vola", "volb", "volc") as $cat) {
             $itag = sprintf("%s_%s", $cat, $id);
             $tag = MakeTag($itag);
             $checked = "";
             if (array_key_exists($id, $attributes)) {
-                $checked = empty($attributes[$id][$cat]) ? "" : "checked";
-                $sort_key = empty($attributes[$id][$cat]) ? "0" : "1";
+                $checked = $attributes[$id][$cat] ? "checked" : "";
+                $sort_key = $attributes[$id][$cat] ? "1" : "0";
+                $val = $attributes[$id][$cat] ? 0 : 1;
+            } else {
+                $val = 1;
             }
             $jsx = array();
             $jsx[] = "setValue('from','DisplayMembers')";
             $jsx[] = "addField('$itag')";
             $jsx[] = "toggleBgRed('update')";
             $js = sprintf("onclick=\"%s\"", join(';', $jsx));
-            echo "<td class=box sorttable_customkey=$sort_key><input type=\"checkbox\" $tag $checked $js value=1></td>\n";
+            $js = "";
+            $ajax_id = "id=\"member_attributes%{$cat}%{$id}\"";
+            echo "<td class=box sorttable_customkey=$sort_key><input class=ajax type=\"checkbox\" $ajax_id $checked $js value=\"$val\"></td>\n";
         }
 
         echo "</tr>\n";
@@ -3213,88 +3187,70 @@ function MembersEdit() {
         $gFunction[] = __FUNCTION__;
         Logger();
     }
+    
+    $id = $_POST['id'];
+    if( $id == 0 ) {
+        $stmt = DoQuery( "select min(ID) from members" );
+        list($id) = $stmt->fetch(PDO::FETCH_NUM);
+        if( $id > 0  ) {
+            $id = - $id;
+        } else {
+            $id -= 1;
+        }
+        DoQuery(  "insert into members (ID,Status) values ($id,'Member')" );
+        DoQuery(  "insert into member_attributes (id) values ($id)" );
+    }
+    
     echo "<div class=center>";
 
     echo "<input type=button value=Back onclick=\"setValue('from', '" . __FUNCTION__ . "');addAction('Back');\">";
-
-    $tag = MakeTag('update');
-    $jsx = array();
-    $jsx[] = "setValue('area','members')";
-    $jsx[] = "setValue('id'," . $_POST['id'] . ")";
-    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
-    $jsx[] = "setValue('func','update')";
-    $jsx[] = "addAction('Update')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value=Update $tag $js>";
-
-    $tag = MakeTag('update');
-    $jsx = array();
-    $jsx[] = "setValue('area','members')";
-    $jsx[] = "setValue('id'," . $_POST['id'] . ")";
-    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
-    $jsx[] = "setValue('func','delete')";
-    $txt = sprintf("Are you sure you want to delete this record?");
-    $jsx[] = sprintf("myConfirm('%s')", CVT_Str_to_Overlib($txt));
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value=Delete $tag $js>";
-
-    $stmt = DoQuery( "select * from members where id = :id", [':id' => $_POST['id']] );
+    
+    $stmt = DoQuery( "select m.*, a.* from members m join member_attributes a on m.ID = a.id where m.ID = :id", [':id' => $id] );
     $rec = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    $prompt =  "Are you sure you want to delete the member record for {$rec['Last Name']} ($id)";
+    $jsx = array();
+    $jsx[] = "setValue('from','" .  __FUNCTION__ . "')";
+    $jsx[] = "setValue('func','delete')";
+    $jsx[] = "setValue('id',$id)";
+    $jsx[] = "myConfirm('$prompt')";
+    $js = sprintf( "onclick=\"%s\"", implode(';',$jsx));
+    echo "<input type=button value=Delete $js>";
     
+    echo "<br>";
+    echo "<br>";
     echo "<table>";
-    
-    echo "<tr>";
+    echo  "<tr>";
     $key = "Last Name";
-    $tag = MakeTag($key);
     echo "<th>$key</th>";
-    $jsx = array();
-    $jsx[] = "setValue('area','members')";
-    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
-    $jsx[] = "addField('$key')";
-    $jsx[] = "toggleBgRed('update')";
-    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-    echo "<td>" . "<input type=text $tag value='" . $rec[$key] . "' size=20 $js></td>";
+    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=20 tabindex=1></td>";
     echo "</tr>";
     
-    echo "<tr>";
-    $key = "Female 1st Name";
-    $tag = MakeTag($key);
-    echo "<th>$key</th>";
-    $jsx = array();
-    $jsx[] = "setValue('area','members')";
-    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
-    $jsx[] = "addField('$key')";
-    $jsx[] = "toggleBgRed('update')";
-    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-    echo "<td>" . "<input type=text $tag value='" . $rec[$key] . "' size=20 $js></td>";
-    echo "</tr>";
-    
-    echo "<tr>";
-    $key = "Male 1st Name";
-    $tag = MakeTag($key);
-    echo "<th>$key</th>";
-    $jsx = array();
-    $jsx[] = "setValue('area','members')";
-    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
-    $jsx[] = "addField('$key')";
-    $jsx[] = "toggleBgRed('update')";
-    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-    echo "<td>" . "<input type=text $tag value='" . $rec[$key] . "' size=20 $js></td>";
-    echo "</tr>";
+    $options = [ 'Member', 'Sharon', 'Associate', 'Staff'];
+    foreach( $options as $opt ) {
+        echo "<tr>";
+        $key = strtolower($opt);
+        echo "<th>$opt</th>";
+        $ajax_id = "id=\"member_attributes%{$key}%{$id}\"";
+        if( $rec[$key] ) {
+            $checked = "checked";
+            $val  = 0;
+        } else {
+            $checked  = "";
+            $val = 1;
+        }
+        echo "<td><input class=ajax type=\"checkbox\" $ajax_id $checked value=\"$val\"></td>\n";
+        echo "</tr>";
+    }
     
     $options = [ '-- Select --', 'Couple', 'Divorced', 'Married', 'Member', 'Separated', 'Single', 'Widow', 'Widowed'];
     echo "<tr>";
     $key = "Marital Status";
-    $tag = MakeTag($key);
     echo "<th>$key</th>";
-    $jsx = array();
-    $jsx[] = "setValue('area','members')";
-    $jsx[] = "setValue('from','" . __FUNCTION__ . "')";
-    $jsx[] = "addField('$key')";
-    $jsx[] = "toggleBgRed('update')";
-    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
     echo "<td>";
-    echo "<select $tag $js>";
+    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    echo "<select class=ajax $ajax_id tabindex=2>";
     foreach( $options as $opt ) {
         $selected = ( $rec[$key] == $opt ) ? 'selected' : '';
         echo "<option value='$opt' $selected>$opt</option>";
@@ -3303,6 +3259,70 @@ function MembersEdit() {
     echo "</td>";
     
     echo "</tr>";
+    echo "</table>";
+    
+    echo "<br>"; #--------------
+    
+    echo "<table>";
+    
+    echo "<thead>";
+    echo "<tr>";
+    echo "<th>Item</th>";
+    echo "<th>1st Person</th>";
+    echo "<th>2nd Person</th>";
+    echo  "</tr>";
+    echo "</thead>";
+    
+    echo "<tbody>";
+    
+    echo "<tr>";
+    echo  "<th>First Name</th>";    
+    $key = "Female 1st Name";
+    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=20 tabindex=3></td>";
+    $key = "Male 1st Name";
+    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=20 tabindex=6></td>";
+    echo "</tr>";
+
+    
+    echo "<tr>";
+    echo "<th>Tribe</th>";  
+    $key = "ftribe";
+    $ajax_id = "id=\"member_attributes%{$key}%{$id}\"";
+    echo "<td>";
+    echo "<select class=ajax $ajax_id tabindex=4>";
+    foreach( ["", "Yisrael", "Levi", "Kohen"] as $opt ) {
+        $selected = ( $rec[$key] == $opt ) ? 'selected' : '';
+        echo "<option value='$opt' $selected>$opt</option>";
+    }
+    echo  "</select>";
+    echo "</td>";
+    $key = "mtribe";
+    $ajax_id = "id=\"member_attributes%{$key}%{$id}\"";
+    echo "<td>";
+    echo "<select class=ajax $ajax_id tabindex=7>";
+    foreach( ["", "Yisrael", "Levi", "Kohen"] as $opt ) {
+        $selected = ( $rec[$key] == $opt ) ? 'selected' : '';
+        echo "<option value='$opt' $selected>$opt</option>";
+    }
+    echo  "</select>";
+    echo "</td>";
+    echo "</tr>";
+    
+    echo "<tr>";
+    echo  "<th>E-Mail</th>";    
+    $key = "E-Mail Address";
+    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=30 tabindex=5></td>";
+    $key = "E-Mail Address 2";
+    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=30 tabindex=8></td>";
+    echo "</tr>";
+
+
+    echo "</tbody>";
+    echo  "<table>";
     
     echo "</div>";
     if ($gTrace)
@@ -3422,6 +3442,9 @@ function Phase1() {     # Phase1 is for pre-output actions that would interfere 
         $gDb = $gPDO[0]['inst'];
         $stmt = DoQuery("select debug from users where userid = $gUserId");
         list($val) = $stmt->fetch(PDO::FETCH_NUM);
+        if( $val ) {
+            echo "<script type=\"text/javascript\">debug_disabled = 0;</script>";
+        }
         $gDb = $saveDb;
     }
 
@@ -3638,9 +3661,15 @@ function Phase2() {
                 MembersDisplay();
                 exit;
             } elseif ($gFrom == "MembersEdit") {
-                MembersUpdate();
-                MembersEdit();
+                if( $gFunc  == "delete" ) {
+                    deleteMember();
+                    MembersDisplay();
+                } else  {
+                    MembersUpdate();
+                    MembersEdit();
+                }
                 exit;
+                    
             } elseif ($gFrom == "DisplayFinancial") {
                 PledgeUpdate();
                 $gAction = 'Main';
@@ -4451,7 +4480,66 @@ function SpecialCode() {
         Logger();
     }
     Logger( "Made it to " . __FUNCTION__ );
-    $key = 5;
+    $key = 6;
+    
+    if( $key == 6 ) {
+        $stmt1 = DoQuery( "select ID, `Female 1st Name` from members_master where `Female 1st Name` like '% and'");
+        while(  list( $id, $name ) = $stmt1->fetch(PDO::FETCH_NUM) ) {
+            $name2 = preg_replace( '/ and/', '', $name );
+            DoQuery( "update members_master set `Female 1st Name` = '$name2' where ID = $id");
+            DoQuery( "update members set `Female 1st Name` = '$name2' where ID = $id");
+        }
+        
+        $stmt = DoQuery( "select * from members limit 1" );
+        $mrow = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        $stmt1 = DoQuery( "select * from members_master" );
+        while( $row = $stmt1->fetch(PDO::FETCH_ASSOC) ) {
+            $id = $row['ID'];
+            $stmt2 = DoQuery( "select * from members where ID = $id" );
+            if( $gPDO_num_rows == 0 ) {
+                $i = 0;
+                $fields = $values = [];
+                foreach( $mrow as $fld => $val )  {
+                    if( array_key_exists($fld, $row ) ) {
+                        $fields[] = "`$fld` = :v$i";
+                        $values[":v$i"] = $row[$fld];
+                        $i++;
+                    }
+                }
+                DoQuery( "insert into members set " . implode(',',$fields), $values );
+            }
+            
+            $stmt2 = DoQuery( "select * from member_attributes where id = $id");
+            if( $gPDO_num_rows == 0 ) {
+                $fields = $values = [];
+                $i = 0;
+                $fields[] = "id =  :v$i";
+                $values[":v$i"] = $id;
+                $i++;
+                $fields[] = "ftribe =  :v$i";
+                $values[":v$i"] = $row['Female Tribe'];
+                $i++;
+                $fields[] = "mtribe =  :v$i";
+                $values[":v$i"] = $row['Male Tribe'];
+                $i++;
+                DoQuery( "insert into member_attributes set " . implode(',',$fields), $values );
+            }
+        }
+        
+        $stmt1 = DoQuery( "select ID, Status from  members_master");
+        while(  list($id,$status)  =  $stmt1->fetch(PDO::FETCH_NUM) ) {
+            if( $status == "Member" ) {
+                DoQuery( "update member_attributes set member = 1 where id = $id" );
+            } elseif( $status ==  "Associate") {
+                DoQuery( "update member_attributes set associate = 1 where id = $id" );
+            } elseif( $status ==  "Sharon") {
+                DoQuery( "update member_attributes set sharon = 1 where id = $id" );
+            } elseif( $status ==  "Staff") {
+                DoQuery( "update member_attributes set staff = 1 where id = $id" );
+            }
+        }
+    }
     
     if( $key == 5 ) {
         $stmt1 = DoQuery( "select id, service, honor from honors order by id asc" );
@@ -4706,6 +4794,7 @@ function addHtmlHeader() {
     $scripts[] = "scripts/main.js";
     $scripts[] = "scripts/sorttable.js";
     $scripts[] = "scripts/commonv2.js";
+    $scripts[] = "scripts/my_ajax.js";
 
     foreach ($styles as $style) {
         printf("<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\" />\n", $style);
@@ -4755,6 +4844,19 @@ function checkForDownloads() {
         }
     }
 }
+function deleteMember() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+    }
+    $id = $_POST['id'];
+    DoQuery( "delete from members where ID = $id");
+    DoQuery( "delete from member_attributes where id  = $id" );
+    if ($gTrace) {
+        array_pop($gFunction);
+    }
+}    
+
 function selectDB() {
     include 'includes/globals.php';
     if ($gTrace) {
