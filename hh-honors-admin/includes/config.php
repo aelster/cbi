@@ -18,21 +18,16 @@ $http_host = $_SERVER['HTTP_HOST'];
 if (preg_match('/^dev.cbi18.org/', $http_host) || $http_host == "192.168.86.7" ) {
     $gProduction = 0;
     $gSiteDir = "/usr/local/site";
-    $gSiteName = "Dev";
+    $gSiteName = "Dev-Admin";
     $prefix = "";
-
-//} elseif (preg_match('/dev.cbi18.org/', $_SERVER['HTTP_HOST'])) {
-//    $gProduction = 0;
-//    $parts[] = '/usr/local/site/php'; # This is for Common
-//    $parts[] = '/usr/local/site/cbi/hh-honors-admin'; # local customization
-//    $parts[] = '/usr/local/PHPMailer';
-//    $parts[] = '/usr/local/fpdf';
-//    define('DIR', 'https://dev.cbi18.org/');
-
+    define( 'DIR', 'http://dev.cbi18.org/');
+    
 } elseif ( preg_match( '/cbi18.org/', $_SERVER['HTTP_HOST']) ) {
     $gProduction = 1;
     $gSiteDir = '/home/cbi18/site';
     $gSiteName = 'CBI-Live';
+    define( 'DIR', 'https://cbi18.org/');
+
 }
 $gSiteSubPath = "cbi";
 

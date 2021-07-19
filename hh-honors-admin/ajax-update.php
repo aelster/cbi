@@ -13,7 +13,7 @@ if ($trace) {
 }
 
 $dataType = $_POST['type'];
-list( $table, $field, $id ) = explode("%", $_POST['id'] );
+list( $table, $field, $id ) = explode("__", $_POST['id'] );
 $val = trim( str_replace('$','', $_POST['val']) );
 $query = "update $table set `$field` = '$val' where id = $id";
 if( $trace ) error_log($query);

@@ -1,8 +1,8 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/index.dwt" codeOutsideHTMLIsLocked="false" -->
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <!-- InstanceBeginEditable name="doctitle" -->
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<!-- InstanceBeginEditable name="doctitle" -->
         <title>CBI High Holy Day Honor Home</title>
         <link href="SpryAssets/SpryValidationTextField.css" rel="stylesheet" type="text/css" />
         <link href="SpryAssets/SpryValidationRadio.css" rel="stylesheet" type="text/css" />
@@ -14,8 +14,7 @@
                 <link href="styles.css" rel="stylesheet" type="text/css" />
                 <script src="SpryAssets/SpryMenuBar.js" type="text/javascript"></script>
                 <script type="text/javascript" src="hhPledges.js"></script>
-
-                <!-- InstanceBeginEditable name="head" -->
+<!-- InstanceBeginEditable name="head" -->
                 <script src="SpryAssets/SpryValidationTextField.js" type="text/javascript"></script>
                 <script src="SpryAssets/SpryValidationRadio.js" type="text/javascript"></script>
                 <!-- InstanceEndEditable -->
@@ -154,6 +153,7 @@
 
 
                 </style>
+                <link href="cbi-fluid.css" rel="stylesheet" type="text/css" />
                 <script type="text/javascript">
 
                                     jQuery('html')
@@ -181,8 +181,10 @@
                     }
                 </script>
 
-                </head>
+</head>
                 <body onload="firstName();" class="home page page-id-8587 page-template page-template-page-templates page-template-homepage page-template-page-templateshomepage-php exodus-logo-font-roboto exodus-tagline-font-roboto exodus-heading-font-roboto exodus-menu-font-roboto exodus-body-font-roboto exodus-has-logo-image exodus-has-logo-text-lowercase exodus-no-tagline-under-logo exodus-has-tagline-right exodus-rounded exodus-no-banner">
+                    <!-- InstanceBeginEditable name="sharedContent" -->
+                    <!-- InstanceEndEditable -->
                     <div id="exodus-container">
                         <header id="exodus-header">
                             <div id="exodus-top-bar">
@@ -195,8 +197,7 @@
 
                                             <a href="#" id="exodus-top-bar-search-icon" class="el-icon-search"></a>
 
-                                            <div id="exodus-top-bar-search-form">
-
+<!--                                            <div id="exodus-top-bar-search-form">
                                                 <div class="exodus-search-form">
                                                     <form method="get" action="https://www.cbi18.org/">
                                                         <label class="screen-reader-text">Search</label>
@@ -205,7 +206,8 @@
                                                         </div>
                                                         <a href="#" class="exodus-search-button el-icon-search"></a>
                                                     </form>
-                                                </div>				</div>
+                                                </div>				
+                                            </div>-->
 
 
 
@@ -298,9 +300,137 @@
                                     </div>
 
                                 </nav>
-                                <!-- InstanceBeginEditable name="Content" -->
+<!-- InstanceBeginEditable name="EditRegionDesktop" -->
                                 <?php
-                                AddForm();
+                                $hash = array_key_exists('hash', $_REQUEST) ? $_REQUEST['hash'] : 'n/a';
+                                $stmt = DoQuery("select * from assignments where hash = '$hash'");
+
+                                if ($gPDO_num_rows == 0) {
+                                    echo "<br>";
+                                    echo "<h3>";
+                                    echo "You may have reached this page in error.<br>";
+                                    echo "Please click on the link in the email that you received,<br>";
+                                    echo "or contact the synagogue office.";
+                                    
+                                    
+                                        
+                                    return;
+                                }
+                                echo "<input type=hidden name=hash value='$hash'>";
+
+                                $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
+                                $member_id = $assignment['member_id'];
+                                $honor_id = $assignment['honor_id'];
+
+                                $stmt = DoQuery("select * from members where id = $member_id");
+                                $member = $stmt->fetch(PDO::FETCH_ASSOC);
+    if( empty($member['Male 1st Name'] ) ) {
+        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
+    } else if( empty( $member['Female 1st Name'] ) ) {
+        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
+    } else {
+        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
+    }
+
+                                $stmt = DoQuery("select * from honors where id = $honor_id");
+                                $honor = $stmt->fetch(PDO::FETCH_ASSOC);
+                                switch  ($honor['service']) {
+                                    case 'rh1':
+                                        $service =  "Rosh Hashanah Day #1";
+                                        break;
+                                    
+                                    case 'rh2':
+                                        $service = "Rosh Hashanah Day #2";
+                                        break;
+                                    
+                                    case 'kn':
+                                        $service = "Kol Nidre";
+                                        break;
+                                    
+                                    case 'yka':
+                                        $service = "Yom Kippur Morning";
+                                        break;
+                                    
+                                    case 'ykp':
+                                        $service = "Yom Kippur Afternoon";
+                                        break;
+                           
+                                }
+                                $str = "{$service}: " . ucfirst($honor['honor']);
+
+                                printf("<input type=hidden name=nameDesktop value=\"%s\">", $name);
+                                ?>
+                                <div class="content">
+
+                                    <div class="fltlft" id="rightContents">
+                                        <strong>Name</strong>:&nbsp;<?php echo $name ?><br />
+                                        <strong>Honor</strong>:&nbsp;<?php echo $str ?><br />
+                                        <?php
+                                        if ($assignment['accepted']) {
+                                            echo "You have already accepted this honor. Please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> if you are no longer able to accept.";
+                                        } elseif ($assignment['declined']) {
+                                            echo "You have already declined this honor. If this might have been a mistake please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> to see if it is still available.";
+                                        } else {
+                                            ?>
+                                            <strong>Please check one:</strong>
+                                            <div id="spryradio1">
+                                                <table width="700" border="0">
+                                                    <tr>
+                                                        <td><label>
+                                                                <input type="radio" name="honorDesktop" value="accept" id="accept" onClick="addField('accept');" />
+                                                                I accept this honor offered to me</label></td>
+                                                        <td><span class="radioRequiredMsg">Please make a selection.</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><label>
+                                                                <input type="radio" name="honorDesktop" value="decline" id="decline" onClick="addField('decline');"/>
+                                                                I decline this honor offered to me</label></td>
+                                                        <td>&nbsp;</td>
+                                                    </tr>
+                                                </table>
+                                                </td>
+                                            </div>
+                                            <p><strong>Comments:</strong><br />
+                                                <textarea name="commentDesktop" cols="120" rows="2"></textarea></p>
+                                            <div>It is customary for those receiving honors to make a donation to the shul in honor of that participatory role, usually in a multiple of $18, or Chai, the Jewish numerical symbol for life.<br />
+                                            </div>
+                                            <div>Please accept my contribution to CBI of $&nbsp;
+                                                <select name="amountDesktop">
+                                                    <option value=0>-- Click Here --</option>
+                                                    <?php
+                                                    $price_points = array(18, 36, 54, 72, 108, 144, 180, 270, 360, 540, 720, 1080);
+                                                    foreach ($price_points as $val) {
+                                                        printf("<option value=%d>%d</option>", $val, $val);
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+                                            <br />
+                                            <div><strong>Payment method</strong> (select one)</div>
+                                            <div><input name="paymentDesktop" type="radio" value="Credit" />&nbsp;Charge my credit card on file</div>
+                                            <div><input name="paymentDesktop" type="radio" value="Check" />&nbsp;I will send a check to the office</div>
+                                            <div><input name="paymentDesktop" type="radio" value="Call" />&nbsp;Contact me about payment</div>
+                                            <br />
+                                            <input name="" value="Submit" type="submit" onClick="setValue('area','desktop');addAction('capture');"/><input name="" type="reset" />
+                                        </div>
+
+                                        <br />
+                                        <div id="bottom_buttons">
+                                        </div>
+                                        <!-- end .content -->
+                                    </div>
+                                    <?php
+                                }
+                                ?>
+
+                                <!-- InstanceEndEditable -->
+<!-- end .content -->
+    </header>
+</div>
+<!-- InstanceBeginEditable name="EditRegionPhone" -->
+                    <div class=phone>
+                    <div style="text-align:center;"><img src="assets/CBI_ner_tamid.png" alt="Congregation B'nai Israel" width="94" height="110" /></div>	
+<?php
                                 $hash = array_key_exists('hash', $_REQUEST) ? $_REQUEST['hash'] : 'n/a';
                                 $stmt = DoQuery("select * from assignments where hash = '$hash'");
 
@@ -328,7 +458,7 @@
                                 $stmt = DoQuery("select honor from honors where id = $honor_id");
                                 list( $hstr ) = $stmt->fetch(PDO::FETCH_NUM);
 
-                                printf("<input type=hidden name=hh-name value=\"%s\">", $name);
+                                printf("<input type=hidden name=namePhone value=\"%s\">", $name);
                                 ?>
                                 <div class="content">
 
@@ -339,7 +469,7 @@
                                         if ($assignment['accepted']) {
                                             echo "You have already accepted this honor. Please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> if you are no longer able to accept.";
                                         } elseif ($assignment['declined']) {
-                                            echo "You have already declined this honor.";
+                                            echo "You have already declined this honor. If this might have been a mistake please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> to see if it is still available.";
                                         } else {
                                             ?>
                                             <strong>Please check one:</strong>
@@ -347,13 +477,13 @@
                                                 <table width="700" border="0">
                                                     <tr>
                                                         <td><label>
-                                                                <input type="radio" name="RadioGroup2" value="accept" id="RadioGroup2_0" />
+                                                                <input type="radio" name="honorPhone" value="accept" id="accept" onClick="addField('accept');"/>
                                                                 I accept this honor offered to me</label></td>
                                                         <td><span class="radioRequiredMsg">Please make a selection.</span></td>
                                                     </tr>
                                                     <tr>
                                                         <td><label>
-                                                                <input type="radio" name="RadioGroup2" value="decline" id="RadioGroup2_1" />
+                                                                <input type="radio" name="honorPhone" value="decline" id="decline" onClick="addField('decline');"/>
                                                                 I decline this honor offered to me</label></td>
                                                         <td>&nbsp;</td>
                                                     </tr>
@@ -361,11 +491,11 @@
                                                 </td>
                                             </div>
                                             <p><strong>Comments:</strong><br />
-                                                <textarea name="hh-comment" cols="120" rows="2"></textarea></p>
+                                                <textarea name="commentPhone" cols="120" rows="2"></textarea></p>
                                             <div>It is customary for those receiving honors to make a donation to the shul in honor of that participatory role, usually in a multiple of $18, or Chai, the Jewish numerical symbol for life.<br />
                                             </div>
                                             <div>Please accept my contribution to CBI of $&nbsp;
-                                                <select name="hh-amount">
+                                                <select name="amountPhone">
                                                     <option value=0>-- Click Here --</option>
                                                     <?php
                                                     $price_points = array(18, 36, 54, 72, 108, 144, 180, 270, 360, 540, 720, 1080);
@@ -377,11 +507,11 @@
                                             </div>
                                             <br />
                                             <div><strong>Payment method</strong> (select one)</div>
-                                            <div><input name="hh-payment" type="radio" value="credit" />&nbsp;Charge my credit card on file</div>
-                                            <div><input name="hh-payment" type="radio" value="check" />&nbsp;I will send a check to the office</div>
-                                            <div><input name="hh-payment" type="radio" value="call" />&nbsp;Contact me about payment</div>
+                                            <div><input name="paymentPhone" type="radio" value="credit" />&nbsp;Charge my credit card on file</div>
+                                            <div><input name="paymentPhone" type="radio" value="check" />&nbsp;I will send a check to the office</div>
+                                            <div><input name="paymentPhone" type="radio" value="call" />&nbsp;Contact me about payment</div>
                                             <br />
-                                            <input name="" value="Submit" type="submit" onClick="addAction('honor');"/><input name="" type="reset" />  </div>
+                                            <input name="" value="Submit" type="submit" onClick="setValue('area','phone');addAction('honor');"/><input name="" type="reset" />  </div>
 
                                         <br />
                                         <div id="bottom_buttons">
@@ -389,19 +519,11 @@
                                         <!-- end .content -->
                                     </div>
 
-                                    <script type="text/javascript">
-                                        var sprytextfield1 = new Spry.Widget.ValidationTextField("sprytextfield1");
-                                        var sprytextfield2 = new Spry.Widget.ValidationTextField("sprytextfield2");
-                                        var spryradio1 = new Spry.Widget.ValidationRadio("spryradio1");
-                                    </script>
                                     <?php
                                 }
                                 ?>
+                                </div>
+					<!-- InstanceEndEditable -->
 
-                                <!-- InstanceEndEditable -->
-                                <!-- end .content -->
-                        </header>
-                    </div>
-
-                </body>
-                <!-- InstanceEnd --></html>
+</body>
+<!-- InstanceEnd --></html>

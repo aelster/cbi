@@ -247,7 +247,9 @@ function Assign() {
                 <?php
                 while (list( $id, $last, $ff, $mf, $ft, $mt ) = $stmt_member->fetch(PDO::FETCH_NUM)) {
                     $str = "$last,";
+                    $num_members = 0;
                     if (!empty($ff)) {
+                        $num_members++;
                         if ($ft == "Kohen") {
                             $str .= " (C) $ff";
                         } elseif ($ft == "Levi") {
@@ -257,6 +259,10 @@ function Assign() {
                         }
                     }
                     if (!empty($mf)) {
+                        $num_members++;
+                        if(  $num_members > 1 ) {
+                            $str .=  " and ";
+                        }
                         if ($mt == "Kohen") {
                             $str .= " (C) $mf";
                         } elseif ($mt == "Levi") {
@@ -410,7 +416,7 @@ function AssignRSVP() {
     }
 
     # sent=1 is artificial. If admin is accepting, 
-    $query = sprintf("update assignments set updated=now(), active=0, sent=1, %s where honor_id = %d and member_id = %d",
+    $query = sprintf("update assignments set updated=now(), active=0, sent=now(), %s where honor_id = %d and member_id = %d",
             join(',', $vx), $honor_id, $member_id);
     DoQuery($query);
     
@@ -843,41 +849,6 @@ function CreateHonorsMaster() {
         array_pop($gFunction);
 }
 
-function DateUpdate() {
-    include( 'includes/globals.php' );
-    if ($gTrace) {
-        $gFunction[] = __FUNCTION__;
-        Logger();
-    }
-
-    $id = $_POST['id'];
-    $from = $_POST['from'];
-
-    if ($gFunc == "update") {
-        $tmp2 = preg_split("/,/", $_POST['fields']);
-        $tmp = array_unique($tmp2);
-
-        foreach ($tmp as $field) {
-            $str = $_POST[$field];
-            $ts = strtotime($str);
-            $date = date('Y-m-d', $ts);
-
-            DoQuery("select `date` from dates where `label` = \"$field\"");
-            if ($gPDO_num_rows == 0) {
-                $query = sprintf("insert into dates set `label` = '%s', `date` = '%s'", $field, $date);
-            } else {
-                $query = sprintf("update dates set `date` = '%s' where `label` = '%s'", $date, $field);
-            }
-            DoQuery($query);
-        }
-    } elseif ($gFunc == "delete") {
-        $query = sprintf("delete from dates where id = %d", $keys[0]);
-        DoQuery($query);
-    }
-
-    if ($gTrace)
-        array_pop($gFunction);
-}
 
 function DisplayCategories() {
     include 'includes/globals.php';
@@ -972,106 +943,6 @@ function DisplayCategories() {
         array_pop($gFunction);
 }
 
-function DisplayDates() {
-    include( 'includes/globals.php' );
-    if ($gTrace) {
-        $gFunction[] = __FUNCTION__;
-        Logger();
-    }
-
-    $area = $_POST['area'];
-
-    echo "<div class=CommonV2>";
-    echo "<input type=button value=Back onclick=\"setValue('from', '$gFunc');addAction('Back');\">";
-    $tag = MakeTag('update');
-    $jsx = array();
-    $jsx[] = "setValue('area','$area')";
-    $jsx[] = "setValue('from','DisplayDates')";
-    $jsx[] = "setValue('func','update')";
-    $jsx[] = "addAction('Update')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value=Update $tag $js>";
-    echo "<input type=hidden id=id>";
-
-    printf("<h3>Current date: %s</h3>", date("D M jS, Y, g:i A"));
-    echo "<table>";
-
-    echo "<tr>";
-    echo "<th>Label</th>";
-    echo "<th>Date</th>";
-    echo "</tr>\n";
-
-    $stmt = DoQuery("select date from dates where `label` = \"erev\"");
-    if ($gPDO_num_rows > 0) {
-        list( $val ) = $stmt->fetch(PDO::FETCH_NUM);
-        $date = new DateTime($val);
-    } else {
-        $date = new DateTime();
-    }
-
-    $jsx = array();
-    $jsx[] = "addField('erev')";
-    $jsx[] = "toggleBgRed('update')";
-    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-
-    echo "<tr>";
-    printf("<td>%s</td>", "Erev Rosh Hashanah");
-    $tag = MakeTag('erev');
-    printf("<td><input $tag $js size=30 value=\"%s\"></td>", $date->format("l, M jS, Y"));
-    echo "</tr>\n";
-
-    $date->add(new DateInterval('P1D'));
-    echo "<tr>";
-    echo "<td>" . $gService['rh1'] . "</td>";
-    printf("<td>%s</td>", $date->format("l, M jS, Y"));
-    echo "</tr>";
-
-    $date->add(new DateInterval('P1D'));
-    echo "<tr>";
-    echo "<td>" . $gService['rh2'] . "</td>";
-    printf("<td>%s</td>", $date->format("l, M jS, Y"));
-    echo "</tr>";
-
-    $date->add(new DateInterval('P7D'));
-    echo "<tr>";
-    echo "<td>" . $gService['kn'] . "</td>";
-    printf("<td>%s</td>", $date->format("l, M jS, Y"));
-    echo "</tr>";
-
-    $date->add(new DateInterval('P1D'));
-    echo "<tr>";
-    echo "<td>" . $gService['yka'] . "</td>";
-    printf("<td>%s</td>", $date->format("l, M jS, Y"));
-    echo "</tr>";
-
-    echo "<tr>";
-    echo "  <td colspan=2 style='background-color:grey;'>&nbsp;</td>";
-    echo "</tr>";
-
-    $stmt = DoQuery("select date from dates where `label` = 'reply_date'");
-    if ($gPDO_num_rows > 0) {
-        list( $val ) = $stmt->fetch(PDO::FETCH_NUM);
-        $date2 = new DateTime($val);
-    } else {
-        $date2 = new DateTime();
-    }
-    $jsx = array();
-    $jsx[] = "addField('reply_date')";
-    $jsx[] = "toggleBgRed('update')";
-    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-
-    echo "<tr>";
-    printf("<td>%s</td>", "Email Reply Deadline");
-    $tag = MakeTag('reply_date');
-    printf("<td><input $tag $js size=30 value=\"%s\"></td>", $date2->format("l, M jS, Y"));
-    echo "</tr>\n";
-
-    echo "</table>\n";
-    echo "</div>\n";
-
-    if ($gTrace)
-        array_pop($gFunction);
-}
 
 function DisplayFinancial() {
     include 'includes/globals.php';
@@ -1294,117 +1165,6 @@ function DisplayItems() {
         array_pop($gFunction);
 }
 
-function DisplayMain() {
-    include( 'includes/globals.php' );
-    if ($gTrace) {
-        $gFunction[] = __FUNCTION__;
-        Logger();
-    }
-
-    if ($gArea == 'categories') {
-        DisplayCategories();
-    } elseif ($gArea == 'dates') {
-        DisplayDates();
-    } elseif ($gArea == 'financial') {
-        DisplayFinancial();
-    } elseif ($gArea == 'items') {
-        DisplayItems();
-    } elseif ($gArea == 'mail') {
-        MailDisplay();
-    } elseif ($gArea == 'showbids') {
-        ShowBids();
-    } elseif ($gArea == 'spiritual') {
-        DisplaySpiritual();
-    } elseif ($gArea == 'topbids') {
-        DisplayTopBids();
-    } elseif ($gFunc == 'users') {
-        UserManager('control');
-    } elseif ($gFunc == 'privileges') {
-        UserManager('privileges');
-    } elseif ($gFunc == 'source') {
-        SourceDisplay();
-    } else {
-        echo "<br>";
-        echo "<input type=button onclick=\"addAction('Logout');\" value=Logout>";
-
-        if (UserManager('authorized', 'control')) {
-            Logger('here in auth(control)');
-            echo "<div class=control>";
-            echo "<h3>Control User Features</h3>";
-            echo "
-<input type=button onclick=\"setValue('func','source');addAction('Main');\" value=\"Source\">
-<input type=button onclick=\"setValue('func','backup');addAction('backup');\" value=\"Backup\">
-<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>
-<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>
-<input type=button onclick=\"setValue('func','build-memb');addAction('Main');\" value=\"Build Members\">
-<input type=button onclick=\"setValue('func','comp-memb');addAction('Main');\" value=\"Compare Members\">
-<input type=button onclick=\"setValue('func','display');addAction('Debug');\" value=\"Debug ($gDebug)\">
-<input type=button onclick=\"setValue('func','special');addAction('Special');\" value=Special>
-";
-
-            echo "</div>";
-        }
-
-        if (UserManager('authorized', 'admin')) {
-            echo "<div class=admin>";
-            echo "<h3>Admin User Features</h3>";
-
-            $jsx = array();
-            $jsx[] = "setValue('area','dates')";
-            $jsx[] = "addAction('Main')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value=Dates>";
-
-            echo "<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>";
-            echo "<input type=button onclick=\"setValue('func','edit');addAction('Honors');\" value=\"Honors List - All Days\">";
-            echo "<input type=button onclick=\"setValue('func','members');addAction('Main');\" value=\"Member List - This Year\">";
-            echo "<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">";
-            echo "<input type=button onclick=\"setValue('func','log');addAction('Main');\" value=\"Log File\">";
-
-            echo "</div>";
-            echo "<br>";
-        }
-
-        if (UserManager('authorized', 'assign')) {
-            echo "<div class=assign>";
-            echo "<h3>Assignor</h3>";
-
-            $jsx = array();
-            $jsx[] = "setValue('area','assign')";
-            $jsx[] = "addAction('Assign')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value='Assign/View'>";
-
-            echo "</div>";
-            echo "<br>";
-        }
-
-        if (UserManager('authorized', 'office')) {
-            echo "<div class=assign>";
-            echo "<h3>Office Staff</h3>";
-
-            $jsx = array();
-            $jsx[] = "setValue('area','assign')";
-            $jsx[] = "addAction('Assign')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button $js value='View'>";
-
-            echo "<input type=button onclick=\"setValue('area','gabbai');addAction('Download');\" value=\"Gabbai Download\">";
-
-            echo "<input type=button onclick=\"setValue('area','donations');addAction('Download');\" value=\"Money Download\">";
-
-            $jsx = array();
-            $jsx[] = "setValue('from','$gFunc')";
-            $jsx[] = "setValue('func','responses')";
-            $jsx[] = "addAction('Main')";
-            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-            echo "<input type=button value='Responses' $js>";
-        }
-    }
-
-    if ($gTrace)
-        array_pop($gFunction);
-}
 
 function EditItem() {
     include 'includes/globals.php';
@@ -1760,113 +1520,6 @@ function ExcelSpiritual() {
     if ($gTrace)
         array_pop($gFunction);
 }
-
-function FYSelect() {
-    include 'includes/globals.php';
-    if ($gTrace) {
-        $gFunction[] = __FUNCTION__;
-        Logger('fy select');
-    }
-
-    if (defined('DB_OPEN')) {
-        echo "FYSelect can't be called twice";
-        exit();
-    }
-    define('DB_OPEN', true);
-    /*
-     * First connect to the manager to determine the database
-     */
-    try {
-        //create PDO connection
-        if ($gProduction) {
-            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
-        } else {
-            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-        }
-
-        $t = new PDO($gPDO_dsn, $gPDO_user, $gPDO_pass, $gPDO_attr);
-    } catch (PDOException $e) {
-        //show error
-        error_log($e);
-        error_log( "connection failed" );
-        echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
-        $gDbControl = NULL;
-        throw $e;
-    }
-
-    $id = $idx = 0;
-    
-    preg_match( '/dbname=(.+)_(.+)_(.+);/', $gPDO_dsn, $matches );
-    list( $na, $gPrefix, $gSiteName, $jewishYear) = $matches;
-
-    $gDb = $gDbControl = $gDbVector[$id] = $t;
-    $local_dbName[$id] = "{$gPrefix}_{$gSiteName}_{$jewishYear}";
-    $local_Label[$id] = $jewishYear;
-
-    if (!array_key_exists('dbId', $_SESSION) || empty($_SESSION['dbId'])) {
-        $_SESSION['dbId'] = $idx;
-    }
-    
-    if( array_key_exists( 'dbId', $_SESSION ) ) {
-        $_SESSION['dbName'] = $local_dbName[$_SESSION['dbId']];
-        $_SESSION['dbLabel'] = $local_Label[$_SESSION['dbId']];
-        $gDb = $gDbVector[$_SESSION['dbId']];
-    }
-    
-    LocalInit();
-}
-
-function FYSelectOrig() {
-    include 'includes/globals.php';
-    if ($gTrace) {
-        $gFunction[] = __FUNCTION__;
-        Logger('fy select');
-    }
-
-    if (defined('DB_OPEN')) {
-        echo "FYSelect can't be called twice";
-        exit();
-    }
-    define('DB_OPEN', true);
-    /*
-     * First connect to the manager to determine the database
-     */
-    try {
-        //create PDO connection
-        if ($gProduction) {
-            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
-        } else {
-            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
-        }
-
-        $t = new PDO($gPDO_dsn, $gPDO_user, $gPDO_pass, $gPDO_attr);
-    } catch (PDOException $e) {
-        //show error
-        error_log($e);
-        error_log( "connection failed" );
-        echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
-        $gDbControl = NULL;
-        throw $e;
-    }
-
-    $dbId = 0;
-    
-    $save_db = $gDb;
-    
-    $gDb = $gDbControl = $gDbVector[0] = $t;
-    $idx = 0;
-    if (!array_key_exists('dbId', $_SESSION))
-        $_SESSION['dbId'] = $idx;
-/*
-    if( array_key_exists( 'dbId', $_SESSION ) ) {
-        $_SESSION['dbName'] = $local_dbName[$_SESSION['dbId']];
-        $_SESSION['dbLabel'] = $local_Label[$_SESSION['dbId']];
-        $gDb = $gDbVector[$_SESSION['dbId']];
-    }
-*/    
-    LocalInit();
-}
-
 function HonorsEdit() {
     include 'includes/globals.php';
     if ($gTrace) {
@@ -2164,10 +1817,8 @@ function LocalInit() {
             DoQuery($query);
         }
     }
-    $stmt = DoQuery("select * from misc where label = \"email_admin\"");
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    list( $gMailAdmin, $gMailAdminName ) = preg_split('/,/', $row['value']);
-    $gMailLive = $row['enabled'];
+    
+    loadMailSettings();
 }
 
 function LogfileDisplay() {
@@ -2249,6 +1900,8 @@ function MailAssignment() {
         Logger();
     }
 
+    loadMailSettings();
+    
     $argc = func_num_args();
     if ($argc > 0) {
         $area = func_get_arg(0);
@@ -2277,7 +1930,6 @@ function MailAssignment() {
     $tmp[] = "honor_id = $honor_id";
     $tmp[] = "member_id = $member_id";
     $tmp[] = "jyear = $gJewishYear";
-    $tmp[] = "active = 1";
             
     $stmt = DoQuery("select * from assignments where " . join(' and ', $tmp ) );
     $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -2297,15 +1949,13 @@ function MailAssignment() {
         }
     }
 
-    if (!empty($member['Female 1st Name']) && empty($member['Male 1st Name'])) {
-        $name = $member['Female 1st Name'];
-    } elseif (empty($member['Female 1st Name']) && !empty($memeber['Male 1st Name'])) {
-        $name = $member['Male 1st Name'];
+    if( empty($member['Male 1st Name'] ) ) {
+        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
+    } else if( empty( $member['Female 1st Name'] ) ) {
+        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
     } else {
-        $name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
+        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
     }
-
-    $name .= sprintf(" %s", $member['Last Name']);
 
     $stmt = DoQuery("select date from dates where `label` = \"erev\"");
     list( $td ) = $stmt->fetch(PDO::FETCH_NUM);
@@ -2359,8 +2009,9 @@ function MailAssignment() {
     } else {
         $str = "We look forward to our congregation gathering in person for High Holy Days once again, and";
         $str .= " thank you for the support you have given to Congregation B'nail Israel during the past year.";
-        $str .= sprintf(" In an effort to show our appreciation, we would like to offer you the honor of %s during the %s service on %s.",
-                $honor['honor'], $gService[$honor['service']], $date->format("l, M jS, Y"));
+        $str .= " In an effort to show our appreciation, we would like to offer you the following honor:";
+//        $str .honor of {$honor['honor']}";
+//        $str .= " during the {$gService[$honor['service']]} service on {$date->format("l, M jS, Y")}";
     }
 
     $html[] = $str;
@@ -2368,23 +2019,32 @@ function MailAssignment() {
 
     $html[] = "";
     $text[] = "";
-    
+
     $t = strtotime( $honor['arrival_time'] );
-    $str = "We ask that you be in the sanctuary by " . date("g:i A", $t);
+    $arriveBy = date("g:i A",$t);
+    
+    $space = "&nbsp;&nbsp;&nbsp;&nbsp;";
+    $var = "html";
+    $$var[] = "{$space}Honor: " . $honor['honor'];
+    $$var[] = "{$space}Service: " . $gService[$honor['service']];
+    $$var[] = "{$space}Date: " . $date->format("l, M jS, Y");
+    $$var[] = "{$space}Time: Please arrive by $arriveBy";
+    
+    $space = "";
+    $var = "text";
+    $$var[] = "{$space}Honor: " . $honor['honor'];
+    $$var[] = "{$space}Service: " . $gService[$honor['service']];
+    $$var[] = "{$space}Date: " . $date->format("l, M jS, Y");
+    $$var[] = "{$space}Time: Please arrive by $arriveBy";
+    
+
+    $html[] = "";
+    $text[] = "";
+    
+    $str = "For this honor we ask that you be in the sanctuary by $arriveBy";
     $str .= " and check in with the Shamash, the person in charge of making sure that everyone";
     $str .= " who has an honor is in the right place at the right time.";
 
-/* old wording    
-    $str = "We ask that you be in the sanctuary at least 30 minutes prior to your honor";
-    $str .= " (15 minutes prior if it occurs at the beginning of the service,) and check in with";
-    $str .= " the Shamash, the person in charge of making sure that everyone who has an honor";
-    $str .= " is in the right place at the right time.";
- */
-/*
-    if (!$remind) {
-        $str .= " We will send you additional detailed information about your honor closer to the date.";
-    }
-*/
     $html[] = $str;
     $text[] = $str;
 
@@ -2401,7 +2061,7 @@ function MailAssignment() {
         $reply_date = date('F jS, Y', $ts);
 
         $url = DIR . "hh-honors/?hash=$hash";
-        $html[] = "<a href=\"$url\">Click here</a> to confirm or decline this honor by $reply_date.";
+        $html[] = "Click <a href=\"$url\">here</a> to confirm or decline this honor by $reply_date.";
         $text[] = "Click on the following link, $url, to confirm or decline this honor by $reply_date.";
 
         $html[] = "";
@@ -2446,21 +2106,20 @@ function MailAssignment() {
             exit;
         }
     } else {
-        $str = preg_replace("/\s+/", " ", $member['E-Mail Address']);
-        if (preg_match("/,/", $str)) {
-            $email = preg_split("/,/", $str, NULL, PREG_SPLIT_NO_EMPTY);
-        } elseif (preg_match("/;/", $str)) {
-            $email = preg_split("/;/", $str, NULL, PREG_SPLIT_NO_EMPTY);
-        } elseif (preg_match("/ /", $str)) {
-            $email = preg_split("/ /", $str, NULL, PREG_SPLIT_NO_EMPTY);
-        } else {
-            if (empty($str)) {
+        $addrs = [];
+        if( $gMailLive ) {
+            if( ! empty( $member['E-Mail Address'] ) )
+                $addrs[] = $member['E-Mail Address'];
+            if( ! empty( $member['E-Mail Address 2'] ) )
+                $addrs[] = $member['E-Mail Address 2'];
+
+            if (empty($email))
                 return;
+        } elseif( ! empty($gMailTesting) ) {
+            foreach( $gMailTesting as $addr ) {
+                $addrs[] = $addr;
             }
-            $email = [$str];
         }
-        if (empty($email))
-            return;
 
         $html[] = "</body></html>";
         
@@ -2468,8 +2127,9 @@ function MailAssignment() {
         $mail = MyMailerNew();
 
         //Recipients
-        foreach( $email as $addr ) {
-            $mail->AddAddress($addr);
+        
+        foreach( $addrs as $obj ) {
+            $mail->AddAddress( $obj['email'], $obj['name']);
         }
         $mail->setFrom('cbi18@cbi18.org', 'CBI');
 
@@ -2479,11 +2139,12 @@ function MailAssignment() {
         //Content
         $mail->Subject = "$gJewishYear CBI High Holy Day Honor";
 
-        $mail->msgHTML(join('<br>', $html), DIR);
-
+        $mail->Body = implode('<br>',$html );
+        $mail->AltBody = implode('\n',$text);
+        
         $ret = MyMailerSend($mail);
 
-        DoQuery("update assignments set sent = 1 where `hash` like '$hash'");
+        DoQuery("update assignments set sent = now() where `hash` like '$hash'");
         $userid = $GLOBALS['gUserId'];
 
         EventLog('record', [
@@ -2709,7 +2370,7 @@ function MailAssignmentByID_notYetUsed() {
 
         $ret = MyMailerSend($mail);
 
-        DoQuery("update assignments set sent = 1 where `hash` = '$hash'");
+        DoQuery("update assignments set sent = now() where `hash` = '$hash'");
         $userid = $GLOBALS['gUserId'];
 
         EventLog('record', [
@@ -2783,180 +2444,235 @@ function MailAssignments($area) {
 
 function MailDisplay() {
     include 'includes/globals.php';
+    include 'local_mailer.php';
+    
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
         Logger();
     }
-    $area = $_POST['area'];
 
-    echo "<div class=CommonV2>";
-    echo "<input type=button value=Refresh onclick=\"setValue('from', '$gFunc');setValue('area','mail');addAction('Main');\">";
-    echo "<input type=button value=Back onclick=\"setValue('from', '$gFunc');addAction('Back');\">";
+//    include 'local_mailer.php';
 
-    $tag = MakeTag('update');
-    $jsx = array();
-    $jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-    $jsx[] = "setValue('func','update')";
-    $jsx[] = "addAction('Update')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input $tag type=button value=Update $tag $js>";
+    echo "<div class=center>";
+    echo "<h2>Mail Controls</h2>";
+//    echo "<span style='background-color: yellow; width: 200px; text-align: left; display: inline-block; font-size: 12pt;'>";
+    echo "</span>";
+    echo "</div>";
+    echo "<input type=button value=Back onclick=\"setValue('from', 'Mail');addAction('Back');\">";
+        $jsx = [];
+    $jsx[] = "setValue('from','" .  __FUNCTION__ . "')";
+    $jsx[] = "setValue('func','new')";
+    $jsx[] = "addAction('update')";
+    $js = implode(';', $jsx); 
+    echo "&nbsp;";
+    echo "<td class=c><input type=submit onclick=\"$js\" value=New></td>";
 
     echo "<br><br>";
+    echo "<table>";
 
-    if (UserManager('authorized', 'control')) {
-        echo "<p>";
-        echo "These settings are part of the local include file. This is the master on/off switch for all mail. If off, no mail will be sent.";
-        echo "</p>";
+    echo "<thead>";
+    echo "<tr>";
+    echo "<th class=col1>Label</th>";
+    echo "<th class=col2>Value</th>";
+    echo "<th class=col3>Enabled</th>";
+    echo "<th class=col5>Action</th>";
+    echo "</tr>";
+    echo "</thead>";
 
-        echo "<table>";
-        echo "<tr>";
-        echo "<th>Mail Enabled</th>";
-        if ($GLOBALS['mail_enabled']) {
-            echo "<td class=cok>OK to send mail</td>";
-            $val = "Disable";
-            $ival = 0;
+    echo "<tbody>";
+    $stmt = DoQuery("select * from mail where lower(label) like '%email:%' order by label asc");
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $id = $row['id'];
+        $label = $row['label'];
+        $value = $row['value'];
+
+        if ($label == 'Email: Server') {
+            echo "<tr>";
+            echo "<td class=col1>$label</td>";
+            echo "<td class=col2>";
+            $ajax_id = "id=\"mail__value__{$id}\"";
+            echo "<select class=\"'col2' ajax\" $ajax_id>";
+            for( $mid = 0; $mid < count($gMailDB); $mid++  )  {
+                $selected = ( $mid == $value ) ? "selected" : "";
+                echo "<option value=$mid $selected>{$gMailDB[$mid]['Label']}</option>";
+            }
+            echo "</select>";
+            echo "</td>";
+            echo "<td>&nbsp;</td>";
+            echo "<td>&nbsp;</td>";
+            echo "</tr>";
         } else {
-            echo "<td class=cbad>Mail System DISABLED</td>";
-            $val = "Enable";
-            $ival = 1;
+            echo "<tr>";
+            echo "<td class=col1>$label</td>";
+            $ajax_id = "id=\"mail__value__{$id}\"";
+            echo "<td class=col2><input class=\"'col2' ajax\" size=60 $ajax_id value='" . $row['value'] . "'></td>";
+
+            $tag = MakeTag("enabled_$id");
+            $acts = array();
+            $acts[] = "addField('$label|enabled|$id')";
+            $acts[] = sprintf("setValue('from','%s')", __FUNCTION__);
+            $acts[] = "setValue('mode','control')";
+            $acts[] = "setValue('area','mail')";
+            $acts[] = "setValue('func','update')";
+            $acts[] = "setValue('id', '$id')";
+            $acts[] = "setValue('key', '$label')";
+            $acts[] = "addAction('update')";
+            if( empty($row['enabled']) )  {
+                $checked = "";
+                $val = 1;
+            } else {
+                $checked = "checked";
+                $val = 0;
+            }
+            $ajax_id = "id=\"mail__enabled__{$id}\"";
+            $js = "";
+            echo "<td class=box><input class=ajax type=\"checkbox\" $ajax_id $checked $js value=\"$val\"></td>\n";
+
+            $acts = array();
+            $acts[] = sprintf("setValue('from','%s')", __FUNCTION__);
+            $acts[] = "setValue('area','mail')";
+            $acts[] = "setValue('func','del')";
+            $acts[] = "setValue('id', '$id')";
+            $acts[] = "addAction('update')";
+            printf("<td class='col5 c'><input type=button onClick=\"%s\" value='Del'></td>", join(';', $acts));
+
+            echo "</tr>";
         }
-        $jsx = array();
-        $jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-        $jsx[] = "setValue('func','update')";
-        $jsx[] = "setValue('area','mail')";
-        $jsx[] = "addField('mail_enabled=$ival')";
-        $jsx[] = "addAction('Update')";
-        $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-        echo "<td class=c><input type=button value=$val $js></td>";
-        echo "</tr>";
-
-        echo "<tr>";
-        echo "<th>Mail Admin</th>";
-        echo "<td colspan=2>" . array_keys($GLOBALS['mail_admin'])[0] . "</td>";
-        echo "</tr>";
-
-        echo "<tr>";
-        echo "<th>Mail Server</th>";
-        echo "<td colspan=2>" . $GLOBALS['mail_servers'][0]['server'] . "</td>";
-        echo "</tr>";
-        echo "</table>";
-
-        echo "<br><br>";
     }
 
-    echo "<table>";
+    $id = 0;
+
     echo "<tr>";
-    echo "<th>Live Mail</th>";
-    if ($mail_live) {
-        echo "<td class=cok>Send email to members</td>";
-        $val = "Disable";
-        $ival = 0;
-    } else {
-        echo "<td class=cbad>Test Mode - Send email to admin</td>";
-        $val = "Enable";
-        $ival = 1;
-    }
 
-    $jsx = array();
-    $jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-    $jsx[] = "setValue('func','update')";
-    $jsx[] = "setValue('area','mail_live')";
-    $jsx[] = "addField('mail_live=$ival')";
-    $jsx[] = "addAction('Update')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<td class=c><input type=button value=$val $js></td>";
+    $tag = MakeTag('label_' . $id);
+    $js = "onChange=\"toggleBgRed('add');\" onClick=\"this.select();\"";
+    echo "<td class=col1><input $tag type='text' size=15 $js value='-- enter label --'></td>";
+
+    $tag = MakeTag('value_' . $id);
+    $js = "onChange=\"addField('new|value|$id');toggleBgRed('add');\"";
+    echo "<td class=col2><input $tag type='text' size=60 $js></td>";
+
+    $tag = MakeTag('enabled_' . $id);
+    $js = "onChange=\"addField('new|enabled|$id');toggleBgRed('add');\"";
+    echo "<td class='col3 c'><input $tag type='checkbox' value=1 $js></td>";
+
+    $tag = MakeTag('add');
+    $acts = array();
+    $acts[] = "addField('new|label|$id')";
+    $acts[] = "addField('new|value|$id')";
+    $acts[] = "addField('new|enabled|$id')";
+    $acts[] = sprintf("setValue('from','%s')", __FUNCTION__);
+    $acts[] = "setValue('mode','control')";
+    $acts[] = "setValue('area','mail')";
+    $acts[] = "setValue('func','add')";
+    $acts[] = "addAction('update')";
+    printf("<td class='col5 c'><input $tag type=button onClick=\"%s\" value=Add></td>", join(';', $acts));
+
     echo "</tr>";
-
-    $stmt = DoQuery("select ival from dates where label = 'num_per_batch'");
-    if ($gPDO_num_rows == 0) {
-        $npb = -1;
-    } else {
-        list( $npb ) = $stmt->fetch(PDO::FETCH_NUM);
-    }
-    echo "<tr>";
-    echo "<th colspan=2>Send/Batch (-1 => no limit)</th>";
-    $tag = MakeTag('num_per_batch');
-    echo "<td><input $tag onchange=\"addField('num_per_batch');toggleBgRed('update');\" type=text value=$npb></td>";
-    echo "</tr>";
-
-    echo "</table>";
-
-    echo "<br><br>";
-
-    echo "<table>";
-    echo "<tr>";
-    echo "<th>Ritual VPs</th>";
-    $stmt = DoQuery( "select value from misc where label = 'ritual'");
-    if( $gPDO_num_rows > 0 ) {
-        list($val) = $stmt->fetch(PDO::FETCH_NUM);
-    } else {
-        $val = "n/a";
-    }
-    $tag = MakeTag('ritual');
-    $js = "onchange=\"addField('ritual');toggleBgRed('update');\"";
-    echo "<td><input $tag type=text size=40 value='$val' $js style='font-size: 16pt;'></td>";
+    echo "</tbody>";
     echo "</table>";
     
     echo "<br><br>";
+
+    echo "<h1>Email: Admin</h1>";
+    echo "<ul class=mail-desc>";
+    echo "<li>All emails are sent from this account</li>";
+    echo "<li class=warn>If enabled, emails are sent to members</b></li>";
+    echo "<li>If not enabled, emails are sent to Testing accounts</li>";
+    echo "</ul>";
+
+    echo "<br><br>";
+
+    echo "<h1>Email: Default</h1>";
+    echo  "<ul class=mail-desc>";
+    echo "<li>This is the default mail account if nothing else is set up</li>";
+    echo "</ul>";
     
-    $stmt = DoQuery("select count(*), sum(sent), sum(accepted), sum(declined) from assignments where jyear = $gJewishYear");
-    list( $total, $sent, $accepted, $declined ) = $stmt->fetch(PDO::FETCH_NUM);
-    printf("%d/%d Aliyot mailed, %d accepted, %d declined<br>", $sent, $total, $accepted, $declined);
+    echo "<br><br>";
 
-    echo "<br><br><br>";
-    $tag = MakeTag('preview');
-    echo "<input $tag type=checkbox value=1>&nbsp;Preview (don't send)<br>";
-
-    $jsx = array();
-    $jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-    $jsx[] = "setValue('func','validate')";
-    $jsx[] = "addAction('Mail')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value='Validate E-Mails' $js>";
-
-    $jsx = array();
-    $jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-    $jsx[] = "setValue('func','all')";
-    $jsx[] = "addAction('Mail')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value='Send All Mail' $js>";
-
-    $jsx = array();
-    $jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-    $jsx[] = "setValue('func','unsent')";
-    $jsx[] = "addAction('Mail')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value='Send All Unsent' $js>";
-
-    $jsx = array();
-    $jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-    $jsx[] = "setValue('func','noresponse')";
-    $jsx[] = "addAction('Mail')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value='Re-send If No Response' $js>";
-
-    echo "<br>";
-
-    $jsx = array();
-    $jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-    $jsx[] = "setValue('func','remind-rosh')";
-    $jsx[] = "addAction('Mail')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value='Send Rosh Reminders' $js>";
-
-    $jsx = array();
-    $jsx[] = sprintf("setValue('from','%s')", __FUNCTION__);
-    $jsx[] = "setValue('func','remind-yom')";
-    $jsx[] = "addAction('Mail')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value='Send Yom Reminders' $js>";
-
-
-    if ($gTrace)
+    echo "<h1>Email: Testing</h1>";
+    echo  "<ul class=mail-desc>";
+    echo "<li>If Admin is disabled, mail is sent to these accounts</li>";
+    echo "<li>Multiple accounts can be created</li>";
+    echo "</ul>";
+    
+    if ($gTrace) {
+        array_pop($gFunction
+        );
+    }
+}
+function MailUpdate() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+    if ($gFunc == 'add') {
+        $v = preg_split('/,/', $_POST['fields'], NULL, PREG_SPLIT_NO_EMPTY);
+        $flds = array_unique($v);
+        $qx = [];
+        $args = [];
+        $i = 0;
+        $ok = 1;
+        foreach ($flds as $fld) {
+            list( $label, $colName, $id ) = preg_split('/\|/', $fld);
+            $var = implode("_", [$colName, $id]);
+            if (array_key_exists($var, $_POST) && !empty($_POST[$var])) {
+                $val = $_POST[$var];
+                if (stripos($val, "email: admin") !== false) {
+                    DoQuery("select id from mail where lower(label) like \"%email: admin%\"");
+                    if ($gPDO_num_rows > 0)
+                        $ok = 0;
+                }
+                if (stripos($val, "email: default") !== false) {
+                    DoQuery("select id from mail where lower(label) like \"%email: default%\"");
+                    if ($gPDO_num_rows > 0)
+                        $ok = 0;
+                }
+                $qx[] = sprintf("`%s` = :v%d", $colName, $i);
+                $args[":v$i"] = $val;
+                $i++;
+            }
+        }
+        $query = "insert into mail set " . join(',', $qx);
+        if ($ok) {
+            Logger("query: [$query]");
+            Logger("args: [" . print_r($args, true) . "]");
+            DoQuery($query, $args);
+        }
+    } elseif ($gFunc == 'del') {
+        $id = $_POST['id'];
+        DoQuery("delete from mail where id = :id", [':id' => $id]);
+    } elseif ($gFunc == 'update') {
+        $v = preg_split('/,/', $_POST['fields'], NULL, PREG_SPLIT_NO_EMPTY);
+        $flds = array_unique($v);
+        foreach ($flds as $fld) {
+            $args = [];
+            list( $label, $colName, $id ) = preg_split('/\|/', $fld);
+            $query = "update mail set " . sprintf("%s = :v1", $colName);
+            $query .= " where id = :v2";
+            $var = implode("_", [$colName, $id]);
+            $newVal = array_key_exists($var, $_POST) ? $_POST[$var] : 0;
+            $args[":v1"] = $newVal;
+            $args[":v2"] = $id;
+            DoQuery($query, $args);
+            if ($label == "Email: Admin" && $newVal == 1) {
+                DoQuery("update mail set enabled = 0 where Label = \"Email: Testing\"");
+            } elseif ($label == "Email: Testing" && $newVal == 1) {
+                DoQuery("update mail set enabled = 0 where Label = \"Email: Admin\"");
+            }
+        }
+    } elseif( $gFunc  == 'new' )  {
+        DoQuery( "insert into mail set Label = 'Email:'");
+    }
+    DoQuery("update mail set enabled = 1 where Label = \"Email: Default\"");
+    loadMailSettings();
+    if ($gTrace) {
         array_pop($gFunction);
+    }
 }
 
-function MailUpdate() {
+function MailUpdatex() {
     include 'includes/globals.php';
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
@@ -3166,7 +2882,7 @@ function MembersDisplay() {
             $jsx[] = "toggleBgRed('update')";
             $js = sprintf("onclick=\"%s\"", join(';', $jsx));
             $js = "";
-            $ajax_id = "id=\"member_attributes%{$cat}%{$id}\"";
+            $ajax_id = "id=\"member_attributes__{$cat}__{$id}\"";
             echo "<td class=box sorttable_customkey=$sort_key><input class=ajax type=\"checkbox\" $ajax_id $checked $js value=\"$val\"></td>\n";
         }
 
@@ -3190,12 +2906,12 @@ function MembersEdit() {
     
     $id = $_POST['id'];
     if( $id == 0 ) {
-        $stmt = DoQuery( "select min(ID) from members" );
+        $stmt = DoQuery( "select max(ID) from members" );
         list($id) = $stmt->fetch(PDO::FETCH_NUM);
-        if( $id > 0  ) {
-            $id = - $id;
+        if( $id > 10000  ) {
+            $id++; # Use the next available
         } else {
-            $id -= 1;
+            $id = 10000; #$ start manual adds here
         }
         DoQuery(  "insert into members (ID,Status) values ($id,'Member')" );
         DoQuery(  "insert into member_attributes (id) values ($id)" );
@@ -3223,7 +2939,7 @@ function MembersEdit() {
     echo  "<tr>";
     $key = "Last Name";
     echo "<th>$key</th>";
-    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    $ajax_id = "id=\"members__{$key}__{$id}\"";
     echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=20 tabindex=1></td>";
     echo "</tr>";
     
@@ -3232,7 +2948,7 @@ function MembersEdit() {
         echo "<tr>";
         $key = strtolower($opt);
         echo "<th>$opt</th>";
-        $ajax_id = "id=\"member_attributes%{$key}%{$id}\"";
+        $ajax_id = "id=\"member_attributes__{$key}__{$id}\"";
         if( $rec[$key] ) {
             $checked = "checked";
             $val  = 0;
@@ -3249,7 +2965,7 @@ function MembersEdit() {
     $key = "Marital Status";
     echo "<th>$key</th>";
     echo "<td>";
-    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    $ajax_id = "id=\"members__{$key}__{$id}\"";
     echo "<select class=ajax $ajax_id tabindex=2>";
     foreach( $options as $opt ) {
         $selected = ( $rec[$key] == $opt ) ? 'selected' : '';
@@ -3278,10 +2994,10 @@ function MembersEdit() {
     echo "<tr>";
     echo  "<th>First Name</th>";    
     $key = "Female 1st Name";
-    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    $ajax_id = "id=\"members__{$key}__{$id}\"";
     echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=20 tabindex=3></td>";
     $key = "Male 1st Name";
-    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    $ajax_id = "id=\"members__{$key}__{$id}\"";
     echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=20 tabindex=6></td>";
     echo "</tr>";
 
@@ -3289,7 +3005,7 @@ function MembersEdit() {
     echo "<tr>";
     echo "<th>Tribe</th>";  
     $key = "ftribe";
-    $ajax_id = "id=\"member_attributes%{$key}%{$id}\"";
+    $ajax_id = "id=\"member_attributes__{$key}__{$id}\"";
     echo "<td>";
     echo "<select class=ajax $ajax_id tabindex=4>";
     foreach( ["", "Yisrael", "Levi", "Kohen"] as $opt ) {
@@ -3299,7 +3015,7 @@ function MembersEdit() {
     echo  "</select>";
     echo "</td>";
     $key = "mtribe";
-    $ajax_id = "id=\"member_attributes%{$key}%{$id}\"";
+    $ajax_id = "id=\"member_attributes__{$key}__{$id}\"";
     echo "<td>";
     echo "<select class=ajax $ajax_id tabindex=7>";
     foreach( ["", "Yisrael", "Levi", "Kohen"] as $opt ) {
@@ -3313,10 +3029,10 @@ function MembersEdit() {
     echo "<tr>";
     echo  "<th>E-Mail</th>";    
     $key = "E-Mail Address";
-    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    $ajax_id = "id=\"members__{$key}__{$id}\"";
     echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=30 tabindex=5></td>";
     $key = "E-Mail Address 2";
-    $ajax_id = "id=\"members%{$key}%{$id}\"";
+    $ajax_id = "id=\"members__{$key}__{$id}\"";
     echo "<td>" . "<input type=text class=ajax $ajax_id value='" . $rec[$key] . "' size=30 tabindex=8></td>";
     echo "</tr>";
 
@@ -3642,10 +3358,21 @@ function Phase2() {
                     SendConfirmation();
                     $gAction = "Assign";
                 }
-            } elseif ($gFrom == "DisplayDates") {
-                DateUpdate();
+            } elseif ($gFrom == "displayDates") {
+                updateDates();
                 $gAction = 'Main';
                 $_POST['area'] = 'dates';
+                
+            } elseif( $gFrom  == "displayMisc" ) {
+                updateMisc();
+                $gAction = "misc";
+                
+            } elseif( $gFrom == "resetHash" ) {
+                if( $gFunc  == "delete"  ) {
+                    resetHash();
+                }
+                $gAction = "Main";
+                
             } elseif ($gFrom == "LogfileDisplay") {
                 if ($gFunc == "log-reset") {
                     LogfileReset();
@@ -3676,7 +3403,7 @@ function Phase2() {
             } elseif ($gFrom == "DisplaySpiritual") {
                 PledgeUpdate();
                 $gAction = 'Main';
-            } elseif ($gFrom == 'DisplayMain') {
+            } elseif ($gFrom == 'displayMain') {
                 if ($area == 'reset') {
                     DoQuery("start transaction");
                     DoQuery("update items set status = 0 where status = 1");
@@ -3781,14 +3508,16 @@ $vect['Inactive'] = 'UserManager';
 $vect['Login'] = 'UserManager';
 $vect['Logout'] = 'UserManager';
 $vect['Mail'] = 'MailDisplay';
-$vect['Main'] = 'DisplayMain';
+$vect['Main'] = 'displayMain';
 $vect['New'] = 'UserManager';
 $vect['Resend'] = 'UserManager';
 $vect['Reset'] = 'UserManager';
 $vect['Start'] = 'UserManager';
-$vect['Welcome'] = 'DisplayMain';
-$vect['backup'] = 'DisplayMain';
+$vect['Welcome'] = 'displayMain';
+$vect['backup'] = 'displayMain';
 $vect['forgot'] = 'UserManager';
+$vect['hash'] = 'resetHash';
+$vect['misc'] = 'displayMisc';
 
 $args['Inactive'] = array('inactive');
 $args['Login'] = array('verify');
@@ -4857,6 +4586,344 @@ function deleteMember() {
     }
 }    
 
+function displayDates() {
+    include( 'includes/globals.php' );
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+
+    $area = $_POST['area'];
+
+    echo "<div class=CommonV2>";
+    echo "<input type=button value=Back onclick=\"setValue('from', '$gFunc');addAction('Back');\">";
+    $tag = MakeTag('update');
+    $jsx = array();
+    $jsx[] = "setValue('area','$area')";
+    $jsx[] = "setValue('from','displayDates')";
+    $jsx[] = "setValue('func','update')";
+    $jsx[] = "addAction('Update')";
+    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+    echo "<input type=button value=Update $tag $js>";
+    echo "<input type=hidden id=id>";
+
+    printf("<h3>Current date: %s</h3>", date("D M jS, Y, g:i A"));
+    echo "<table>";
+
+    echo "<tr>";
+    echo "<th>Label</th>";
+    echo "<th>Date</th>";
+    echo "</tr>\n";
+
+    $stmt = DoQuery("select date from dates where `label` = \"erev\"");
+    if ($gPDO_num_rows > 0) {
+        list( $val ) = $stmt->fetch(PDO::FETCH_NUM);
+        $date = new DateTime($val);
+    } else {
+        $date = new DateTime();
+    }
+
+    $jsx = array();
+    $jsx[] = "addField('erev')";
+    $jsx[] = "toggleBgRed('update')";
+    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
+
+    echo "<tr>";
+    printf("<td>%s</td>", "Erev Rosh Hashanah");
+    $tag = MakeTag('erev');
+    printf("<td><input $tag $js size=30 value=\"%s\"></td>", $date->format("l, M jS, Y"));
+    echo "</tr>\n";
+
+    $date->add(new DateInterval('P1D'));
+    echo "<tr>";
+    echo "<td>" . $gService['rh1'] . "</td>";
+    printf("<td>%s</td>", $date->format("l, M jS, Y"));
+    echo "</tr>";
+
+    $date->add(new DateInterval('P1D'));
+    echo "<tr>";
+    echo "<td>" . $gService['rh2'] . "</td>";
+    printf("<td>%s</td>", $date->format("l, M jS, Y"));
+    echo "</tr>";
+
+    $date->add(new DateInterval('P7D'));
+    echo "<tr>";
+    echo "<td>" . $gService['kn'] . "</td>";
+    printf("<td>%s</td>", $date->format("l, M jS, Y"));
+    echo "</tr>";
+
+    $date->add(new DateInterval('P1D'));
+    echo "<tr>";
+    echo "<td>" . $gService['yka'] . "</td>";
+    printf("<td>%s</td>", $date->format("l, M jS, Y"));
+    echo "</tr>";
+
+    echo "<tr>";
+    echo "  <td colspan=2 style='background-color:grey;'>&nbsp;</td>";
+    echo "</tr>";
+
+    $stmt = DoQuery("select date from dates where `label` = 'reply_date'");
+    if ($gPDO_num_rows > 0) {
+        list( $val ) = $stmt->fetch(PDO::FETCH_NUM);
+        $date2 = new DateTime($val);
+    } else {
+        $date2 = new DateTime();
+    }
+    $jsx = array();
+    $jsx[] = "addField('reply_date')";
+    $jsx[] = "toggleBgRed('update')";
+    $js = sprintf("onChange=\"%s\"", join(';', $jsx));
+
+    echo "<tr>";
+    printf("<td>%s</td>", "Email Reply Deadline");
+    $tag = MakeTag('reply_date');
+    printf("<td><input $tag $js size=30 value=\"%s\"></td>", $date2->format("l, M jS, Y"));
+    echo "</tr>\n";
+
+    echo "</table>\n";
+    echo "</div>\n";
+
+    if ($gTrace)
+        array_pop($gFunction);
+}
+
+function displayMain() {
+    include( 'includes/globals.php' );
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+
+    if ($gArea == 'categories') {
+        DisplayCategories();
+    } elseif ($gArea == 'dates') {
+        displayDates();
+    } elseif ($gArea == 'financial') {
+        DisplayFinancial();
+    } elseif ($gArea == 'items') {
+        DisplayItems();
+    } elseif ($gArea == 'mail') {
+        MailDisplay();
+    } elseif ($gArea == 'showbids') {
+        ShowBids();
+    } elseif ($gArea == 'spiritual') {
+        DisplaySpiritual();
+    } elseif ($gArea == 'topbids') {
+        DisplayTopBids();
+    } elseif ($gFunc == 'users') {
+        UserManager('control');
+    } elseif ($gFunc == 'privileges') {
+        UserManager('privileges');
+    } elseif ($gFunc == 'source') {
+        SourceDisplay();
+    } else {
+        echo "<br>";
+        echo "<input type=button onclick=\"addAction('Logout');\" value=Logout>";
+
+        if (UserManager('authorized', 'control')) {
+            Logger('here in auth(control)');
+            echo "<div class=control>";
+            echo "<h3>Control User Features</h3>";
+            echo "
+<input type=button onclick=\"setValue('func','source');addAction('Main');\" value=\"Source\">
+<input type=button onclick=\"setValue('func','backup');addAction('backup');\" value=\"Backup\">
+<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=Users>
+<input type=button onclick=\"setValue('func','privileges');addAction('Main');\" value=Privileges>
+<input type=button onclick=\"setValue('func','build-memb');addAction('Main');\" value=\"Build Members\">
+<input type=button onclick=\"setValue('func','comp-memb');addAction('Main');\" value=\"Compare Members\">
+<input type=button onclick=\"setValue('func','display');addAction('Debug');\" value=\"Debug ($gDebug)\">
+<input type=button onclick=\"setValue('func','special');addAction('Special');\" value=Special>
+";
+
+            echo "</div>";
+        }
+
+        if (UserManager('authorized', 'admin')) {
+            echo "<div class=admin>";
+            echo "<h3>Admin User Features</h3>";
+
+            $jsx = array();
+            $jsx[] = "setValue('area','dates')";
+            $jsx[] = "addAction('Main')";
+            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+            echo "
+<input type=button $js value=Dates>
+<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">
+<input type=button onclick=\"setValue('area','misc');addAction('misc');\" value=\"Misc\">
+<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=\"Users\">
+<input type=button onclick=\"setValue('func','edit');addAction('Honors');\" value=\"Honors List - All Days\">
+<input type=button onclick=\"setValue('func','members');addAction('Main');\" value=\"Member List - This Year\">
+<input type=button onclick=\"setValue('func','log');addAction('Main');\" value=\"Log File\">
+<input type=button onclick=\"setValue('func','hash');addAction('hash');\" value=\"Reset Hash\">
+";
+
+            echo "</div>";
+            echo "<br>";
+        }
+
+        if (UserManager('authorized', 'assign')) {
+            echo "<div class=assign>";
+            echo "<h3>Assignor</h3>";
+
+            $jsx = array();
+            $jsx[] = "setValue('area','assign')";
+            $jsx[] = "addAction('Assign')";
+            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+            echo "<input type=button $js value='Assign/View'>";
+
+            echo "</div>";
+            echo "<br>";
+        }
+
+        if (UserManager('authorized', 'office')) {
+            echo "<div class=assign>";
+            echo "<h3>Office Staff</h3>";
+
+            $jsx = array();
+            $jsx[] = "setValue('area','assign')";
+            $jsx[] = "addAction('Assign')";
+            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+            echo "<input type=button $js value='View'>";
+
+            echo "<input type=button onclick=\"setValue('area','gabbai');addAction('Download');\" value=\"Gabbai Download\">";
+
+            echo "<input type=button onclick=\"setValue('area','donations');addAction('Download');\" value=\"Money Download\">";
+
+            $jsx = array();
+            $jsx[] = "setValue('from','$gFunc')";
+            $jsx[] = "setValue('func','responses')";
+            $jsx[] = "addAction('Main')";
+            $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+            echo "<input type=button value='Responses' $js>";
+        }
+    }
+
+    if ($gTrace)
+        array_pop($gFunction);
+}
+
+function displayMisc() {
+    include 'includes/globals.php';
+    $gFunction[] = __FUNCTION__;
+
+    echo "<input type=button value=Back onclick=\"setValue('from', '" . __FUNCTION__ . "');addAction('Back');\">";
+    
+    $jsx = [];
+    $jsx[] = "setValue('from','" .  __FUNCTION__ . "')";
+    $jsx[] = "setValue('func','new')";
+    $jsx[] = "addAction('update')";
+    $js = implode(';', $jsx); 
+    echo "&nbsp;";
+    echo "<td class=c><input type=submit onclick=\"$js\" value=New></td>";
+    echo "<br><br>";
+    
+    echo "<table>";
+    
+    echo "<thead>";
+    echo "<tr>";
+    echo "<th>Label</th>";
+    echo "<th>Value</th>";
+    echo "<th>Action</th>";
+    echo "</tr>";
+    echo "</thead>";
+    
+    echo "<tbody>";
+    $stmt = DoQuery( "select * from misc order by label asc" );
+    while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
+        $id = $row['id'];
+        echo "<tr>";
+        $ajax_id = "id=misc__label__$id";
+        echo "<td><input class=ajax $ajax_id size=20 value=\"" . $row['label'] . "\"></td>";
+        $ajax_id = "id=misc__value__$id";
+        echo "<td><input class=ajax $ajax_id size=50 value=\"" . $row['value'] . "\"></td>";
+        $jsx = [];
+        $jsx[] = "setValue('id',$id)";
+        $jsx[] = "setValue('from','" .  __FUNCTION__ . "')";
+        $jsx[] = "setValue('func','delete')";
+        $jsx[] = "addAction('update')";
+        $js = implode(';', $jsx);        
+        echo "<td class=c><input type=submit onclick=\"$js\" value=Del></td>";
+        echo "</tr>";
+    }
+    echo "</tbody>";
+    echo "</table>";
+    array_pop($gFunction);
+}
+
+function loadMailSettings() {
+    include 'includes/globals.php';
+    include 'local_mailer.php';
+
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+    $gMailAdmin = $gMailDefault = $gMailTesting = [];
+    $query = "select label, `value`, enabled from mail where lower(label) like '%email:%'";
+
+    $stmt = DoQuery($query);
+    if ($gPDO_num_rows == 0) {
+        DoQuery("insert into mail (label, value, enabled) values ('Email Server','',0)");
+        DoQuery("insert into mail (label, value, enabled) values ('Email: Default','andy.elster@gmail.com, Andy Elster',1)");
+    }
+    if (!$gProduction) {
+        DoQuery("update mail set enabled = 0 where label = 'Email: Admin'"); # Don't let me send out live emails from home
+    }
+
+    $gMailLive = 0;
+    $stmt = DoQuery($query);
+    while (list( $label, $value, $enabled ) = $stmt->fetch(PDO::FETCH_NUM)) {
+        $tmp = preg_split("/,/", $value, NULL, PREG_SPLIT_NO_EMPTY);
+        $j = count($tmp);
+        if ($j == 1) {
+            $email = $name = $tmp[0];
+        } elseif ($j == 2) {
+            $email = $tmp[0];
+            $name = $tmp[1];
+        }
+        if (stripos($label, "admin") !== false) {
+            $gMailAdmin[] = ['email' => "$email", 'name' => "$name"];
+            $gMailLive = $enabled;
+        } elseif (stripos($label, "default") !== false) {
+            $gMailDefault[] = ['email' => "$email", 'name' => "$name"];
+        } elseif (stripos($label, "backup") !== false) {
+            $gMailBackup[] = ['email' => "$email", 'name' => "$name"];
+        } elseif ($enabled && stripos($label, "testing") !== false) {
+            $gMailTesting[] = ['email' => "$email", 'name' => "$name"];
+        } elseif (stripos($label, "server") !== false) {
+            $gMailServer = $gMailDB[$value];
+        }
+    }
+
+    if (count($gMailAdmin) == 0) {
+        $gMailAdmin = $gMailDefault;
+    }
+    if (count($gMailTesting) == 0) {
+        $gMailTesting = $gMailDefault;
+    }
+
+    if ($gTrace) {
+        array_pop($gFunction);
+    }
+}
+function resetHash() {
+    include 'includes/globals.php';
+    $gFunction[] = __FUNCTION__;
+    
+    $hash = array_key_exists('hash',$_POST) ?  $_POST['hash'] : "";
+    if( empty($hash) )  {
+        echo "<input type=button value=Back onclick=\"setValue('from', '" . __FUNCTION__ . "');addAction('Back');\">";
+        echo "<br><br>";
+        $tag = MakeTag('hash');
+        echo  "<input type=text $tag size=5>";
+        echo  "&nbsp;";
+        echo "<input type=button value=Reset onclick=\"setValue('from', '" . __FUNCTION__ . "');setValue('area','hash');setValue('func','delete');addAction('update');\">";
+    } elseif( $gFunc  == "delete" ) {
+        DoQuery( "update assignments set active = 1, accepted = 0, declined = 0 where hash = '$hash'");
+        DoQuery( "delete from replies where hash = '$hash'");
+    }
+    array_pop($gFunction);
+}
 function selectDB() {
     include 'includes/globals.php';
     if ($gTrace) {
@@ -4897,4 +4964,54 @@ function selectDB() {
     $gDb = $gPDO[0]['inst'];
 
     LocalInit();
+}
+
+function updateDates() {
+    include( 'includes/globals.php' );
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+
+    $id = $_POST['id'];
+    $from = $_POST['from'];
+
+    if ($gFunc == "update") {
+        $tmp2 = preg_split("/,/", $_POST['fields']);
+        $tmp = array_unique($tmp2);
+
+        foreach ($tmp as $field) {
+            $str = $_POST[$field];
+            $ts = strtotime($str);
+            $date = date('Y-m-d', $ts);
+
+            DoQuery("select `date` from dates where `label` = \"$field\"");
+            if ($gPDO_num_rows == 0) {
+                $query = sprintf("insert into dates set `label` = '%s', `date` = '%s'", $field, $date);
+            } else {
+                $query = sprintf("update dates set `date` = '%s' where `label` = '%s'", $date, $field);
+            }
+            DoQuery($query);
+        }
+    } elseif ($gFunc == "delete") {
+        $query = sprintf("delete from dates where id = %d", $keys[0]);
+        DoQuery($query);
+    }
+
+    if ($gTrace)
+        array_pop($gFunction);
+}
+
+function updateMisc() {
+    include( 'includes/globals.php' );
+    $gFunction[] = __FUNCTION__;
+
+    $id = $_POST['id'];
+    if( $gFunc == "delete" ) {
+        DoQuery( "delete from misc where id = $id");
+
+    } elseif( $gFunc == "new" )  {
+        DoQuery( "insert into misc (label,value) value ('',  '')");
+    }
+    array_pop($gFunction);
 }

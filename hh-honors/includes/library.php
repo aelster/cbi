@@ -1,15 +1,5 @@
 <?php
 
-function AddForm() {
-	include( 'globals.php' );
-	echo "<form name=fMain id=fMain method=post action=\"$gSourceCode\">";
-	
-	$hidden = array( 'action', 'area', 'fields', 'func', 'from', 'id' );
-	foreach( $hidden as $var ) {
-		$tag = MakeTag($var);
-		echo "<input type=hidden $tag>";
-	}
-}
 
 function BidAdd() {
 	include( 'globals.php' );
@@ -54,9 +44,9 @@ function BidAdd() {
 	DoQuery( "start transaction" );
 	while( $get_new_hash ) {
 		$random_hash = substr(md5(uniqid(rand(), true)), 8, 8); // 6 characters long
-		DoQuery( "select * from bidders where hash = '$random_hash'" );
+		DoQuery( "select * from bidders where `hash` like '$random_hash'" );
 		if( ! $mysql_numrows ) {
-			DoQuery( "update bidders set hash = '$random_hash' where id = $bidder_id" );
+			DoQuery( "update bidders set `hash` like '$random_hash' where id = $bidder_id" );
 			$get_new_hash = 0;
 		}
 	}
@@ -686,7 +676,6 @@ function DisplayMain() {
 		SourceDisplay();
 		
 	} else {
-		printf( "User: %s<br>", $GLOBALS['gUserName'] );
 		if( UserManager( 'authorized', 'control' ) ) {
 			echo "<div class=control>";
 			echo "<h3>Control User Features</h3>";
@@ -1445,94 +1434,91 @@ function ExcelSpiritual() {
 	if( $gTrace ) array_pop( $gFunction );	
 }
 
-function FYSelect() {
-    include 'includes/globals.php';
+function HashAdd() {
+    include( 'globals.php' );
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
-        Logger('fy select');
+        Logger();
     }
-
-    if (defined('DB_OPEN')) {
-        echo "FYSelect can't be called twice";
-        exit();
-    }
-    define('DB_OPEN', true);
-    /*
-     * First connect to the manager to determine the database
-     */
-    try {
-        //create PDO connection
-        if ($gProduction) {
-            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
-        } else {
-            $gPDO_attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+    DoQuery("select id, hash from bidders where `hash` like ''");
+    if ($mysql_numrows) {
+        $outer = $mysql_result;
+        while (list( $bidder_id, $hash ) = mysql_fetch_array($outer)) {
+            if (empty($hash)) {
+                DoQuery("start transaction");
+                $get_new_hash = 1;
+                while ($get_new_hash) {
+                    $random_hash = substr(md5(uniqid(rand(), true)), 8, 6); // 6 characters long
+                    DoQuery("select * from bidders where `hash` like '$random_hash'");
+                    if (!$mysql_numrows) {
+                        DoQuery("update bidders set `hash` like '$random_hash' where id = $bidder_id");
+                        $get_new_hash = 0;
+                    }
+                }
+            }
+            DoQuery("commit");
         }
-
-        $t = new PDO($gPDO_dsn, $gPDO_user, $gPDO_pass, $gPDO_attr);
-    } catch (PDOException $e) {
-        //show error
-        error_log($e);
-        error_log( "connection failed" );
-        echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
-        $gDbControl = NULL;
-        throw $e;
     }
-
-    $id = $idx = 0;
-    
-    preg_match( '/dbname=(.+)_(.+)_(.+);/', $gPDO_dsn, $matches );
-    list( $na, $gPrefix, $gSiteName, $jewishYear) = $matches;
-
-    $gDb = $gDbControl = $gDbVector[$id] = $t;
-    $local_dbName[$id] = "{$gPrefix}_{$gSiteName}_{$jewishYear}";
-    $local_Label[$id] = $jewishYear;
-
-    if (!array_key_exists('dbId', $_SESSION) || empty($_SESSION['dbId'])) {
-        $_SESSION['dbId'] = $idx;
-    }
-    
-    if( array_key_exists( 'dbId', $_SESSION ) ) {
-        $_SESSION['dbName'] = $local_dbName[$_SESSION['dbId']];
-        $_SESSION['dbLabel'] = $local_Label[$_SESSION['dbId']];
-        $gDb = $gDbVector[$_SESSION['dbId']];
-    }
-    
-    LocalInit();
-}
-
-function HashAdd() {
-	include( 'globals.php' );
-	if( $gTrace ) {
-		$gFunction[] = __FUNCTION__;
-		Logger();
-	}
-	DoQuery( "select id, hash from bidders where hash = ''" );
-	if( $mysql_numrows ) {
-		$outer = $mysql_result;
-		while( list( $bidder_id, $hash ) = mysql_fetch_array( $outer ) ) {
-			if( empty( $hash ) ) {
-				DoQuery( "start transaction" );
-				$get_new_hash = 1;
-				while( $get_new_hash ) {
-					$random_hash = substr(md5(uniqid(rand(), true)), 8, 6); // 6 characters long
-					DoQuery( "select * from bidders where hash = '$random_hash'" );
-					if( ! $mysql_numrows ) {
-						DoQuery( "update bidders set hash = '$random_hash' where id = $bidder_id" );
-						$get_new_hash = 0;
-					}
-				}
-			}
-			DoQuery( "commit" );
-		}
-	}
-	if( $gTrace ) array_pop( $gFunction );	
+    if ($gTrace)
+        array_pop($gFunction);
 }
 
 function LocalInit() {
+    include( 'includes/globals.php' );
 /*
 * This function should not generate any output so Excel downloads can be sent to the local browser
 */
-    include( 'includes/globals.php' );
+    $gDb = $gPDO[0]['inst'];
+    
+    $req = $_SERVER['QUERY_STRING'];
+    if (!empty($req)) {
+        $tmp = parse_str($req, $qs);
+        if (array_key_exists('action', $qs) && $qs['action'] == 'password' &&
+                array_key_exists('func', $qs) && $qs['func'] == 'reset') {
+            $gAction = 'password';
+            $gFunc = 'reset';
+            $gFrom = 'email';
+            $gResetKey = $qs['key'];
+        } elseif (array_key_exists('hash', $qs)) {
+            $gAction = 'pledge';
+        }
+    }
+    $noAction = empty($gAction) && !array_key_exists('action', $_POST);
+
+    $tmp = ['action', 'area', 'from', 'func', 'mode', 'where'];
+    foreach ($tmp as $name) {
+        $gn = 'g' . ucfirst($name);
+        if (!isset($$gn)) {
+            $$gn = array_key_exists($name, $_POST) ? $_POST[$name] : "";
+        }
+    }
+    if (empty($gMode)) {
+        $gMode = "office";
+    }
+    $dump = 0;
+    if ($dump) {
+        $v = array_keys($_SERVER);
+        sort($v);
+        foreach ($v as $key) {
+            printf("_SERVER['%s'] = %s<br>", $key, $_SERVER[$key]);
+        }
+    }
+    $gLF = "\n";
+
+    $proto = ( array_key_exists('HTTPS', $_SERVER) && $_SERVER['HTTPS'] == "on" ) ? "https" : "http";
+    $gSourceCode = sprintf("%s://%s%s", $proto, $_SERVER['SERVER_NAME'], $_SERVER['SCRIPT_NAME']);
+    $gFunction = array();
+
+    $date_server = new DateTime('2000-01-01');
+    $date_calif = new DateTime('2000-01-01', new DateTimeZone('America/Los_Angeles'));
+    $time_offset = $date_server->format('U') - $date_calif->format('U');
+
+    $gPreSelected = ( preg_match('/id=(\d+)/', $gSourceCode, $matches) ) ? $matches[1] : 0;
+    if ($gPreSelected > 0) {
+        $stmt = preg_match('/(.+)\?(.+)/', $gSourceCode, $matches);
+        $gSourceCode = $matches[1];
+    }
+#----
     if ($gUserId > 0) {
         $stmt = DoQuery("select debug from users where userid = $gUserId");
         list($val) = $stmt->fetch(PDO::FETCH_NUM);
@@ -1540,6 +1526,7 @@ function LocalInit() {
         $val = 0;
     }
     $gDebug = $gTrace = $_SESSION['debug'] = $val;
+    $gDebug = $gDebugWindow;
 
     if (array_key_exists('action', $_POST)) {
         $gAction = $_POST['action'];
@@ -1686,7 +1673,116 @@ END;
 
 	if( $gTrace ) array_pop( $gFunction );
 }
-	
+function Phase1($dpv_phase) {
+    include( 'globals.php' );
+    $gFunction[] = __FUNCTION__;
+    
+    $dpv_pre = "Begin";
+    $dpv_tag = "pre-html";
+
+    if ($gDebug) {
+        DumpPostVars(sprintf("++ %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+
+    addForm();
+
+     if ($gAction == 'password' && $gFunc == 'verify') {
+        Logger("user NOT logged in, verifying password");
+        UserManager('verify');
+        if( $gAction == 'home' ) $gAction = 'Main';
+    }
+
+    if ($gDebug) {
+        $dpv_pre = "End";
+        DumpPostVars(sprintf("-- %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+    
+    array_pop($gFunction);
+}
+
+function Phase2($dpv_phase) {
+    include( 'globals.php' );
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+    $dpv_pre = "Begin";
+    $dpv_tag = "pre-html";
+
+    if ($gDebug) {
+        DumpPostVars(sprintf("++ %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+    
+    if( $gAction  == 'capture' ) {
+        captureResponse();
+        SendConfirmation();
+        $gAction = 'thankyou';
+        
+    } elseif( $gAction == '' ) {
+        SendConfirmation();
+    }
+    
+     if ($gDebug) {
+        $dpv_pre = "End";
+        DumpPostVars(sprintf("-- %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+    
+   if ($gTrace)
+        array_pop($gFunction);
+}
+
+function Phase3($dpv_phase) {
+    include( 'globals.php' );
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+    $dpv_pre = "Begin";
+    $dpv_tag = "pre-html";
+
+    if ($gDebug) {
+        DumpPostVars(sprintf("++ %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+
+//    if (array_key_exists('hash', $_REQUEST)) {
+//        $hash = $_REQUEST['hash'];
+//        if (empty($gAction))
+//            $gAction = "pledge";
+//    } else {
+//        $hash = "n/a";
+//        $gAction = "exit";
+//    }
+
+    if ($gAction == "confirm") {
+        logger("here in confirm");
+        if ($gDebug)
+            DumpPostVars();
+        BidAdd();
+        $gAction = $action = "pledge";
+    }
+
+    if ($gAction == 'thankyou') {
+        logger("here in honor");
+        include( "ThankYou.html" );
+    } elseif ($gAction == "pledge") {
+        logger("here in pledge");
+        include( "pledge.php" );
+    }
+    if ($gDebug) {
+        $dpv_pre = "End";
+        DumpPostVars(sprintf("-- %s Phase #%d (%s): gAction: [%s], gFrom: [%s], gMode: [%s], gArea: [%s], gFunc: [%s]",
+                        $dpv_pre, $dpv_phase, $dpv_tag, $gAction, $gFrom, $gMode, $gArea, $gFunc));
+    }
+
+    if ($gTrace)
+        array_pop($gFunction);
+}
+
 function PledgeEdit() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -1898,13 +1994,28 @@ function SendConfirmation() {
     }
     if(array_key_exists('hash', $_POST) ) {
         $hash = $_POST['hash'];
+    } elseif( array_key_exists('hash', $_REQUEST) )  {
+        $hash = $_REQUEST['hash'];
+    } else  {
+        return;
     }
     
-    $stmt = DoQuery( "select * from assignments where active = 1 and hash = '$hash'" );
-    $orig = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = DoQuery( "select * from assignments where `hash` = '$hash'" );
+    $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    $firstName = $_POST['hh-name'];
-    $lastName = "";
+    $stmt = DoQuery( "select * from members where id = " . $assignment['member_id']  );
+    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+    $stmt = DoQuery( "select * from replies where hash = '$hash'" );
+    $reply = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+    if( empty($member['Male 1st Name'] ) ) {
+        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
+    } else if( empty( $member['Female 1st Name'] ) ) {
+        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
+    } else {
+        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
+    }
 
     $html = $text = array();
 
@@ -1917,48 +2028,37 @@ function SendConfirmation() {
     $html[] = "";
     $text[] = "";
 
-    $html[] = sprintf("Dear %s,", $firstName);
-    $text[] = sprintf("Dear %s,", $firstName);
+    $html[] = sprintf("Dear %s,", $name);
+    $text[] = sprintf("Dear %s,", $name);
 
     $html[] = "";
     $text[] = "";
 
-    $qarr = [];
-
-    $button = $_POST['RadioGroup2'];
-    if ($button == 'accept') {
+    if ( $assignment['accepted'] ) {
         $str_html = sprintf("Thank you for allowing us to honor you.");
         $str_text = sprintf("Thank you for allowing us to honor you.");
-        $qarr[] = "accepted = 1";
-        $qarr[] = "declined = 0";
-    } elseif ($button == 'decline') {
+    } elseif ($assignment['declined'] ) {
         $str_html = sprintf("Thank you for letting us know you are declining your honor.");
         $str_text = sprintf("Thank you for letting us know you are declining your honor.");
-        $qarr[] = "declined = 1";
-        $qarr[] = "accepted = 0";
     }
-    $query = sprintf("update assignments set updated=now(), active = 0, %s where hash = '%s'", join(',', $qarr), $_REQUEST['hash']);
-    DoQuery($query);
 
-    $amount = $_POST['hh-amount'];
+    $amount = $reply['donation'];
+
     if (!empty($amount)) {
         $str_html .= sprintf(" We also thank you for your generous donation of \$ %s.", number_format($amount, 2));
         $str_text .= sprintf(" We also, thank you for your generous donation of \$ %s.", number_format($amount, 2));
-        $qarr[] = "donation = $amount";
 
-        $payment = $_POST['hh-payment'];
-        if ($payment == 'credit') {
+        $payment = ( array_key_exists( 'paymentDesktop', $_POST ) ) ? $_POST['paymentDesktop'] : $_POST['paymentPhone'];
+
+        if ( $reply['payby'] == $PaymentCredit ) {
             $str_html .= sprintf(" We will be charging your credit card on file.");
             $str_text .= sprintf(" We will be charging your credit card on file.");
-            $qarr[] = "payby = 1";
-        } elseif ($payment == 'check') {
+        } elseif ($reply['payby'] == $PaymentCheck ) {
             $str_html .= sprintf(" We will be expecting your check in the next few days.");
             $str_text .= sprintf(" We will be expecting your check in the next few days.");
-            $qarr[] = "payby = 2";
-        } elseif ($payment == 'call') {
+        } elseif ($reply['payby'] == $PaymentCall ) {
             $str_html .= sprintf(" We will be contacting you to arrange for payment.");
             $str_text .= sprintf(" We will be contacting you to arrange for payment.");
-            $qarr[] = "payby = 3";
         }
     } else {
         $qarr[] = "donation = $amount";
@@ -1970,7 +2070,8 @@ function SendConfirmation() {
     $html[] = "";
     $text[] = "";
 
-    $comment = $_POST['hh-comment'];
+    $comment = $reply['comment'];
+
     if (!empty($comment)) {
         $html[] = sprintf("We appreciate your following comments:");
         $text[] = sprintf("We appreciate your following comments:");
@@ -1978,25 +2079,14 @@ function SendConfirmation() {
         $text[] = "";
         $html[] = "&nbsp;&nbsp;&nbsp;&nbsp;$comment";
         $text[] = "    $comment";
-        $qarr[] = sprintf("comment = '%s'", addslashes($comment));
-    } else {
-        $qarr[] = "comment = ''";
     }
 
-    $qarr[] = "jyear = $gJewishYear";
-    $qarr[] = "honor_id = " . $orig['honor_id'];
-    $qarr[] = "member_id = " . $orig['member_id'];
-    
-    $query = sprintf("insert into replies set updated=now(), %s", join(',', $qarr));
-    DoQuery($query);
+    $mid = $member['ID'];
 
-    $mid = $orig['member_id'];
-
-    $str = join(',', $qarr);
     EventLog('record', [
         'type' => 'rsvp',
         'userid' => $mid,
-        'item' => addslashes($str )
+        'item' => addslashes($str_text )
     ]);
 
     $html[] = "";
@@ -2008,30 +2098,32 @@ function SendConfirmation() {
     $html[] = "The CBI HH Honors Committee";
     $text[] = "The CBI HH Honors Committee";
 
-    $stmt = DoQuery("select * from members where id = $mid");
-    $member = $stmt->fetch(PDO::FETCH_ASSOC);
-    $str = preg_replace("/\s+/", " ", $member['E-Mail Address']);
-    if (preg_match("/,/", $str)) {
-        $email = preg_split("/,/", $str, NULL, PREG_SPLIT_NO_EMPTY);
-    } elseif (preg_match("/;/", $str)) {
-        $email = preg_split("/;/", $str, NULL, PREG_SPLIT_NO_EMPTY);
-    } elseif (preg_match("/ /", $str)) {
-        $email = preg_split("/ /", $str, NULL, PREG_SPLIT_NO_EMPTY);
-    } else {
-        if (empty($str)) {
-            return;
+    loadMailSettings();
+    
+         $addrs = [];
+        if( $gMailLive ) {
+            if( ! empty( $member['E-Mail Address'] ) )
+                $addrs[] = $member['E-Mail Address'];
+            if( ! empty( $member['E-Mail Address 2'] ) )
+                $addrs[] = $member['E-Mail Address 2'];
+
+            if (empty($email))
+                return;
+        } elseif( ! empty($gMailTesting) ) {
+            foreach( $gMailTesting as $addr ) {
+                $addrs[] = $addr;
+            }
         }
-        $email = [$str];
-    }
-    $html[] = "</body></html>";
+
+        $html[] = "</body></html>";
 
     $mail = NULL;
     $mail = MyMailerNew();
 
     //Recipients
-    foreach ($email as $addr) {
-        $mail->AddAddress($addr);
-    }
+        foreach( $addrs as $obj ) {
+            $mail->AddAddress( $obj['email'], $obj['name']);
+        }
     $mail->setFrom('cbi18@cbi18.org', 'CBI');
 
     //Attachments
@@ -2040,16 +2132,15 @@ function SendConfirmation() {
     //Content
     $mail->Subject = "$gJewishYear CBI High Holy Day Honor Confirmation";
 
-    $mail->msgHTML(join('<br>', $html), DIR);
+        $mail->Body = implode('<br>',$html );
+        $mail->AltBody = implode('\n',$text);
 
     $ret = MyMailerSend($mail);
-
-    DoQuery("update assignments set sent = 1, active = 0 where hash = '$hash'");
 
     EventLog('record', [
         'type' => 'mail',
         'userid' => $mid,
-        'item' => "Sent confirmation to $firstName, has: $hash, status: $ret"
+        'item' => "Sent confirmation to {$member['Last Name']}, has: $hash, status: $ret"
     ]);
 
     if ($gTrace)
@@ -2065,7 +2156,7 @@ function ShowBids() {
 	}
 
 	$hash = $_POST['id'];	
-	DoQuery( "select * from bidders where hash = '$hash'" );
+	DoQuery( "select * from bidders where `hash` like '$hash'" );
 	$bidder = mysql_fetch_assoc( $mysql_result );
 	
 	echo "<div class=CommonV2>";
@@ -2079,7 +2170,7 @@ function ShowBids() {
 	echo "<input type=button onclick=\"$js\" value=Refresh>";
 
 	$hash = $_POST['id'];	
-	DoQuery( "select * from bidders where hash = '$hash'" );
+	DoQuery( "select * from bidders where `hash` like '$hash'" );
 	$bidder = mysql_fetch_assoc( $mysql_result );
 ?>
 <style>
@@ -2327,4 +2418,249 @@ function WriteHeader() {
     }
     echo "<!-- End of scripts -->\n";
     echo "</head>\n";
+}
+function addForm() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+
+    echo "<form name=fMain id=fMain method=post action=\"$gSourceCode\">$gLF";
+
+    $hidden = array();
+    $hidden[] = 'action';   # what needs to be done or what was pressed
+    $hidden[] = 'mode';     # top banner modes, i.e. logout, control, admin, office
+    $hidden[] = 'area';     # sidebar area
+    $hidden[] = 'bypass';
+    $hidden[] = 'crumbs';
+    $hidden[] = 'eventID';
+    $hidden[] = 'familyId';
+    $hidden[] = 'fields';   # what fields were touched: using js(addField)
+    $hidden[] = 'filter';
+    $hidden[] = 'filter_fy';
+    $hidden[] = 'fiscalYear';
+    $hidden[] = 'from';     # name of function
+    $hidden[] = 'func';     # more detailed description of action
+    $hidden[] = 'id';       # overloaded variable
+    $hidden[] = 'id2';      # overloaded variable
+    $hidden[] = 'key';
+    $hidden[] = 'listID';
+    $hidden[] = 'parentId';
+    $hidden[] = 'reset';
+    $hidden[] = 'studentId';
+    $hidden[] = 'userId';
+    $hidden[] = 'vars';
+    $hidden[] = 'where';    # where the action took place
+
+    foreach ($hidden as $var) {
+        $tag = MakeTag($var);
+        echo "<input type=hidden $tag>$gLF";
+    }
+    if ($gTrace) {
+        array_pop($gFunction);
+    }
+}
+
+function addHtmlHeader() {
+    include 'includes/globals.php';
+
+    $tag = 'LOADED_' . __FILE__;
+    if (defined($tag))
+        return;
+    define($tag, 1);
+
+    $styles = array();
+    $styles[] = "css/main.css";
+    $styles[] = "css/oneColFixCtr.css";
+    $styles[] = "css/Common.css";
+
+    $scripts = array();
+#    $scripts[] = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js";    
+    $scripts[] = "scripts/assign.js";
+    $scripts[] = "scripts/main.js";
+    $scripts[] = "scripts/sorttable.js";
+    $scripts[] = "scripts/commonv2.js";
+#    $scripts[] = "scripts/my_ajax.js";
+
+    foreach ($styles as $style) {
+        printf("<link href=\"%s\" rel=\"stylesheet\" type=\"text/css\" />\n", $style);
+    }
+    echo "<link rel='shortcut icon' type='image/x-icon' href='assets/favicon.ico' />";
+
+    $force = 1;
+
+    if ($force) {
+        $tag = rand(0, 1000);
+        $str = "?dev=$tag";
+    } else {
+        $str = "";
+    }
+    foreach ($styles as $style) {
+        printf("<link href=\"%s$str\" rel=\"stylesheet\" type=\"text/css\" />\n", $style);
+    }
+
+    foreach ($scripts as $script) {
+        printf("<script type=\"text/javascript\" src=\"%s$str\"></script>\n", $script);
+    }
+    $gDebug = $gDebugWindow;
+    if ($gDebug & $gDebugWindow) {
+        echo "<script type='text/javascript'>\n";
+        $tag = ($gDreamweaver) ? "Dreamweaver" : "";
+        echo "createDebugWindow('$tag');\n";
+        echo "var d = new Date();\n";
+        echo "debug('--- Non-Production. Start of run @ ' + d + ' ---')\n";
+        echo "</script>\n";
+    }
+}
+
+function captureResponse() {
+    include 'includes/globals.php';
+    $gFunction[] = __FUNCTION__;
+
+    $hash =  $_POST['hash'];
+    $stmt = DoQuery( "select * from assignments where `hash` = '$hash' and active = 1" );
+    $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
+    if( $gPDO_num_rows ) {
+        if( $_POST['fields'] ==  'accept' ) {
+            $accepted = 1;
+            $declined = 0;
+            $active =  0;
+        } elseif( $_POST['fields']  == 'decline'  ) {
+            $accepted = 0;
+            $declined = 1;
+            $active = 1;
+        }
+
+        $columns = $values = [];
+        $i = 0;
+        $columns[] = "updated = now()";
+        $columns[] = "active = :v$i"; $values[":v$i"] = $active; $i++;
+        $columns[] = "accepted = :v$i"; $values[":v$i"] = $accepted; $i++;
+        $columns[] = "declined = :v$i"; $values[":v$i"] = $declined; $i++;
+        $values[":v$i"] = $assignment['id'];
+        $query  = "update assignments set " . implode(', ', $columns );
+        $query .=  " where id = :v$i";
+        DoQuery( $query, $values );
+
+        $columns = $values = [];
+        $i = 0;
+        $columns[] = "updated = now()";
+        $columns[] = "jyear = :v$i"; $values[":v$i"] = $assignment['jyear']; $i++;
+        $columns[] = "honor_id = :v$i"; $values[":v$i"] = $assignment['honor_id']; $i++;
+        $columns[] = "member_id = :v$i"; $values[":v$i"] = $assignment['member_id']; $i++;
+        $columns[] = "hash = :v$i"; $values[":v$i"] = $hash; $i++;
+        $columns[] = "accepted = :v$i"; $values[":v$i"] = $accepted; $i++;
+        $columns[] = "declined = :v$i"; $values[":v$i"] = $declined; $i++;
+        $columns[] = "donation = :v$i"; $values[":v$i"] = $_POST['amountDesktop']; $i++;
+        for( $j = 0; $j < count($gPayMethods); $j++ ) {
+            if( $_POST['paymentDesktop'] == $gPayMethods[$j] ) {
+                $columns[] = "payby = :v$i"; $values[":v$i"] = $j; $i++;
+            }
+        }
+        $columns[] = "comment = :v$i"; $values[":v$i"] = $_POST['commentDesktop']; $i++;
+        $query = "insert into replies set " . implode(', ', $columns );
+        DoQuery( $query, $values );
+    }
+
+    array_pop($gFunction);
+}
+
+function loadMailSettings() {
+    include 'includes/globals.php';
+    include 'local_mailer.php';
+
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+        Logger();
+    }
+    $gMailAdmin = $gMailDefault = $gMailTesting = [];
+    $query = "select label, `value`, enabled from mail where lower(label) like '%email:%'";
+
+    $stmt = DoQuery($query);
+    if ($gPDO_num_rows == 0) {
+        DoQuery("insert into mail (label, value, enabled) values ('Email Server','',0)");
+        DoQuery("insert into mail (label, value, enabled) values ('Email: Default','andy.elster@gmail.com, Andy Elster',1)");
+    }
+    if (!$gProduction) {
+        DoQuery("update mail set enabled = 0 where label = 'Email: Admin'"); # Don't let me send out live emails from home
+    }
+
+    $gMailLive = 0;
+    $stmt = DoQuery($query);
+    while (list( $label, $value, $enabled ) = $stmt->fetch(PDO::FETCH_NUM)) {
+        $tmp = preg_split("/,/", $value, NULL, PREG_SPLIT_NO_EMPTY);
+        $j = count($tmp);
+        if ($j == 1) {
+            $email = $name = $tmp[0];
+        } elseif ($j == 2) {
+            $email = $tmp[0];
+            $name = $tmp[1];
+        }
+        if (stripos($label, "admin") !== false) {
+            $gMailAdmin[] = ['email' => "$email", 'name' => "$name"];
+            $gMailLive = $enabled;
+        } elseif (stripos($label, "default") !== false) {
+            $gMailDefault[] = ['email' => "$email", 'name' => "$name"];
+        } elseif (stripos($label, "backup") !== false) {
+            $gMailBackup[] = ['email' => "$email", 'name' => "$name"];
+        } elseif ($enabled && stripos($label, "testing") !== false) {
+            $gMailTesting[] = ['email' => "$email", 'name' => "$name"];
+        } elseif (stripos($label, "server") !== false) {
+            $gMailServer = $gMailDB[$value];
+        }
+    }
+
+    if (count($gMailAdmin) == 0) {
+        $gMailAdmin = $gMailDefault;
+    }
+    if (count($gMailTesting) == 0) {
+        $gMailTesting = $gMailDefault;
+    }
+
+    if ($gTrace) {
+        array_pop($gFunction);
+    }
+}
+
+function selectDB() {
+    include 'includes/globals.php';
+    if ($gTrace) {
+        $gFunction[] = __FUNCTION__;
+    }
+
+    $openType = ( func_num_args() == 0 ) ? 'local' : 'remote';
+    for ($i = 0; $i < count($gPDO); $i++) {
+        $gPDO[$i]['open'] = false;
+        if( $gPDO[$i]['mode'] != $openType ) continue;
+        $tmp = [];
+        $tmp[] = $gPDO[$i]['host'];
+        $tmp[] = 'dbname=' . $gPDO[$i]['dbname'];
+        $tmp[] = 'charset=' . $gPDO[$i]['charset'];
+        $dsn = implode(';', $tmp);
+        $user = $gPDO[$i]['user'];
+        $pass = $gPDO[$i]['pass'];
+        $attr = $gPDO[$i]['attr'];
+        try {
+            error_log("Trying to open: $dsn");
+            //create PDO connection
+            if ($gProduction) {
+                $attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
+            } else {
+                $attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_EXCEPTION;
+            }
+            $inst = new PDO($dsn, $user, $pass, $attr);
+            $gPDO[$i]['inst'] = $inst;
+            $gPDO[$i]['open'] = true;
+            error_log("opened DB #$i: " . $gPDO[$i]['dbname']);
+        } catch (PDOException $e) {
+            //show error
+            echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
+            $gDbControl = NULL;
+            throw $e;
+        }
+    }
+    $gDb = $gPDO[0]['inst'];
+
+    LocalInit();
 }

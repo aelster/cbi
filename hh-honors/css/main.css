@@ -72,15 +72,3 @@
 td.signed {
     background-color: #B4EEB4;
 }
-
-ul.mail-desc {
-    text-align: left;
-    margin-left: 30%;
-    margin-right: 30%;
-    border: 1pt solid;
-}
-
-li.warn {
-    color: red;
-    font-weight: bold;
-}
