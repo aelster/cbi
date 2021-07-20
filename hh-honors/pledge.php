@@ -300,7 +300,6 @@
                                     </div>
 
                                 </nav>
-<!-- InstanceBeginEditable name="EditRegionDesktop" -->
                                 <?php
                                 $hash = array_key_exists('hash', $_REQUEST) ? $_REQUEST['hash'] : 'n/a';
                                 $stmt = DoQuery("select * from assignments where hash = '$hash'");
@@ -311,115 +310,120 @@
                                     echo "You may have reached this page in error.<br>";
                                     echo "Please click on the link in the email that you received,<br>";
                                     echo "or contact the synagogue office.";
-                                    
-                                    
-                                        
                                     return;
+                                } else {
+                                    $tag = MakeTag('resp_hash');
+                                    echo "<input type=hidden $tag value='$hash'>";
+                                    $tag = MakeTag("resp_platform");
+                                    echo "<input type=hidden $tag>";
+
+                                    $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    $member_id = $assignment['member_id'];
+                                    $honor_id = $assignment['honor_id'];
+
+                                    $stmt = DoQuery("select * from members where id = $member_id");
+                                    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    if (empty($member['Male 1st Name'])) {
+                                        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
+                                    } else if (empty($member['Female 1st Name'])) {
+                                        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
+                                    } else {
+                                        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
+                                    }
+
+                                    $stmt = DoQuery("select * from honors where id = $honor_id");
+                                    $honor = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    switch ($honor['service']) {
+                                        case 'rh1':
+                                            $service = "Rosh Hashanah Day #1";
+                                            break;
+
+                                        case 'rh2':
+                                            $service = "Rosh Hashanah Day #2";
+                                            break;
+
+                                        case 'kn':
+                                            $service = "Kol Nidre";
+                                            break;
+
+                                        case 'yka':
+                                            $service = "Yom Kippur Morning";
+                                            break;
+
+                                        case 'ykp':
+                                            $service = "Yom Kippur Afternoon";
+                                            break;
+                                    }
+                                    $str = "{$service}: " . ucfirst($honor['honor']);
+                                    $platform = "desktop";
+                                    $tagStatus = MakeTag("resp_{$platform}_status");
+                                    $tagComment = MakeTag("resp_{$platform}_comment");
+                                    $tagDonation = MakeTag("resp_{$platform}_donation");
+                                    $tagMethod = MakeTag("resp_{$platform}_method");
                                 }
-                                echo "<input type=hidden name=hash value='$hash'>";
-
-                                $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
-                                $member_id = $assignment['member_id'];
-                                $honor_id = $assignment['honor_id'];
-
-                                $stmt = DoQuery("select * from members where id = $member_id");
-                                $member = $stmt->fetch(PDO::FETCH_ASSOC);
-    if( empty($member['Male 1st Name'] ) ) {
-        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
-    } else if( empty( $member['Female 1st Name'] ) ) {
-        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
-    } else {
-        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
-    }
-
-                                $stmt = DoQuery("select * from honors where id = $honor_id");
-                                $honor = $stmt->fetch(PDO::FETCH_ASSOC);
-                                switch  ($honor['service']) {
-                                    case 'rh1':
-                                        $service =  "Rosh Hashanah Day #1";
-                                        break;
-                                    
-                                    case 'rh2':
-                                        $service = "Rosh Hashanah Day #2";
-                                        break;
-                                    
-                                    case 'kn':
-                                        $service = "Kol Nidre";
-                                        break;
-                                    
-                                    case 'yka':
-                                        $service = "Yom Kippur Morning";
-                                        break;
-                                    
-                                    case 'ykp':
-                                        $service = "Yom Kippur Afternoon";
-                                        break;
-                           
-                                }
-                                $str = "{$service}: " . ucfirst($honor['honor']);
-
-                                printf("<input type=hidden name=nameDesktop value=\"%s\">", $name);
                                 ?>
-                                <div class="content">
 
-                                    <div class="fltlft" id="rightContents">
-                                        <strong>Name</strong>:&nbsp;<?php echo $name ?><br />
-                                        <strong>Honor</strong>:&nbsp;<?php echo $str ?><br />
-                                        <?php
-                                        if ($assignment['accepted']) {
-                                            echo "You have already accepted this honor. Please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> if you are no longer able to accept.";
-                                        } elseif ($assignment['declined']) {
-                                            echo "You have already declined this honor. If this might have been a mistake please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> to see if it is still available.";
-                                        } else {
-                                            ?>
-                                            <strong>Please check one:</strong>
-                                            <div id="spryradio1">
-                                                <table width="700" border="0">
-                                                    <tr>
-                                                        <td><label>
-                                                                <input type="radio" name="honorDesktop" value="accept" id="accept" onClick="addField('accept');" />
-                                                                I accept this honor offered to me</label></td>
-                                                        <td><span class="radioRequiredMsg">Please make a selection.</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><label>
-                                                                <input type="radio" name="honorDesktop" value="decline" id="decline" onClick="addField('decline');"/>
-                                                                I decline this honor offered to me</label></td>
-                                                        <td>&nbsp;</td>
-                                                    </tr>
-                                                </table>
-                                                </td>
-                                            </div>
-                                            <p><strong>Comments:</strong><br />
-                                                <textarea name="commentDesktop" cols="120" rows="2"></textarea></p>
-                                            <div>It is customary for those receiving honors to make a donation to the shul in honor of that participatory role, usually in a multiple of $18, or Chai, the Jewish numerical symbol for life.<br />
-                                            </div>
-                                            <div>Please accept my contribution to CBI of $&nbsp;
-                                                <select name="amountDesktop">
-                                                    <option value=0>-- Click Here --</option>
-                                                    <?php
-                                                    $price_points = array(18, 36, 54, 72, 108, 144, 180, 270, 360, 540, 720, 1080);
-                                                    foreach ($price_points as $val) {
-                                                        printf("<option value=%d>%d</option>", $val, $val);
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                            <br />
-                                            <div><strong>Payment method</strong> (select one)</div>
-                                            <div><input name="paymentDesktop" type="radio" value="Credit" />&nbsp;Charge my credit card on file</div>
-                                            <div><input name="paymentDesktop" type="radio" value="Check" />&nbsp;I will send a check to the office</div>
-                                            <div><input name="paymentDesktop" type="radio" value="Call" />&nbsp;Contact me about payment</div>
-                                            <br />
-                                            <input name="" value="Submit" type="submit" onClick="setValue('area','desktop');addAction('capture');"/><input name="" type="reset" />
-                                        </div>
+<!-- InstanceBeginEditable name="EditRegionDesktop" -->
+<div id="pledge">
+    <div>
+        <strong>Name</strong>:&nbsp;<?php echo $name ?><br />
+        <strong>Honor</strong>:&nbsp;<?php echo $str ?><br />
+        <?php
+        if ($assignment['accepted']) {
+            echo "You have already accepted this honor. Please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> if you are no longer able to accept.";
+        } elseif ($assignment['declined']) {
+            echo "You have already declined this honor. If this might have been a mistake please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> to see if it is still available.";
+        } else {
+            ?>
+            <strong>Please check one:</strong>
+            <div id="spryradio1">
+                <table width="50%" border="0">
+                    <tr>
+                        <td><label>
+                                <input type="radio" <?php echo $tagStatus ?> value="accept" />
+                                I accept</label></td>
+                    </tr>
+                    <tr>
+                        <td><label>
+                                <input type="radio" <?php echo $tagStatus ?> value="decline" />
+                                I decline</label></td>
+                    </tr>
+                </table>
+                </td>
+            </div>
+            <strong>Comments:</strong><br />
+            <textarea <?php echo $tagComment ?> style="width:90%" rows="2"></textarea>
+            <br /><strong>Donation:</strong>
+            <div>It is customary for those receiving honors to make a donation to the shul in honor of that participatory role, usually in a multiple of $18, or Chai, the Jewish numerical symbol for life.<br />
+            </div>
+            <div>Please accept my contribution to CBI of $&nbsp;
+                <select <?php echo $tagDonation ?> >
+                    <option value=0>-- Click Here --</option>
+                    <?php
+                    $price_points = array(18, 36, 54, 72, 108, 144, 180, 270, 360, 540, 720, 1080);
+                    foreach ($price_points as $val) {
+                        printf("<option value=%d>%d</option>", $val, $val);
+                    }
+                    ?>
+                </select>
+            </div>
+            <br />
+            <div><strong>Payment method</strong> (select one)</div>
+            <div><input <?php echo $tagMethod ?> type="radio" value="Credit" />&nbsp;Charge my credit card on file</div>
+            <div><input <?php echo $tagMethod ?> type="radio" value="Check" />&nbsp;I will send a check to the office</div>
+            <div><input <?php echo $tagMethod ?> type="radio" value="Call" />&nbsp;Contact me about payment</div>
+            <br />
+            <input name="" value="Submit" type="submit" onClick="setValue('resp_platform','desktop');addAction('capture');"/>
+            &nbsp;
+            <input name="" type="reset" />
+        </div>
 
-                                        <br />
-                                        <div id="bottom_buttons">
-                                        </div>
-                                        <!-- end .content -->
-                                    </div>
-                                    <?php
+        <br />
+        <div id="bottom_buttons">
+        </div>
+        <!-- end .content -->
+    </div>
+    <?php
                                 }
                                 ?>
 
@@ -428,102 +432,79 @@
     </header>
 </div>
 <!-- InstanceBeginEditable name="EditRegionPhone" -->
-                    <div class=phone>
-                    <div style="text-align:center;"><img src="assets/CBI_ner_tamid.png" alt="Congregation B'nai Israel" width="94" height="110" /></div>	
 <?php
-                                $hash = array_key_exists('hash', $_REQUEST) ? $_REQUEST['hash'] : 'n/a';
-                                $stmt = DoQuery("select * from assignments where hash = '$hash'");
+                                    $platform = "phone";
+                                    $tagStatus = MakeTag("resp_{$platform}_status");
+                                    $tagComment = MakeTag("resp_{$platform}_comment");
+                                    $tagDonation = MakeTag("resp_{$platform}_donation");
+                                    $tagMethod = MakeTag("resp_{$platform}_method");
+?>
+<div class=phone>
+    <div style="text-align:center;"><img src="assets/CBI_ner_tamid.png" alt="Congregation B'nai Israel" width="94" height="110" /></div>	
+    <div class="content">
 
-                                if ($gPDO_num_rows == 0) {
-                                    return;
-                                }
-                                echo "<input type=hidden name=hash value='$hash'>";
+        <div class="fltrt" id="rightContents">
+            <strong>Name</strong>:&nbsp;<?php echo $name; ?><br />
+            <strong>Honor</strong>:&nbsp;<?php echo $str; ?><br />
+            <?php
+            if ($assignment['accepted']) {
+                echo "You have already accepted this honor. Please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> if you are no longer able to accept.";
+            } elseif ($assignment['declined']) {
+                echo "You have already declined this honor. If this might have been a mistake please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> to see if it is still available.";
+            } else {
+                ?><strong>Please check one:</strong>
+                <div id="spryradio1">
+                    <table width="50%" border="0">
+                        <tr>
+                            <td><label>
+                                <input type="radio" <?php echo $tagStatus ?> value="accept" />
+                                    I accept</label></td>
+                        </tr>
+                        <tr>
+                            <td><label>
+                                <input type="radio" <?php echo $tagStatus ?> value="decline" />
+                                    I decline</label></td>
+                        </tr>
+                    </table>
+                    </td>
+                </div>
+                <strong>Comments:</strong><br />
+            <textarea <?php echo $tagComment ?> style="width:90%" rows="2"></textarea>
+             <br /><strong>Donation:</strong>
+               <div>It is customary for those receiving honors to make a donation to the shul in honor of that participatory role, usually in a multiple of $18, or Chai, the Jewish numerical symbol for life.<br />
+                </div>
+                <div>Please accept my contribution to CBI of $&nbsp;
+                    <select <?php echo $tagDonation ?>>
+                        <option value=0>-- Click Here --</option>
+                        <?php
+                        $price_points = array(18, 36, 54, 72, 108, 144, 180, 270, 360, 540, 720, 1080);
+                        foreach ($price_points as $val) {
+                            printf("<option value=%d>%d</option>", $val, $val);
+                        }
+                        ?>
+                    </select>
+                </div>
+                <br />
+                <div><strong>Payment method</strong> (select one)</div>
+                <div><input <?php echo $tagMethod ?> type="radio" value="credit" />&nbsp;Charge my credit card on file</div>
+                <div><input <?php echo $tagMethod ?> type="radio" value="check" />&nbsp;I will send a check to the office</div>
+                <div><input <?php echo $tagMethod ?> type="radio" value="call" />&nbsp;Contact me about payment</div>
+                <br />
+            <input name="" value="Submit" type="submit" onClick="setValue('resp_platform','desktop');addAction('capture');"/>
+                &nbsp;
+                <input name="" type="reset" />  </div>
 
-                                $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
-                                $member_id = $assignment['member_id'];
-                                $honor_id = $assignment['honor_id'];
+            <br />
+            <div id="bottom_buttons">
+            </div>
+            <!-- end .content -->
+        </div>
 
-                                $stmt = DoQuery("select * from members where id = $member_id");
-                                $member = $stmt->fetch(PDO::FETCH_ASSOC);
-
-                                if (!empty($member['Female 1st Name']) && empty($member['Male 1st Name'])) {
-                                    $name = $member['Female 1st Name'];
-                                } elseif (empty($member['Female 1st Name']) && !empty($memeber['Male 1st Name'])) {
-                                    $name = $member['Male 1st Name'];
-                                } else {
-                                    $name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
-                                }
-                                $name .= sprintf(" %s", $member['Last Name']);
-
-                                $stmt = DoQuery("select honor from honors where id = $honor_id");
-                                list( $hstr ) = $stmt->fetch(PDO::FETCH_NUM);
-
-                                printf("<input type=hidden name=namePhone value=\"%s\">", $name);
-                                ?>
-                                <div class="content">
-
-                                    <div class="fltrt" id="rightContents">
-                                        <strong>Name</strong>:&nbsp;<?php echo $name ?><br />
-                                        <strong>Honor</strong>:&nbsp;<?php echo ucfirst($hstr) ?><br />
-                                        <?php
-                                        if ($assignment['accepted']) {
-                                            echo "You have already accepted this honor. Please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> if you are no longer able to accept.";
-                                        } elseif ($assignment['declined']) {
-                                            echo "You have already declined this honor. If this might have been a mistake please contact the <a href='mailto:cbi18@cbi18.org?subject=High Holy Day Honor'>CBI office</a> to see if it is still available.";
-                                        } else {
-                                            ?>
-                                            <strong>Please check one:</strong>
-                                            <div id="spryradio1">
-                                                <table width="700" border="0">
-                                                    <tr>
-                                                        <td><label>
-                                                                <input type="radio" name="honorPhone" value="accept" id="accept" onClick="addField('accept');"/>
-                                                                I accept this honor offered to me</label></td>
-                                                        <td><span class="radioRequiredMsg">Please make a selection.</span></td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td><label>
-                                                                <input type="radio" name="honorPhone" value="decline" id="decline" onClick="addField('decline');"/>
-                                                                I decline this honor offered to me</label></td>
-                                                        <td>&nbsp;</td>
-                                                    </tr>
-                                                </table>
-                                                </td>
-                                            </div>
-                                            <p><strong>Comments:</strong><br />
-                                                <textarea name="commentPhone" cols="120" rows="2"></textarea></p>
-                                            <div>It is customary for those receiving honors to make a donation to the shul in honor of that participatory role, usually in a multiple of $18, or Chai, the Jewish numerical symbol for life.<br />
-                                            </div>
-                                            <div>Please accept my contribution to CBI of $&nbsp;
-                                                <select name="amountPhone">
-                                                    <option value=0>-- Click Here --</option>
-                                                    <?php
-                                                    $price_points = array(18, 36, 54, 72, 108, 144, 180, 270, 360, 540, 720, 1080);
-                                                    foreach ($price_points as $val) {
-                                                        printf("<option value=%d>%d</option>", $val, $val);
-                                                    }
-                                                    ?>
-                                                </select>
-                                            </div>
-                                            <br />
-                                            <div><strong>Payment method</strong> (select one)</div>
-                                            <div><input name="paymentPhone" type="radio" value="credit" />&nbsp;Charge my credit card on file</div>
-                                            <div><input name="paymentPhone" type="radio" value="check" />&nbsp;I will send a check to the office</div>
-                                            <div><input name="paymentPhone" type="radio" value="call" />&nbsp;Contact me about payment</div>
-                                            <br />
-                                            <input name="" value="Submit" type="submit" onClick="setValue('area','phone');addAction('honor');"/><input name="" type="reset" />  </div>
-
-                                        <br />
-                                        <div id="bottom_buttons">
-                                        </div>
-                                        <!-- end .content -->
-                                    </div>
-
-                                    <?php
-                                }
-                                ?>
-                                </div>
-					<!-- InstanceEndEditable -->
+        <?php
+    }
+    ?>
+</div>
+<!-- InstanceEndEditable -->
 
 </body>
 <!-- InstanceEnd --></html>

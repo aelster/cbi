@@ -1,17 +1,36 @@
 @charset "UTF-8";
 
 @media screen and (max-width: 600px) {
-.home.page.page-id-8587.page-template.page-template-page-templates.page-template-homepage.page-template-page-templateshomepage-php.exodus-logo-font-roboto.exodus-tagline-font-roboto.exodus-heading-font-roboto.exodus-menu-font-roboto.exodus-body-font-roboto.exodus-has-logo-image.exodus-has-logo-text-lowercase.exodus-no-tagline-under-logo.exodus-has-tagline-right.exodus-rounded.exodus-no-banner #exodus-container {
-	display: none;
-}
-	.phone {
-		display:block;
-	}
+    .home.page.page-id-8587.page-template.page-template-page-templates.page-template-homepage.page-template-page-templateshomepage-php.exodus-logo-font-roboto.exodus-tagline-font-roboto.exodus-heading-font-roboto.exodus-menu-font-roboto.exodus-body-font-roboto.exodus-has-logo-image.exodus-has-logo-text-lowercase.exodus-no-tagline-under-logo.exodus-has-tagline-right.exodus-rounded.exodus-no-banner #exodus-container {
+        display: none;
+        
+    }
+    .phone {
+        display:block;
+    }
 
+    .fltrt {
+        float: left;
+    }
+    
+    .content {
+        font-size: 1em;
+    }
+    
+    strong {
+        font-size: 1.4em;
+        font-weight: bold;
+    }
 }
 
 @media screen and (min-width: 600px) {
-	.phone {
-		display:none;
-	}
+    .phone {
+        display:none;
+    }
+    
+    #pledge {
+    margin-left: 10px;
 }
+
+}
+

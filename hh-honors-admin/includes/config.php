@@ -23,7 +23,7 @@ if (preg_match('/^dev.cbi18.org/', $http_host) || $http_host == "192.168.86.7" )
     $gProduction = 1;
     $gSiteDir = '/home/cbi18/site';
     $gSiteName = 'CBI-Live';
-    define( 'DIR', 'https://cbi18.org/');
+    define( 'DIR', 'https://www.cbi18.org/');
 
 } else {
     echo "Unknown config for http_host: [$http_host]<br>";

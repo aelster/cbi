@@ -444,3 +444,9 @@ table.items td.bar2 {
 .content #spryradio1 td {
 	border:hidden;
 }
+
+.already {
+    margin-left: 10%;
+    margin-right: 10%;
+    font-size: 16pt;
+}

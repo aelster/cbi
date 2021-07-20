@@ -1,6 +1,4 @@
 <?php
-
-
 function Assign() {
     include 'includes/globals.php';
     if ($gTrace) {
@@ -14,8 +12,10 @@ function Assign() {
     $member_assigned = [];
     $member_accepted = [];
     $member_declined = [];
+    $member_sent = [];
     $stmt = DoQuery("select * from assignments where jyear = $gJewishYear");
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $member_sent[$row['member_id']] = ($row['sent'] != NULL );
         if ($row['declined']) {
             $member_declined[$row['member_id']] = $row['honor_id'];
         } else if ($row['accepted']) {
@@ -45,6 +45,7 @@ function Assign() {
     echo "<script type='text/javascript' id=member-database>\n";
     $tot_other = 0;
     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+        $id =  $row['id'];
         $tmp = array();
         $other = 1;
         $cohen = $levi = 0;
@@ -70,11 +71,12 @@ function Assign() {
         $tmp[] = sprintf("%s:%d", "cohen", $cohen);
         $tmp[] = sprintf("%s:%d", "levi", $levi);
         $tmp[] = sprintf("%s:%d", "other", $other);
-        printf("members_db[%d] = { %s };\n", $row['id'], join(', ', $tmp));
-        $used = array_key_exists($row['id'], $member_assigned) ? $member_assigned[$row['id']] : 0;
-        $acc = array_key_exists($row['id'], $member_accepted) ? $member_accepted[$row['id']] : 0;
-        $rej = array_key_exists($row['id'], $member_declined) ? $member_declined[$row['id']] : 0;
-        printf("members_status[%d] = { selected:0, assigned:%d, accepted:%d, declined:%d };\n", $row['id'], $used, $acc, $rej);
+        printf("members_db[%d] = { %s };\n", $id, join(', ', $tmp));
+        $sent = array_key_exists($row['id'],  $member_sent) ? $member_sent[$id] : 0;
+        $used = array_key_exists($row['id'], $member_assigned) ? $member_assigned[$id] : 0;
+        $acc = array_key_exists($row['id'], $member_accepted) ? $member_accepted[$id] : 0;
+        $rej = array_key_exists($row['id'], $member_declined) ? $member_declined[$id] : 0;
+        printf("members_status[%d] = { selected:0, sent:%d, assigned:%d, accepted:%d, declined:%d };\n", $id, $sent, $used, $acc, $rej);
     }
     echo "</script>\n";
     $stmt_honors = DoQuery("select id, service, honor from honors order by sort");
@@ -89,7 +91,6 @@ function Assign() {
     <div class="container">
         <div class="assign-top">
             <input type=button onclick="setValue('func', 'assign');addAction('Main');" value="Back">
-            <input type=button onclick="clearDebugWindow();" value="Clear Debug">
         </div>
 
         <div class="button-bar">
@@ -278,7 +279,6 @@ function Assign() {
             </div>
         </div>
     </div>
-    </form>
     </body>
     <script type='text/javascript'>
         myButtonInit();
@@ -561,8 +561,8 @@ function CompareMembers() {
             }
             echo "<tr>";
             echo "<td>$i</td>";
-            printf("<td>%d</td>", $row['ID']);
-            printf("<td>%s, %s %s</td>", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name']);
+            printf("<td>%d</td>", $id);
+            printf("<td>%s</td>", formatName($id) );
             echo "</tr>\n";
             DoQuery("update members_master set status = 'New' where `ID` = $id");
             DoQuery("update members set status = 'New' where `ID` = $id");
@@ -595,8 +595,8 @@ function CompareMembers() {
             }
             echo "<tr>";
             echo "<td>$i</td>";
-            printf("<td>%d</td>", $row['ID']);
-            printf("<td>%s, %s %s</td>", $row['Last Name'], $row['Female 1st Name'], $row['Male 1st Name']);
+            printf("<td>%d</td>", $id);
+            printf("<td>%s</td>", formatName($id) );
             echo "</tr>\n";
         }
     }
@@ -640,8 +640,9 @@ function CompareMembers() {
             }
             echo "<tr>";
             echo "<td>$i</td>";
-            printf("<td>%d</td>", $row1['ID']);
-            printf("<td>%s, %s %s</td>", $row1['Last Name'], $row1['Female 1st Name'], $row1['Male 1st Name']);
+            $id = $row1['ID'];
+            printf("<td>%d</td>", $id);
+            printf("<td>%s</td>", formatName($id));
             printf("<td>%s</td>", $key);
             printf("<td>" . $row1["$key"] . "</td>");
             printf("<td>" . $row2["$key"] . "</td>");
@@ -1528,15 +1529,8 @@ function HonorsEdit() {
     }
     echo "<div class=center>";
     echo "<input type=button value=Back onclick=\"setValue('from', 'HonorsEdit');addAction('Back');\">";
-
-    $tag = MakeTag('update');
-    $jsx = array();
-    $jsx[] = "setValue('from','HonorsEdit')";
-    $jsx[] = "setValue('area','honors')";
-    $jsx[] = "setValue('func','update')";
-    $jsx[] = "addAction('Update')";
-    $js = sprintf("onClick=\"%s\"", join(';', $jsx));
-    echo "<input type=button value=Update $tag $js>";
+    echo "&nbsp;";
+    echo "<input type=button value=Rebuild onclick=\"setValue('from', 'HonorsEdit');addAction('update');\">";
 
     echo "<div class=CommonV2>";
     echo "<table class=honors>";
@@ -1565,76 +1559,48 @@ function HonorsEdit() {
         $id = $row['id'];
         echo "<tr>";
 
-        $tag = sprintf("%03d_%s", $id, "service");
-        $jsx = array();
-        $jsx[] = "setValue('from','HonorsEdit')";
-        $jsx[] = "addField('$tag')";
-        $jsx[] = "toggleBgRed('update')";
-        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-        echo "<td class=service><select name=$tag $js>";
+        $ajax_id = "id=\"honors_master__service__$id\"";
+        echo "<td class=service><select class=ajax $ajax_id>";
         foreach ($services as $val) {
             $selected = ( $val == $row['service'] ) ? "selected" : "";
             echo "<option value=$val $selected>$val</option>";
         }
         echo "</select></td>";
 
-        $tag = sprintf("%03d_%s", $id, "sort");
-        $jsx = array();
-        $jsx[] = "setValue('from','HonorsEdit')";
-        $jsx[] = "addField('$tag')";
-        $jsx[] = "toggleBgRed('update')";
-        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-        printf("<td class=sort><input type=text size=2 value=%d name=$tag $js></td>", $row['sort']);
+        $ajax_id = "id=\"honors_master__sort__$id\"";
+        printf("<td class=sort><input type=text size=4 value=%d class=ajax $ajax_id></td>", $row['sort']);
 
-        $tag = sprintf("%03d_%s", $id, "shabbat_include");
-        $jsx = array();
-        $jsx[] = "setValue('from','HonorsEdit')";
-        $jsx[] = "addField('$tag')";
-        $jsx[] = "toggleBgRed('update')";
-        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-        $checked = $row['shabbat_include'] ? "checked" : "";
-        echo "<td class=si><input type=checkbox value=1 name=$tag $js $checked></td>";
+        $ajax_id = "id=\"honors_master__shabbat_include__$id\"";
+        if( $row['shabbat_include'] ) {
+            $checked = "checked";
+            $val = 0;
+        } else {
+            $checked = "";
+            $val = 1;
+        }
+        echo "<td class=si><input type=checkbox value=$val class=ajax $ajax_id $checked></td>";
 
-        $tag = sprintf("%03d_%s", $id, "shabbat_exclude");
-        $jsx = array();
-        $jsx[] = "setValue('from','HonorsEdit')";
-        $jsx[] = "addField('$tag')";
-        $jsx[] = "toggleBgRed('update')";
-        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-        $checked = $row['shabbat_exclude'] ? "checked" : "";
-        echo "<td class=se><input type=checkbox value=1 name=$tag $js $checked></td>";
+        $ajax_id = "id=\"honors_master__shabbat_exclude__$id\"";
+        if( $row['shabbat_exclude'] ) {
+            $checked = "checked";
+            $val = 0;
+        } else {
+            $checked = "";
+            $val = 1;
+        }
+        echo "<td class=si><input type=checkbox value=$val class=ajax $ajax_id $checked></td>";
 
-        $tag = sprintf("%03d_%s", $id, "arrival_time");
-        $jsx = array();
-        $jsx[] = "setValue('from','HonorsEdit')";
-        $jsx[] = "addField('$tag')";
-        $jsx[] = "toggleBgRed('update')";
-        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-        printf("<td class=service><input type=text size=6 value='%s' name=$tag $js></td>", substr($row['arrival_time'],0,5));
+        $ajax_id = "id=\"honors_master__arrival_time__$id\"";
+        printf("<td class=service><input type=text size=6 value='%s' class=ajax $ajax_id></td>", substr($row['arrival_time'],0,5));
 
-        $tag = sprintf("%03d_%s", $id, "honor");
-        $jsx = array();
-        $jsx[] = "setValue('from','HonorsEdit')";
-        $jsx[] = "addField('$tag')";
-        $jsx[] = "toggleBgRed('update')";
-        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-        echo "<td class=honor><textarea rows=3 cols=50 name=$tag $js>" . $row['honor'] . "</textarea></td>";
+        $ajax_id = "id=\"honors_master__honor__$id\"";
+        echo "<td class=honor><textarea rows=3 cols=50 class=ajax $ajax_id>" . $row['honor'] . "</textarea></td>";
 
-        $tag = sprintf("%03d_%s", $id, "page");
-        $jsx = array();
-        $jsx[] = "setValue('from','HonorsEdit')";
-        $jsx[] = "addField('$tag')";
-        $jsx[] = "toggleBgRed('update')";
-        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-        printf("<td class=page><input type=text size=2 value=%d name=$tag $js></td>", $row['page']);
+        $ajax_id = "id=\"honors_master__page__$id\"";
+        printf("<td class=page><input type=text size=4 value=%d class=ajax $ajax_id></td>", $row['page']);
 
-        $tag = sprintf("%03d_%s", $id, "mail_group");
-        $jsx = array();
-        $jsx[] = "setValue('from','HonorsEdit')";
-        $jsx[] = "addField('$tag')";
-        $jsx[] = "toggleBgRed('update')";
-        $js = sprintf("onChange=\"%s\"", join(';', $jsx));
-        printf("<td class=service><input type=text size=2 value=%d name=$tag $js></td>", $row['mail_group']);
+        $ajax_id = "id=\"honors_master__mail_group__$id\"";
+        printf("<td class=service><input type=text size=2 value=%d class=ajax $ajax_id></td>", $row['mail_group']);
 
         echo "</tr>";
     }
@@ -1947,13 +1913,7 @@ function MailAssignment() {
         }
     }
 
-    if( empty($member['Male 1st Name'] ) ) {
-        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
-    } else if( empty( $member['Female 1st Name'] ) ) {
-        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
-    } else {
-        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
-    }
+    $name = formatName($member_id);
 
     $stmt = DoQuery("select date from dates where `label` = \"erev\"");
     list( $td ) = $stmt->fetch(PDO::FETCH_NUM);
@@ -2006,7 +1966,7 @@ function MailAssignment() {
                 $gService[$honor['service']], $date->format("l, M jS, Y"));
     } else {
         $str = "We look forward to our congregation gathering in person for High Holy Days once again, and";
-        $str .= " thank you for the support you have given to Congregation B'nail Israel during the past year.";
+        $str .= " thank you for the support you have given to Congregation B'nai Israel during the past year.";
         $str .= " In an effort to show our appreciation, we would like to offer you the following honor:";
 //        $str .honor of {$honor['honor']}";
 //        $str .= " during the {$gService[$honor['service']]} service on {$date->format("l, M jS, Y")}";
@@ -2074,7 +2034,7 @@ function MailAssignment() {
     $html[] = "";
     $text[] = "";
 
-    $str = "Thank you again and we wish you and your family a happy and healthy New Year.";
+    $str = "Thank you again and we wish you and your loved ones a happy and healthy New Year.";
     $html[] = $str;
     $text[] = $str;
 
@@ -3434,16 +3394,27 @@ function Phase2() {
                 PledgeUpdate();
                 $gAction = 'Main';
             } elseif ($gFrom == 'displayMain') {
-                if ($area == 'reset') {
+                if ($gArea == 'reset') {
                     DoQuery("start transaction");
                     DoQuery("update items set status = 0 where status = 1");
                     DoQuery("commit");
+                } elseif( $gArea == 'responses' ) {
+                    DoQuery("delete from replies where jyear = $gJewishYear");
+                    $j = 0;
+                    $columns = [];
+                    $columns[] = "accepted = 0";
+                    $columns[] = "declined = 0";
+                    $columns[] = "active = 1";
+                    $columns[] = "sent = NULL";
+                    $str = implode(",", $columns);
+                    DoQuery("update assignments set $str where jyear = $gJewishYear" );
                 }
                 $gAction = 'Main';
             } elseif ($gFrom == "HonorsEdit") {
-                HonorsUpdate();
-                $gAction = "Edit";
-                $area = "honors";
+                HonorsReSort();
+                CreateHonors();
+                $gAction = "Honors";
+                $gFunc = "edit";
             } elseif ($gFrom == "UserManagerPassword") {
                 UserManager('update');
                 $gAction = 'Start';
@@ -3826,8 +3797,7 @@ function Responses() {
 
     echo "<br><br>";
 
-    $query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
-    $query .= " from replies a";
+    $querey = "select a.* from replies a";
     $query .= " join members c on a.member_id=c.id";
     $query .= " where a.accepted = 1 and a.jyear = $gJewishYear";
     $query .= " order by a.updated desc";
@@ -3849,6 +3819,8 @@ function Responses() {
     $banner .= "<input type=button value=Refresh onclick=\"setValue('from', '" . __FUNCTION__ . "');setValue('func','responses');addAction('Main');\">";
     $banner .= "<input type=button value=Back onclick=\"setValue('from', '" . __FUNCTION__ . "');addAction('Back');\">";
 
+    $control = UserManager('authorized', 'control');
+
     echo "<h2 id=accepts>$banner</h2>";
     echo "<h3>Acceptances</h3>";
 
@@ -3862,20 +3834,22 @@ function Responses() {
     echo "  <th>PayBy</th>";
     echo "</tr>";
 
-    while (list( $time, $hid, $mid, $donation, $payby, $comment ) = $accepts->fetch(PDO::FETCH_NUM)) {
+//    while (list( $time, $hid, $mid, $donation, $payby, $comment ) = $accepts->fetch(PDO::FETCH_NUM)) {
+    while( $accept = $accepts->fetch(PDO::FETCH_ASSOC) ) {
+        $time = $accept['updated'];
+        $hid = $accept['honor_id'];
+        $mid  = $accept['member_id'];
+        $hash  = $accept['hash'];
+        $donation = $accept['donation'];
+        $payby  = $accept['payby'];
+        $comment = $accept['comment'];
+            
         $stmt = DoQuery("select * from members where id = $mid");
         $member = $stmt->fetch(PDO::FETCH_ASSOC);
         $stmt = DoQuery("select * from honors where id = $hid");
         $honor = $stmt->fetch(PDO::FETCH_ASSOC);
         echo "<tr>";
-        if (!empty($member['Female 1st Name']) && empty($member['Male 1st Name'])) {
-            $name = $member['Female 1st Name'];
-        } elseif (empty($member['Female 1st Name']) && !empty($memeber['Male 1st Name'])) {
-            $name = $member['Male 1st Name'];
-        } else {
-            $name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
-        }
-        $name .= sprintf(" %s", $member['Last Name']);
+        $name = formatName($mid);
         $rows = empty($comment) ? 1 : 2;
         printf("<td class=c rowspan=$rows>%d</td>", $hid);
         printf("<td class=c rowspan=$rows>%s</td>", preg_replace("/ /", "<br>", $time));
@@ -4776,15 +4750,19 @@ function displayMain() {
             $jsx[] = "setValue('area','dates')";
             $jsx[] = "addAction('Main')";
             $js = sprintf("onClick=\"%s\"", join(';', $jsx));
+            $from =  "setValue('from','" . __FUNCTION__ . "')";
+            $resetMessage = "Are you sure you want to delete all responses for $gJewishYear?";
             echo "
 <input type=button $js value=Dates>
-<input type=button onclick=\"setValue('area','mail');addAction('Main');\" value=\"Mail\">
-<input type=button onclick=\"setValue('area','misc');addAction('misc');\" value=\"Misc\">
-<input type=button onclick=\"setValue('func','users');addAction('Main');\" value=\"Users\">
-<input type=button onclick=\"setValue('func','edit');addAction('Honors');\" value=\"Honors List - All Days\">
-<input type=button onclick=\"setValue('func','members');addAction('Main');\" value=\"Member List - This Year\">
-<input type=button onclick=\"setValue('func','log');addAction('Main');\" value=\"Log File\">
-<input type=button onclick=\"setValue('func','hash');addAction('hash');\" value=\"Reset Hash\">
+<input type=button onclick=\"$from;setValue('area','mail');addAction('Main');\" value=\"Mail\">
+<input type=button onclick=\"$from;setValue('area','misc');addAction('misc');\" value=\"Misc\">
+<input type=button onclick=\"$from;setValue('func','users');addAction('Main');\" value=\"Users\">
+<input type=button onclick=\"$from;setValue('func','edit');addAction('Honors');\" value=\"Honors List - All Days\">
+<input type=button onclick=\"$from;setValue('func','members');addAction('Main');\" value=\"Member List - This Year\">
+<input type=button onclick=\"$from;setValue('func','log');addAction('Main');\" value=\"Log File\">
+<br><br>
+<input type=button onclick=\"$from;setValue('func','hash');addAction('hash');\" value=\"Reset Hash\">
+<input type=button onclick=\"$from;setValue('area','responses');setValue('func','reset');myConfirm('$resetMessage');\" value=\"Reset Responses\">
 ";
 
             echo "</div>";
@@ -4880,6 +4858,21 @@ function displayMisc() {
     array_pop($gFunction);
 }
 
+function formatName($member_id) {
+    include 'includes/globals.php';
+    $gFunction[] = __FUNCTION__;
+    $stmt = DoQuery( "select * from members where ID = $member_id"  );
+    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+    if( empty($member['Male 1st Name'] ) ) {
+        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
+    } else if( empty( $member['Female 1st Name'] ) ) {
+        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
+    } else {
+        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
+    }
+    array_pop($gFunction);
+    return $name;
+}
 function loadMailSettings() {
     include 'includes/globals.php';
 

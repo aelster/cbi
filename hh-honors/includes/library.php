@@ -1,6 +1,5 @@
 <?php
 
-
 function BidAdd() {
 	include( 'globals.php' );
 	if( $gTrace ) {
@@ -1717,8 +1716,13 @@ function Phase2($dpv_phase) {
     }
     
     if( $gAction  == 'capture' ) {
-        captureResponse();
-        SendConfirmation();
+        if( array_key_exists( "resp_hash", $_POST ) && $hash = $_POST['resp_hash'] ) {
+            DoQuery("select * from replies where hash = '$hash'");
+            if( ! $gPDO_num_rows ) {
+                captureResponse();
+                SendConfirmation();
+            }
+        }
         $gAction = 'thankyou';
         
     } elseif( $gAction == '' ) {
@@ -1772,6 +1776,8 @@ function Phase3($dpv_phase) {
     } elseif ($gAction == "pledge") {
         logger("here in pledge");
         include( "pledge.php" );
+    } else {
+        include "pledge.php";
     }
     if ($gDebug) {
         $dpv_pre = "End";
@@ -1992,10 +1998,10 @@ function SendConfirmation() {
         $gFunction[] = __FUNCTION__;
         Logger();
     }
-    if(array_key_exists('hash', $_POST) ) {
-        $hash = $_POST['hash'];
-    } elseif( array_key_exists('hash', $_REQUEST) )  {
-        $hash = $_REQUEST['hash'];
+    if(array_key_exists('resp_hash', $_POST) ) {
+        $hash = $_POST['resp_hash'];
+    } elseif( array_key_exists('resp_hash', $_REQUEST) )  {
+        $hash = $_REQUEST['resp_hash'];
     } else  {
         return;
     }
@@ -2003,19 +2009,15 @@ function SendConfirmation() {
     $stmt = DoQuery( "select * from assignments where `hash` = '$hash'" );
     $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    $stmt = DoQuery( "select * from members where id = " . $assignment['member_id']  );
+    $id = $assignment['member_id'];
+    
+    $stmt = DoQuery( "select * from members where id = $id");
     $member = $stmt->fetch(PDO::FETCH_ASSOC);
         
     $stmt = DoQuery( "select * from replies where hash = '$hash'" );
     $reply = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-    if( empty($member['Male 1st Name'] ) ) {
-        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
-    } else if( empty( $member['Female 1st Name'] ) ) {
-        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
-    } else {
-        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
-    }
+    
+    $name = formatName($id);
 
     $html = $text = array();
 
@@ -2047,8 +2049,6 @@ function SendConfirmation() {
     if (!empty($amount)) {
         $str_html .= sprintf(" We also thank you for your generous donation of \$ %s.", number_format($amount, 2));
         $str_text .= sprintf(" We also, thank you for your generous donation of \$ %s.", number_format($amount, 2));
-
-        $payment = ( array_key_exists( 'paymentDesktop', $_POST ) ) ? $_POST['paymentDesktop'] : $_POST['paymentPhone'];
 
         if ( $reply['payby'] == $PaymentCredit ) {
             $str_html .= sprintf(" We will be charging your credit card on file.");
@@ -2503,7 +2503,6 @@ function addHtmlHeader() {
     foreach ($scripts as $script) {
         printf("<script type=\"text/javascript\" src=\"%s$str\"></script>\n", $script);
     }
-    $gDebug = $gDebugWindow;
     if ($gDebug & $gDebugWindow) {
         echo "<script type='text/javascript'>\n";
         $tag = ($gDreamweaver) ? "Dreamweaver" : "";
@@ -2518,15 +2517,17 @@ function captureResponse() {
     include 'includes/globals.php';
     $gFunction[] = __FUNCTION__;
 
-    $hash =  $_POST['hash'];
+    $hash =  $_POST['resp_hash'];
     $stmt = DoQuery( "select * from assignments where `hash` = '$hash' and active = 1" );
     $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $platform = $_POST['resp_platform'];
     if( $gPDO_num_rows ) {
-        if( $_POST['fields'] ==  'accept' ) {
+        if( $_POST["resp_{$platform}_status"] ==  'accept' ) {
             $accepted = 1;
             $declined = 0;
             $active =  0;
-        } elseif( $_POST['fields']  == 'decline'  ) {
+        } elseif( $_POST["resp_{$platform}_status"]  == 'decline'  ) {
             $accepted = 0;
             $declined = 1;
             $active = 1;
@@ -2552,18 +2553,33 @@ function captureResponse() {
         $columns[] = "hash = :v$i"; $values[":v$i"] = $hash; $i++;
         $columns[] = "accepted = :v$i"; $values[":v$i"] = $accepted; $i++;
         $columns[] = "declined = :v$i"; $values[":v$i"] = $declined; $i++;
-        $columns[] = "donation = :v$i"; $values[":v$i"] = $_POST['amountDesktop']; $i++;
+        $columns[] = "donation = :v$i"; $values[":v$i"] = $_POST["resp_{$platform}_donation"]; $i++;
         for( $j = 0; $j < count($gPayMethods); $j++ ) {
-            if( $_POST['paymentDesktop'] == $gPayMethods[$j] ) {
+            if( $_POST["resp_{$platform}_method"] == $gPayMethods[$j] ) {
                 $columns[] = "payby = :v$i"; $values[":v$i"] = $j; $i++;
             }
         }
-        $columns[] = "comment = :v$i"; $values[":v$i"] = $_POST['commentDesktop']; $i++;
+        $columns[] = "comment = :v$i"; $values[":v$i"] = $_POST["resp_{$platform}_comment"]; $i++;
         $query = "insert into replies set " . implode(', ', $columns );
         DoQuery( $query, $values );
     }
 
     array_pop($gFunction);
+}
+function formatName($member_id) {
+    include 'includes/globals.php';
+    $gFunction[] = __FUNCTION__;
+    $stmt = DoQuery( "select * from members where ID = $member_id"  );
+    $member = $stmt->fetch(PDO::FETCH_ASSOC);
+    if( empty($member['Male 1st Name'] ) ) {
+        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
+    } else if( empty( $member['Female 1st Name'] ) ) {
+        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
+    } else {
+        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
+    }
+    array_pop($gFunction);
+    return $name;
 }
 
 function loadMailSettings() {
