@@ -10,16 +10,13 @@ ini_set('zlib.output_compression', false);
 
 //ob_start();
 ob_implicit_flush(TRUE);
-
-$prefix = "NoPrefixFound";
     
 $http_host = $_SERVER['HTTP_HOST'];
     
 if (preg_match('/^dev.cbi18.org/', $http_host) || $http_host == "192.168.86.7" ) {
     $gProduction = 0;
     $gSiteDir = "/usr/local/site";
-    $gSiteName = "Dev";
-    $prefix = "";
+    $gSiteName = "Dev-Admin";
     define( 'DIR', 'http://dev.cbi18.org/');
     
 } elseif ( preg_match( '/cbi18.org/', $_SERVER['HTTP_HOST']) ) {
@@ -28,22 +25,28 @@ if (preg_match('/^dev.cbi18.org/', $http_host) || $http_host == "192.168.86.7" )
     $gSiteName = 'CBI-Live';
     define( 'DIR', 'https://cbi18.org/');
 
+} else {
+    echo "Unknown config for http_host: [$http_host]<br>";
+    exit;
 }
+
 $gSiteSubPath = "cbi";
 
+$parts = [];
 $parts[] = $gSiteDir . "/$gSiteSubPath/php";
 $parts[] = $gSiteDir . "/bin";
 $parts[] = $gSiteDir . "/php";
 $parts[] = $gSiteDir . "/PHPMailer";
 $parts[] = $gSiteDir . "/fpdf";
-$path = join(PATH_SEPARATOR, $parts);
-
-set_include_path(get_include_path() . PATH_SEPARATOR . $path );
+$parts[] = $gSiteDir;
+$str = get_include_path() . PATH_SEPARATOR . join(PATH_SEPARATOR, $parts);
+set_include_path($str);
 
 include 'includes/globals.php';
 include 'includes/library.php';
 
 include 'local-hh-honors.php';
+include 'local_mailer.php';
 
 //application address
 define('SITEEMAIL', 'andy.elster@gmail.com');
@@ -64,6 +67,6 @@ require_once 'src/Exception.php';
 
 session_start();
 
-selectDb();
+selectDB();
 
 $user = new User($gPDO[$gDbControlId]['inst']);

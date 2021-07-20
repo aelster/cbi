@@ -1817,8 +1817,6 @@ function LocalInit() {
             DoQuery($query);
         }
     }
-    
-    loadMailSettings();
 }
 
 function LogfileDisplay() {
@@ -2444,14 +2442,11 @@ function MailAssignments($area) {
 
 function MailDisplay() {
     include 'includes/globals.php';
-    include 'local_mailer.php';
     
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
         Logger();
     }
-
-//    include 'local_mailer.php';
 
     echo "<div class=center>";
     echo "<h2>Mail Controls</h2>";
@@ -3335,6 +3330,41 @@ function Phase2() {
             if ($gFunc == "responses") {
                 Responses();
                 $gAction = "Mail";
+            }
+            
+            if ($gFunc == "source") {
+                array_map('unlink', glob("tmp/*.sql")); # delete all the existing .sql files
+                array_map('unlink', glob("tmp/*.txt")); # delete all the existing .txt files
+
+                $saveDb = $gDb;
+
+                for ($dbx = 0; $dbx < count($gPDO); $dbx++) {
+                    $gDb = $gPDO[$dbx]['inst'];
+                    $level1 = DoQuery("show tables");
+                    while (list($table) = $level1->fetch(PDO::FETCH_NUM)) {
+                        if (preg_match("/^gl_/", $table))
+                            continue;
+
+                        $tfile = sprintf("tmp/%s_%s.sql", $gPDO[$dbx]['dbname'], $table);
+                        $fp = fopen($tfile, 'w');
+
+                        $level2 = DoQuery("show fields from $table");
+                        while ($fields = $level2->fetch(PDO::FETCH_NUM)) {
+                            for ($i = 0; $i < count($fields); $i++) {
+                                if ($fields[$i] == "DEFAULT_GENERATED") {
+                                    $fields[$i] = "";
+                                }
+                            }
+                            array_unshift($fields, $table);
+                            $str = implode('|', $fields);
+                            fwrite($fp, $str . "\n");
+                        }
+
+                        fclose($fp);
+                    }
+                }
+
+                $gDb = $saveDb;
             }
 
             break;
@@ -4852,7 +4882,6 @@ function displayMisc() {
 
 function loadMailSettings() {
     include 'includes/globals.php';
-    include 'local_mailer.php';
 
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
@@ -4929,7 +4958,7 @@ function selectDB() {
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
     }
-
+    
     $openType = ( func_num_args() == 0 ) ? 'local' : 'remote';
     for ($i = 0; $i < count($gPDO); $i++) {
         $gPDO[$i]['open'] = false;
@@ -4962,7 +4991,8 @@ function selectDB() {
         }
     }
     $gDb = $gPDO[0]['inst'];
-
+    
+    
     LocalInit();
 }
 
