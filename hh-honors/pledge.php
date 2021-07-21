@@ -413,7 +413,7 @@
             <div><input <?php echo $tagMethod ?> type="radio" value="Check" />&nbsp;I will send a check to the office</div>
             <div><input <?php echo $tagMethod ?> type="radio" value="Call" />&nbsp;Contact me about payment</div>
             <br />
-            <input name="" value="Submit" type="submit" onClick="setValue('resp_platform','desktop');addAction('capture');"/>
+            <input name="" value="Submit" type="submit" onClick="setValue('resp_platform','<?php echo $platform ?>');addAction('capture');"/>
             &nbsp;
             <input name="" type="reset" />
         </div>
@@ -490,7 +490,7 @@
                 <div><input <?php echo $tagMethod ?> type="radio" value="check" />&nbsp;I will send a check to the office</div>
                 <div><input <?php echo $tagMethod ?> type="radio" value="call" />&nbsp;Contact me about payment</div>
                 <br />
-            <input name="" value="Submit" type="submit" onClick="setValue('resp_platform','desktop');addAction('capture');"/>
+            <input name="" value="Submit" type="submit" onClick="setValue('resp_platform','<?php echo $platform ?>');addAction('capture');"/>
                 &nbsp;
                 <input name="" type="reset" />  </div>
 

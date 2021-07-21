@@ -38,7 +38,6 @@ $parts[] = $gSiteDir . "/bin";
 $parts[] = $gSiteDir . "/php";
 $parts[] = $gSiteDir . "/PHPMailer";
 $parts[] = $gSiteDir . "/fpdf";
-$parts[] = $gSiteDir;
 $str = get_include_path() . PATH_SEPARATOR . join(PATH_SEPARATOR, $parts);
 set_include_path($str);
 

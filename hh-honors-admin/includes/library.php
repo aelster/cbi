@@ -174,25 +174,6 @@ function Assign() {
                 echo "<div id=reply-block class=action-hidden>";
                 echo "<hr>";
 
-                $tag = MakeTag('action-reply');
-
-                $tmp = [];
-                $tmp[] = "setValue('from','Assign')";
-                $tmp[] = "setValue('func','manual')";
-                $tmp[] = "setValue('area','accept')";
-                $tmp[] = "mySaveChoices()";
-                $tmp[] = "addAction('Update')";
-                $js = join(';', $tmp);
-                echo "<input $tag type=button disabled onclick=\"$js\" value=\"Accept\"><br>";
-
-                $tmp = [];
-                $tmp[] = "setValue('from','Assign')";
-                $tmp[] = "setValue('func','manual')";
-                $tmp[] = "setValue('area','decline')";
-                $tmp[] = "mySaveChoices()";
-                $tmp[] = "addAction('Update')";
-                $js = join(';', $tmp);
-                echo "<input $tag type=button disabled onclick=\"$js\" value=\"Decline\">";
 
                 $tag = MakeTag('reply-amount');
                 echo "<select $tag>";
@@ -210,6 +191,26 @@ function Assign() {
                     printf("<option value=%d>%s</option>", $i, $val);
                 }
                 echo "</select>";
+                
+                $tag = MakeTag('action-reply');
+                $tmp = [];
+                $tmp[] = "setValue('from','Assign')";
+                $tmp[] = "setValue('func','manual')";
+                $tmp[] = "setValue('area','accept')";
+                $tmp[] = "mySaveChoices()";
+                $tmp[] = "addAction('Update')";
+                $js = join(';', $tmp);
+                echo "<input $tag type=button disabled onclick=\"$js\" value=\"Accept\"><br>";
+
+                $tmp = [];
+                $tmp[] = "setValue('from','Assign')";
+                $tmp[] = "setValue('func','manual')";
+                $tmp[] = "setValue('area','decline')";
+                $tmp[] = "mySaveChoices()";
+                $tmp[] = "addAction('Update')";
+                $js = join(';', $tmp);
+                echo "<input $tag type=button disabled onclick=\"$js\" value=\"Decline\">";
+ 
                 echo "</div>";
             }
             if (UserManager('authorized', 'admin')) {
@@ -3345,6 +3346,7 @@ function Phase2() {
                     MailAssignments();
                     $gAction = "Assign";
                 } elseif ($gFunc == "manual") {
+                    captureResponse();
                     SendConfirmation();
                     $gAction = "Assign";
                 }
@@ -3797,15 +3799,14 @@ function Responses() {
 
     echo "<br><br>";
 
-    $querey = "select a.* from replies a";
+    $query = "select a.* from replies a";
     $query .= " join members c on a.member_id=c.id";
     $query .= " where a.accepted = 1 and a.jyear = $gJewishYear";
     $query .= " order by a.updated desc";
     $accepts = DoQuery($query);
     $banner = sprintf("<a href=#accepts>Acceptances</a>: %d", $gPDO_num_rows);
 
-    $query = "select a.updated, a.honor_id, a.member_id, a.donation, a.payby, a.comment";
-    $query .= " from replies a";
+    $query = "select a.* from replies a";
     $query .= " join members c on a.member_id=c.id";
     $query .= " where a.declined = 1 and a.jyear = $gJewishYear";
     $query .= " order by a.updated desc";
@@ -3836,6 +3837,7 @@ function Responses() {
 
 //    while (list( $time, $hid, $mid, $donation, $payby, $comment ) = $accepts->fetch(PDO::FETCH_NUM)) {
     while( $accept = $accepts->fetch(PDO::FETCH_ASSOC) ) {
+        $id = $accept['id'];
         $time = $accept['updated'];
         $hid = $accept['honor_id'];
         $mid  = $accept['member_id'];
@@ -3851,7 +3853,7 @@ function Responses() {
         echo "<tr>";
         $name = formatName($mid);
         $rows = empty($comment) ? 1 : 2;
-        printf("<td class=c rowspan=$rows>%d</td>", $hid);
+        printf("<td class=c rowspan=$rows>%d</td>", $id);
         printf("<td class=c rowspan=$rows>%s</td>", preg_replace("/ /", "<br>", $time));
         echo "<td rowspan=$rows>$name</td>\n";
         printf("<td>%s</td>\n", $honor['honor']);
@@ -3882,22 +3884,21 @@ function Responses() {
     echo "  <th>Pay By</th>";
     echo "</tr>";
 
-    while (list( $time, $hid, $mid, $donation, $payby, $comment ) = $declines->fetch(PDO::FETCH_NUM)) {
-        $stmt = DoQuery("select * from members where id = $mid");
-        $member = $stmt->fetch(PDO::FETCH_ASSOC);
+//    while (list( $time, $hid, $mid, $donation, $payby, $comment ) = $declines->fetch(PDO::FETCH_NUM)) {
+    while ($decline = $declines->fetch(PDO::FETCH_ASSOC)) {
+        $id =  $decline['id'];
+        $time = $decline['updated'];
+        $hid = $decline['honor_id'];
+        $mid = $decline['member_id'];
+        $donation = $decline['donation'];
+        $payby  = $decline['payby'];
+        $comment = $decline['comment'];
         $stmt = DoQuery("select * from honors where id = $hid");
         $honor = $stmt->fetch(PDO::FETCH_ASSOC);
         echo "<tr>";
-        if (!empty($member['Female 1st Name']) && empty($member['Male 1st Name'])) {
-            $name = $member['Female 1st Name'];
-        } elseif (empty($member['Female 1st Name']) && !empty($memeber['Male 1st Name'])) {
-            $name = $member['Male 1st Name'];
-        } else {
-            $name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
-        }
-        $name .= sprintf(" %s", $member['Last Name']);
+        $name = formatName($mid);
         $rows = empty($comment) ? 1 : 2;
-        printf("<td class=c rowspan=$rows>%d</td>", $hid);
+        printf("<td class=c rowspan=$rows>%d</td>", $id);
         printf("<td class=c rowspan=$rows>%s</td>", preg_replace("/ /", "<br>", $time));
         echo "<td rowspan=$rows>$name</td>\n";
         printf("<td>%s</td>\n", $honor['honor']);
@@ -3921,69 +3922,38 @@ function Responses() {
         array_pop($gFunction);
 }
 function SendConfirmation() {
+//    This was copied from HH_HONORS
     include 'includes/globals.php';
     if ($gTrace) {
         $gFunction[] = __FUNCTION__;
         Logger();
     }
-    $vx = [];
-    $area = $_POST['area'];
-    if ($area == 'accept') {
-        $vx[] = "accepted=1";
-        $vx[] = "declined=0";
-    } elseif ($area == "decline") {
-        $vx[] = "accepted=0";
-        $vx[] = "declined=1";
-    }
-
-    $tmp = preg_split("/,/", $_POST['fields']);
-    foreach ($tmp as $field) {
-        $tmp2 = preg_split("/_/", $field);
-        if ($tmp2[0] == "honor") {
-            $honor_id = $tmp2[1];
-        } elseif ($tmp2[0] == "member") {
-            $member_id = $tmp2[1];
+    if( array_key_exists('func', $_POST) && $_POST['func'] == 'manual' ) {
+        $fields = preg_split('/,/', $_POST['fields'] );
+        $hid = $mid = 0;
+        foreach( $fields as $field ) {
+            if( preg_match( '/^honor/', $field ) ) {
+                list( $na, $hid ) = explode( '_', $field );
+            } elseif( preg_match( '/^member/',  $field  ) ) {
+                list( $na, $mid ) = explode( '_', $field  );
+            }
         }
+        $stmt = DoQuery( "select * from assignments where honor_id = $hid and member_id = $mid and jyear = $gJewishYear" );
+        if( $gPDO_num_rows == 0 ) return;
+        $assignment = $stmt->fetch(PDO::FETCH_ASSOC);
+    } else  {
+        return;
     }
+        
+    $hash = $assignment['hash'];
     
-    # sent=1 is artificial. If admin is accepting, 
-    $query = sprintf("update assignments set updated=now(), active=0, sent=1, %s where honor_id = %d and member_id = %d",
-            join(',', $vx), $honor_id, $member_id);
-    DoQuery($query);
-
-    $donation = $_POST['reply-amount'];
-    $vx[] = "donation = $donation";
-
-    $method = $_POST['reply-method'];
-    $vx[] = "payby = $method";
-    $vx[] = "jyear = " . $_SESSION['dbLabel'];
-    $vx[] = "honor_id = $honor_id";
-    $vx[] = "member_id = $member_id";
-    $query = sprintf("insert into replies set updated=now(), %s", join(',', $vx));
-    DoQuery($query);
-
-    $str = join(',', $vx);
-    $mid = $GLOBALS['gUserId'];
-    EventLog('record', [
-        'type' => 'rsvp',
-        'userid' => $member_id,
-        'item' => addslashes($str) 
-    ]);
-
-    $stmt = DoQuery("select * from members where id = $member_id");
+    $stmt = DoQuery( "select * from members where id = $mid");
     $member = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!empty($member['Female 1st Name']) && empty($member['Male 1st Name'])) {
-        $name = $member['Female 1st Name'];
-    } elseif (empty($member['Female 1st Name']) && !empty($memeber['Male 1st Name'])) {
-        $name = $member['Male 1st Name'];
-    } else {
-        $name = $member['Female 1st Name'] . " " . $member['Male 1st Name'];
-    }
-    $firstName = $name . sprintf(" %s", $member['Last Name']);
-
-
-    $lastName = "";
+        
+    $stmt = DoQuery( "select * from replies where hash = '$hash'" );
+    $reply = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+    $name = formatName($mid);
 
     $html = $text = array();
 
@@ -3996,46 +3966,35 @@ function SendConfirmation() {
     $html[] = "";
     $text[] = "";
 
-    $html[] = sprintf("Dear %s,", $firstName);
-    $text[] = sprintf("Dear %s,", $firstName);
+    $html[] = sprintf("Dear %s,", $name);
+    $text[] = sprintf("Dear %s,", $name);
 
     $html[] = "";
     $text[] = "";
 
-    $qarr = [];
-
-    $button = $_POST['area'];
-    if ($button == 'accept') {
+    if ( $assignment['accepted'] ) {
         $str_html = sprintf("Thank you for allowing us to honor you.");
         $str_text = sprintf("Thank you for allowing us to honor you.");
-        $qarr[] = "accepted = 1";
-        $qarr[] = "declined = 0";
-    } elseif ($button == 'decline') {
+    } elseif ($assignment['declined'] ) {
         $str_html = sprintf("Thank you for letting us know you are declining your honor.");
         $str_text = sprintf("Thank you for letting us know you are declining your honor.");
-        $qarr[] = "declined = 1";
-        $qarr[] = "accepted = 0";
     }
 
-    $amount = $_POST['reply-amount'];
+    $amount = $reply['donation'];
+
     if (!empty($amount)) {
         $str_html .= sprintf(" We also thank you for your generous donation of \$ %s.", number_format($amount, 2));
         $str_text .= sprintf(" We also, thank you for your generous donation of \$ %s.", number_format($amount, 2));
-        $qarr[] = "donation = $amount";
 
-        $payMethod = $_POST['reply-method'];
-        if ($payMethod == 1) {
+        if ( $reply['payby'] == $PaymentCredit ) {
             $str_html .= sprintf(" We will be charging your credit card on file.");
             $str_text .= sprintf(" We will be charging your credit card on file.");
-            $qarr[] = "payby = $payMethod";
-        } elseif ($payMethod == 2) {
+        } elseif ($reply['payby'] == $PaymentCheck ) {
             $str_html .= sprintf(" We will be expecting your check in the next few days.");
             $str_text .= sprintf(" We will be expecting your check in the next few days.");
-            $qarr[] = "payby = $payMethod";
-        } elseif ($payMethod == 3) {
+        } elseif ($reply['payby'] == $PaymentCall ) {
             $str_html .= sprintf(" We will be contacting you to arrange for payment.");
             $str_text .= sprintf(" We will be contacting you to arrange for payment.");
-            $qarr[] = "payby = $payMethod";
         }
     } else {
         $qarr[] = "donation = $amount";
@@ -4047,14 +4006,24 @@ function SendConfirmation() {
     $html[] = "";
     $text[] = "";
 
+    $comment = $reply['comment'];
 
-        $qarr[] = "comment = ''";
+    if (!empty($comment)) {
+        $html[] = sprintf("We appreciate your following comments:");
+        $text[] = sprintf("We appreciate your following comments:");
+        $html[] = "";
+        $text[] = "";
+        $html[] = "&nbsp;&nbsp;&nbsp;&nbsp;$comment";
+        $text[] = "    $comment";
+    }
 
-    $qarr[] = "jyear = $gJewishYear";
-    $qarr[] = "honor_id = " . $honor_id;
-    $qarr[] = "member_id = " . $member_id;
-    
-    $mid = $member_id;
+    $mid = $member['ID'];
+
+    EventLog('record', [
+        'type' => 'rsvp',
+        'userid' => $mid,
+        'item' => addslashes($str_text )
+    ]);
 
     $html[] = "";
     $text[] = "";
@@ -4065,30 +4034,32 @@ function SendConfirmation() {
     $html[] = "The CBI HH Honors Committee";
     $text[] = "The CBI HH Honors Committee";
 
-    $stmt = DoQuery("select * from members where id = $mid");
-    $member = $stmt->fetch(PDO::FETCH_ASSOC);
-    $str = preg_replace("/\s+/", " ", $member['E-Mail Address']);
-    if (preg_match("/,/", $str)) {
-        $email = preg_split("/,/", $str, NULL, PREG_SPLIT_NO_EMPTY);
-    } elseif (preg_match("/;/", $str)) {
-        $email = preg_split("/;/", $str, NULL, PREG_SPLIT_NO_EMPTY);
-    } elseif (preg_match("/ /", $str)) {
-        $email = preg_split("/ /", $str, NULL, PREG_SPLIT_NO_EMPTY);
-    } else {
-        if (empty($str)) {
-            return;
+    loadMailSettings();
+    
+         $addrs = [];
+        if( $gMailLive ) {
+            if( ! empty( $member['E-Mail Address'] ) )
+                $addrs[] = $member['E-Mail Address'];
+            if( ! empty( $member['E-Mail Address 2'] ) )
+                $addrs[] = $member['E-Mail Address 2'];
+
+            if (empty($email))
+                return;
+        } elseif( ! empty($gMailTesting) ) {
+            foreach( $gMailTesting as $addr ) {
+                $addrs[] = $addr;
+            }
         }
-        $email = [$str];
-    }
-    $html[] = "</body></html>";
+
+        $html[] = "</body></html>";
 
     $mail = NULL;
     $mail = MyMailerNew();
 
     //Recipients
-    foreach ($email as $addr) {
-        $mail->AddAddress($addr);
-    }
+        foreach( $addrs as $obj ) {
+            $mail->AddAddress( $obj['email'], $obj['name']);
+        }
     $mail->setFrom('cbi18@cbi18.org', 'CBI');
 
     //Attachments
@@ -4097,14 +4068,15 @@ function SendConfirmation() {
     //Content
     $mail->Subject = "$gJewishYear CBI High Holy Day Honor Confirmation";
 
-    $mail->msgHTML(join('<br>', $html), DIR);
+        $mail->Body = implode('<br>',$html );
+        $mail->AltBody = implode('\n',$text);
 
     $ret = MyMailerSend($mail);
 
     EventLog('record', [
         'type' => 'mail',
-        'userid' => $member_id,
-        'item' => "Sent confirmation to $firstName, status: $ret"
+        'userid' => $mid,
+        'item' => "Sent confirmation to {$member['Last Name']}, has: $hash, status: $ret"
     ]);
 
     if ($gTrace)
@@ -4559,6 +4531,72 @@ function addHtmlHeader() {
         echo "</script>\n";
     }
 }
+function captureResponse() {
+    include 'includes/globals.php';
+    $gFunction[] = __FUNCTION__;
+
+    if( array_key_exists('func', $_POST) && $_POST['func'] == 'manual' ) {
+        $fields = preg_split('/,/', $_POST['fields'] );
+        $hid = $mid = 0;
+        foreach( $fields as $field ) {
+            if( preg_match( '/^honor/', $field ) ) {
+                list( $na, $hid ) = explode( '_', $field );
+            } elseif( preg_match( '/^member/',  $field  ) ) {
+                list( $na, $mid ) = explode( '_', $field  );
+            }
+        }
+
+        $stmt = DoQuery( "select * from assignments where honor_id = $hid and member_id = $mid and jyear = $gJewishYear" );
+        if( $gPDO_num_rows == 0 ) return;
+        $assignment  = $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    $hash = $assignment['hash'];
+    
+    if( $_POST["area"] ==  'accept' ) {
+            $accepted = 1;
+            $declined = 0;
+            $active =  0;
+    } elseif( $_POST["area"]  == 'decline'  ) {
+            $accepted = 0;
+            $declined = 1;
+            $active = 1;
+    }
+
+        $columns = $values = [];
+        $i = 0;
+        $columns[] = "updated = now()";
+        $columns[] = "active = :v$i"; $values[":v$i"] = $active; $i++;
+        $columns[] = "accepted = :v$i"; $values[":v$i"] = $accepted; $i++;
+        $columns[] = "declined = :v$i"; $values[":v$i"] = $declined; $i++;
+        $values[":v$i"] = $assignment['id'];
+        $query  = "update assignments set " . implode(', ', $columns );
+        $query .=  " where id = :v$i";
+        DoQuery( $query, $values );
+
+        $columns = $values = [];
+        $i = 0;
+        $columns[] = "updated = now()";
+        $columns[] = "jyear = :v$i"; $values[":v$i"] = $assignment['jyear']; $i++;
+        $columns[] = "honor_id = :v$i"; $values[":v$i"] = $hid; $i++;
+        $columns[] = "member_id = :v$i"; $values[":v$i"] = $mid; $i++;
+        $columns[] = "hash = :v$i"; $values[":v$i"] = $hash; $i++;
+        $columns[] = "accepted = :v$i"; $values[":v$i"] = $accepted; $i++;
+        $columns[] = "declined = :v$i"; $values[":v$i"] = $declined; $i++;
+        $columns[] = "donation = :v$i"; $values[":v$i"] = $_POST["reply-amount"]; $i++;
+        for( $j = 0; $j < count($gPayMethods); $j++ ) {
+            if( $_POST["reply-method"] == $gPayMethods[$j] ) {
+                $columns[] = "payby = :v$i"; $values[":v$i"] = $j; $i++;
+            }
+        }
+        $columns[] = "comment = :v$i"; $values[":v$i"] = ""; $i++;
+        $query = "insert into replies set " . implode(', ', $columns );
+        DoQuery( $query, $values );
+
+
+    array_pop($gFunction);
+}
+
 function checkForDownloads() {
     include 'includes/globals.php';
     if ($gTrace) {
@@ -4965,7 +5003,6 @@ function selectDB() {
         $pass = $gPDO[$i]['pass'];
         $attr = $gPDO[$i]['attr'];
         try {
-            error_log("Trying to open: $dsn");
             //create PDO connection
             if ($gProduction) {
                 $attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
@@ -4975,7 +5012,6 @@ function selectDB() {
             $inst = new PDO($dsn, $user, $pass, $attr);
             $gPDO[$i]['inst'] = $inst;
             $gPDO[$i]['open'] = true;
-            error_log("opened DB #$i: " . $gPDO[$i]['dbname']);
         } catch (PDOException $e) {
             //show error
             echo '<p class="bg-danger">' . $e->getMessage() . '</p>';

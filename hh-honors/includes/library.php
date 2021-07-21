@@ -2658,7 +2658,6 @@ function selectDB() {
         $pass = $gPDO[$i]['pass'];
         $attr = $gPDO[$i]['attr'];
         try {
-            error_log("Trying to open: $dsn");
             //create PDO connection
             if ($gProduction) {
                 $attr[PDO::ATTR_ERRMODE] = PDO::ERRMODE_SILENT;
@@ -2668,7 +2667,6 @@ function selectDB() {
             $inst = new PDO($dsn, $user, $pass, $attr);
             $gPDO[$i]['inst'] = $inst;
             $gPDO[$i]['open'] = true;
-            error_log("opened DB #$i: " . $gPDO[$i]['dbname']);
         } catch (PDOException $e) {
             //show error
             echo '<p class="bg-danger">' . $e->getMessage() . '</p>';
