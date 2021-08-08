@@ -450,3 +450,15 @@ function mySetMode(mode) {
 	member_refresh = 1;
 	myDisplayRefresh();
 }
+
+function mySubmitEnable() {
+    var e;
+    e = document.getElementById('submit_desktop');
+    if( e ) {
+        e.disabled = false;
+    }
+    e = document.getElementById('submit_phone');
+    if( e ) {
+        e.disabled = false;
+    }
+}

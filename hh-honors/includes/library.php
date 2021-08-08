@@ -1519,13 +1519,13 @@ function LocalInit() {
     }
 #----
     if ($gUserId > 0) {
-        $stmt = DoQuery("select debug from users where userid = $gUserId");
+        $stmt = DoQuery("select debug from users where user_id = $gUserId");
         list($val) = $stmt->fetch(PDO::FETCH_NUM);
     } else {
         $val = 0;
     }
     $gDebug = $gTrace = $_SESSION['debug'] = $val;
-    $gDebug = $gDebugWindow;
+    $gDebug = $gDebugErrorLog;
 
     if (array_key_exists('action', $_POST)) {
         $gAction = $_POST['action'];
@@ -2049,19 +2049,6 @@ function SendConfirmation() {
     if (!empty($amount)) {
         $str_html .= sprintf(" We also thank you for your generous donation of \$ %s.", number_format($amount, 2));
         $str_text .= sprintf(" We also, thank you for your generous donation of \$ %s.", number_format($amount, 2));
-
-        if ( $reply['payby'] == $PaymentCredit ) {
-            $str_html .= sprintf(" We will be charging your credit card on file.");
-            $str_text .= sprintf(" We will be charging your credit card on file.");
-        } elseif ($reply['payby'] == $PaymentCheck ) {
-            $str_html .= sprintf(" We will be expecting your check in the next few days.");
-            $str_text .= sprintf(" We will be expecting your check in the next few days.");
-        } elseif ($reply['payby'] == $PaymentCall ) {
-            $str_html .= sprintf(" We will be contacting you to arrange for payment.");
-            $str_text .= sprintf(" We will be contacting you to arrange for payment.");
-        }
-    } else {
-        $qarr[] = "donation = $amount";
     }
 
     $html[] = $str_html;
@@ -2083,12 +2070,6 @@ function SendConfirmation() {
 
     $mid = $member['ID'];
 
-    EventLog('record', [
-        'type' => 'rsvp',
-        'userid' => $mid,
-        'item' => addslashes($str_text )
-    ]);
-
     $html[] = "";
     $text[] = "";
 
@@ -2101,14 +2082,12 @@ function SendConfirmation() {
     loadMailSettings();
     
          $addrs = [];
-        if( $gMailLive ) {
+         if( $gMailLive ) {
             if( ! empty( $member['E-Mail Address'] ) )
-                $addrs[] = $member['E-Mail Address'];
+                $addrs[] = ['email' => $member['E-Mail Address'], 'name' => ''];
             if( ! empty( $member['E-Mail Address 2'] ) )
-                $addrs[] = $member['E-Mail Address 2'];
+                $addrs[] = ['email' => $member['E-Mail Address 2'], 'name' => ''];
 
-            if (empty($email))
-                return;
         } elseif( ! empty($gMailTesting) ) {
             foreach( $gMailTesting as $addr ) {
                 $addrs[] = $addr;
@@ -2130,7 +2109,11 @@ function SendConfirmation() {
     $mail->AddEmbeddedImage($gMailSignatureImage, 'sigimg', $gMailSignatureImage);
 
     //Content
-    $mail->Subject = "$gJewishYear CBI High Holy Day Honor Confirmation";
+    if( $gMailLive ) {
+        $mail->Subject = "$gJewishYear CBI High Holy Day Honor Confirmation";
+    } else {
+        $mail->Subject = "$gJewishYear CBI High Holy Day Honor Confirmation ** Test Mode **";
+    }
 
         $mail->Body = implode('<br>',$html );
         $mail->AltBody = implode('\n',$text);
@@ -2532,6 +2515,12 @@ function captureResponse() {
             $declined = 1;
             $active = 1;
         }
+        $key = "resp_{$platform}_donation";
+        $donation = array_key_exists($key, $_POST) ? $_POST[$key] : 0.0;
+
+        $key = "resp_{$platform}_method";
+        $method = array_key_exists($key, $_POST) ? $_POST[$key] : $PaymentCall;
+
 
         $columns = $values = [];
         $i = 0;
@@ -2553,15 +2542,28 @@ function captureResponse() {
         $columns[] = "hash = :v$i"; $values[":v$i"] = $hash; $i++;
         $columns[] = "accepted = :v$i"; $values[":v$i"] = $accepted; $i++;
         $columns[] = "declined = :v$i"; $values[":v$i"] = $declined; $i++;
-        $columns[] = "donation = :v$i"; $values[":v$i"] = $_POST["resp_{$platform}_donation"]; $i++;
-        for( $j = 0; $j < count($gPayMethods); $j++ ) {
-            if( $_POST["resp_{$platform}_method"] == $gPayMethods[$j] ) {
-                $columns[] = "payby = :v$i"; $values[":v$i"] = $j; $i++;
-            }
-        }
+        $columns[] = "donation = :v$i"; $values[":v$i"] = $donation; $i++;
+        $columns[] = "payby = :v$i"; $values[":v$i"] = $method; $i++;
         $columns[] = "comment = :v$i"; $values[":v$i"] = $_POST["resp_{$platform}_comment"]; $i++;
         $query = "insert into replies set " . implode(', ', $columns );
         DoQuery( $query, $values );
+//
+        $name = formatName($assignment['member_id']);
+        $tail = "";
+        if( $donation > 0 ) {
+            $tail = ", donated \$ " . number_format($donation,2) . ", pay by: " . ucfirst($gPayMethods[$method]);
+        }
+        if( $accepted ) {
+            $msg = "$name accepted honor $hash" . $tail;
+        } else {
+            $msg = "$name declined honor $hash" . $tail;
+        }
+        EventLog('record', [
+            'type' => 'rsvp',
+            'userid' => 0,
+            'item' => "$msg"
+        ]);
+        
     }
 
     array_pop($gFunction);

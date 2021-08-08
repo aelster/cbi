@@ -323,13 +323,7 @@
 
                                     $stmt = DoQuery("select * from members where id = $member_id");
                                     $member = $stmt->fetch(PDO::FETCH_ASSOC);
-                                    if (empty($member['Male 1st Name'])) {
-                                        $name = "{$member['Female 1st Name']} {$member['Last Name']}";
-                                    } else if (empty($member['Female 1st Name'])) {
-                                        $name = "{$member['Male 1st Name']} {$member['Last Name']}";
-                                    } else {
-                                        $name = "{$member['Female 1st Name']} and {$member['Male 1st Name']} {$member['Last Name']}";
-                                    }
+                                    $name = formatName($member_id);
 
                                     $stmt = DoQuery("select * from honors where id = $honor_id");
                                     $honor = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -354,6 +348,12 @@
                                             $service = "Yom Kippur Afternoon";
                                             break;
                                     }
+                                    $msg = "$name viewed their rsvp, hash: $hash";
+                                    EventLog( 'record', [
+                                        'type' => 'viewed',
+                                        'user_id' => 0,
+                                        'item' => "$msg"
+                                    ]);
                                     $str = "{$service}: " . ucfirst($honor['honor']);
                                     $platform = "desktop";
                                     $tagStatus = MakeTag("resp_{$platform}_status");
@@ -362,7 +362,12 @@
                                     $tagMethod = MakeTag("resp_{$platform}_method");
                                 }
                                 ?>
-
+<style type="text/css">
+    input:disabled,
+    input[disabled] { 
+        background-color: #cccccc;
+    }
+</style>
 <!-- InstanceBeginEditable name="EditRegionDesktop" -->
 <div id="pledge">
     <div>
@@ -380,12 +385,12 @@
                 <table width="50%" border="0">
                     <tr>
                         <td><label>
-                                <input type="radio" <?php echo $tagStatus ?> value="accept" />
+                                <input type="radio" <?php echo $tagStatus ?> onclick="mySubmitEnable();" value="accept" />
                                 I accept</label></td>
                     </tr>
                     <tr>
                         <td><label>
-                                <input type="radio" <?php echo $tagStatus ?> value="decline" />
+                                <input type="radio" <?php echo $tagStatus ?> onclick="mySubmitEnable();" value="decline" />
                                 I decline</label></td>
                     </tr>
                 </table>
@@ -409,11 +414,11 @@
             </div>
             <br />
             <div><strong>Payment method</strong> (select one)</div>
-            <div><input <?php echo $tagMethod ?> type="radio" value="Credit" />&nbsp;Charge my credit card on file</div>
-            <div><input <?php echo $tagMethod ?> type="radio" value="Check" />&nbsp;I will send a check to the office</div>
-            <div><input <?php echo $tagMethod ?> type="radio" value="Call" />&nbsp;Contact me about payment</div>
+            <div><input <?php echo "$tagMethod value=$PaymentCredit"; ?> type="radio" />&nbsp;Charge my credit card on file</div>
+            <div><input <?php echo "$tagMethod value=$PaymentCheck"; ?> type="radio" />&nbsp;I will send a check to the office</div>
+            <div><input <?php echo "$tagMethod value=$PaymentCall"; ?> type="radio" />&nbsp;Contact me about payment</div>
             <br />
-            <input name="" value="Submit" type="submit" onClick="setValue('resp_platform','<?php echo $platform ?>');addAction('capture');"/>
+            <input name="" id="<?php echo "submit_$platform"; ?>"  value="Submit" type="submit" onClick="setValue('resp_platform','<?php echo $platform ?>');addAction('capture');" disabled/>
             &nbsp;
             <input name="" type="reset" />
         </div>
@@ -457,12 +462,12 @@
                     <table width="50%" border="0">
                         <tr>
                             <td><label>
-                                <input type="radio" <?php echo $tagStatus ?> value="accept" />
+                                <input type="radio" <?php echo $tagStatus ?> onclick="mySubmitEnable();" value="accept" />
                                     I accept</label></td>
                         </tr>
                         <tr>
                             <td><label>
-                                <input type="radio" <?php echo $tagStatus ?> value="decline" />
+                                <input type="radio" <?php echo $tagStatus ?> onclick="mySubmitEnable();" value="decline" />
                                     I decline</label></td>
                         </tr>
                     </table>
@@ -486,11 +491,11 @@
                 </div>
                 <br />
                 <div><strong>Payment method</strong> (select one)</div>
-                <div><input <?php echo $tagMethod ?> type="radio" value="credit" />&nbsp;Charge my credit card on file</div>
-                <div><input <?php echo $tagMethod ?> type="radio" value="check" />&nbsp;I will send a check to the office</div>
-                <div><input <?php echo $tagMethod ?> type="radio" value="call" />&nbsp;Contact me about payment</div>
+            <div><input <?php echo "$tagMethod value=$PaymentCredit"; ?> type="radio" />&nbsp;Charge my credit card on file</div>
+            <div><input <?php echo "$tagMethod value=$PaymentCheck"; ?> type="radio" />&nbsp;I will send a check to the office</div>
+            <div><input <?php echo "$tagMethod value=$PaymentCall"; ?> type="radio" />&nbsp;Contact me about payment</div>
                 <br />
-            <input name="" value="Submit" type="submit" onClick="setValue('resp_platform','<?php echo $platform ?>');addAction('capture');"/>
+            <input name="" id="<?php echo "submit_$platform"; ?>" value="Submit" type="submit" onClick="setValue('resp_platform','<?php echo $platform ?>');addAction('capture');" disabled/>
                 &nbsp;
                 <input name="" type="reset" />  </div>
 

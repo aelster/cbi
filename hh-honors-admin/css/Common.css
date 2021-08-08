@@ -63,7 +63,7 @@ td {
     text-align: center;
 }
 
-.secretary {
+.secretary, .assign {
     background-color: #ff9966;
     text-align: center;
 }
@@ -159,4 +159,28 @@ input.r {
     border: solid 10px;
     border-color:  #f86652;
     font-size: 15px;
+}
+
+.user_manager h2 {
+    font-size: 2em;
+}
+
+.user_manager input[type="button"], input[type="password"], input[type="text"] {
+    font-size: 1em;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 6px;
+}
+
+.user_manager td {
+    border: 0px;
+}
+
+.user_manager p.hidden {
+    color: red;
+    font-weight: bold;
+    border: 0px;
+    background-color: #fff;
+    vertical-align: middle;
+    text-align: left;
 }

@@ -307,7 +307,7 @@ function showHideDiv(e, divx) {
         d.style.top = top;
         d.style.display = "block";
 
-    } else {
+    } else { 
         d.style.display = "none";
     }
 }

@@ -16,13 +16,13 @@ $http_host = $_SERVER['HTTP_HOST'];
 if (preg_match('/^dev.cbi18.org/', $http_host) || $http_host == "192.168.86.7" ) {
     $gProduction = 0;
     $gSiteDir = "/usr/local/site";
-    $gSiteName = "Dev-Admin";
+    $gSiteName = "Dev-Honors";
     define( 'DIR', 'http://dev.cbi18.org/');
     
 } elseif ( preg_match( '/cbi18.org/', $_SERVER['HTTP_HOST']) ) {
     $gProduction = 1;
     $gSiteDir = '/home/cbi18/site';
-    $gSiteName = 'CBI-Live';
+    $gSiteName = 'CBI-Honors-Live';
     define( 'DIR', 'https://www.cbi18.org/');
 
 } else {

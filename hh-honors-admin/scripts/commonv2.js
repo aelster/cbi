@@ -7,6 +7,36 @@ function _init() {
     debug('_init');
     hideAll();
 }
+function createDebugWindow(tag = 'xx') {
+    if (debug_disabled) {
+        return;
+    }
+
+    var windowName = '';
+    if (tag == 'xx') {
+        windowName = 'Debug Window';
+    } else {
+        windowName = 'Debug Window - ' + tag;
+    }
+    
+    if( debugWindow == null || debugWindow.closed ) {
+        debugWindow = window.open(
+            "",
+            "Debug",
+            "left=0,top=0,width=900,height=700,scrollbars=yes,status=yes,resizable=yes"
+            );
+        debugWindowIndex++;
+        myDebugWindows.push(debugWindow);
+            
+    } else {
+        debugWindow.focus();
+    }
+    // open the document for writing
+    debugWindow.document.open();
+    debugWindow.document.write(
+            '<HTML><HEAD><TITLE>' + windowName + '(' + debugWindowIndex + ')'
+            + '</TITLE></HEAD><BODY><PRE>\n');
+}
 function addAction(cmd) {
     var e = document.getElementById('action');
     if (!e)
@@ -68,36 +98,6 @@ function closeDebugWindow() {
     if (window.top.debugWindow && !window.top.debugWindow.closed) {
         window.top.debugWindow.close();
     }
-}
-function createDebugWindow(tag = 'xx') {
-    if (debug_disabled) {
-        return;
-    }
-
-    var windowName = '';
-    if (tag == 'xx') {
-        windowName = 'Debug Window';
-    } else {
-        windowName = 'Debug Window - ' + tag;
-    }
-    
-    if( debugWindow == null || debugWindow.closed ) {
-        debugWindow = window.open(
-            "",
-            "Debug",
-            "left=0,top=0,width=900,height=700,scrollbars=yes,status=yes,resizable=yes"
-            );
-        debugWindowIndex++;
-        myDebugWindows.push(debugWindow);
-            
-    } else {
-        debugWindow.focus();
-    }
-    // open the document for writing
-    debugWindow.document.open();
-    debugWindow.document.write(
-            '<HTML><HEAD><TITLE>' + windowName + '(' + debugWindowIndex + ')'
-            + '</TITLE></HEAD><BODY><PRE>\n');
 }
 function debug(text) {
     var str;
@@ -450,6 +450,7 @@ function verifypwd() {
     } else {
         btn.disabled = false;
         btn.style.backgroundColor = '#90EE90';
+        btn.style.borderwidth = '5px';
         if (txt)
             txt.innerHTML = "";
     }

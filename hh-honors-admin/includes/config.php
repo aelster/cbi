@@ -17,12 +17,14 @@ if (preg_match('/^dev.cbi18.org/', $http_host) || $http_host == "192.168.86.7" )
     $gProduction = 0;
     $gSiteDir = "/usr/local/site";
     $gSiteName = "Dev-Admin";
+    $gJavascriptDebugDisabled = 0;
     define( 'DIR', 'http://dev.cbi18.org/');
     
 } elseif ( preg_match( '/cbi18.org/', $_SERVER['HTTP_HOST']) ) {
     $gProduction = 1;
     $gSiteDir = '/home/cbi18/site';
-    $gSiteName = 'CBI-Live';
+    $gSiteName = 'CBI-Admin-Live';
+    $gJavascriptDebugDisabled = 1;
     define( 'DIR', 'https://www.cbi18.org/');
 
 } else {
@@ -68,4 +70,4 @@ session_start();
 
 selectDB();
 
-$user = new User($gPDO[$gDbControlId]['inst']);
+$user = new User2($gPDO[$gDbControlId]['inst']);
